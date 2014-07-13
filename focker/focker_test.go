@@ -11,7 +11,7 @@ import (
 var _ = Describe("Focker", func() {
 	var (
 		testfocker *focker.Focker
-		buffer *gbytes.Buffer
+		buffer     *gbytes.Buffer
 	)
 	BeforeEach(func() {
 		testfocker = focker.NewFocker()
