@@ -1,6 +1,8 @@
 package focker_test
 
 import (
+	"fmt"
+
 	"github.com/hatofmonkeys/cloudfocker/focker"
 
 	. "github.com/onsi/ginkgo"
@@ -27,12 +29,15 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
-	/*
-	  Describe("Bootstrapping the base image", func() {
-	  	It("should download and tag the lucid64 filesystem", func() {
-	  		Expect(true).To(Equal(true))
-	  		})
-	  	})
+	Describe("Bootstrapping the base image", func() {
+		//This works, but speed depends on your net connection
+		XIt("should download and tag the lucid64 filesystem", func() {
+			fmt.Println("Downloading lucid64 - this could take a while")
+	  	testfocker.ImportRootfsImage(buffer)
+	  	Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
+	  })
+	})
+/*
 
 	  Describe("Writing a dockerfile", func() {
 	  	It("should output a valid dockerfile", func() {

@@ -11,6 +11,7 @@ import (
 
 type DockerClient interface {
 	CmdVersion(...string) error
+	CmdImport(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -25,6 +26,21 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 		}
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished getting Docker version", writer)
+	return nil
+}
+
+func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, url string) error {
+	fmt.Fprintln(writer, "Bootstrapping Docker setup - this will take a few minutes...")
+	go func() {
+		err := cli.CmdImport(url, "cloudfocker-base")
+		if err != nil {
+			fmt.Errorf(" %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			fmt.Errorf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished bootstrapping", writer)
 	return nil
 }
 

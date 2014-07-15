@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/hatofmonkeys/cloudfocker/docker"
+	"github.com/hatofmonkeys/cloudfocker/utils"
 )
 
 type Focker struct {
@@ -17,4 +18,9 @@ func NewFocker() *Focker {
 func (Focker) DockerVersion(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.PrintVersion(cli, Stdout, stdoutpipe, writer)
+}
+
+func (Focker) ImportRootfsImage(writer io.Writer) {
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
 }

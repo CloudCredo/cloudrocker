@@ -13,10 +13,16 @@ import (
 
 type FakeDockerClient struct {
 	cmdVersionCalled bool
+	cmdImportArgs []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
 	f.cmdVersionCalled = true
+	return nil
+}
+
+func (f *FakeDockerClient) CmdImport(args ...string) error {
+	f.cmdImportArgs = args
 	return nil
 }
 
@@ -36,6 +42,18 @@ var _ = Describe("Docker", func() {
 			stdout, stdoutPipe := io.Pipe()
 			docker.PrintVersion(fakeDockerClient, stdout, stdoutPipe, buffer)
 			Expect(fakeDockerClient.cmdVersionCalled).To(Equal(true))
+		})
+	})
+
+	Describe("Bootstrapping the Docker environment", func() {
+		It("should tell Docker to import the rootfs from the supplied URL", func() {
+			url := "http://test.com/test-img"
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.ImportRootfsImage(fakeDockerClient, stdout, stdoutPipe, buffer, url)
+			Expect(len(fakeDockerClient.cmdImportArgs)).To(Equal(2))
+			Expect(fakeDockerClient.cmdImportArgs[0]).To(Equal("http://test.com/test-img"))
+			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudfocker-base"))
 		})
 	})
 
