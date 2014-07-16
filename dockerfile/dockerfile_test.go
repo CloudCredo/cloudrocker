@@ -13,8 +13,8 @@ import (
 
 var _ = Describe("Dockerfile", func() {
 	var (
-		testdockerfile  *dockerfile.Dockerfile
-		buffer *gbytes.Buffer
+		testdockerfile *dockerfile.Dockerfile
+		buffer         *gbytes.Buffer
 	)
 
 	BeforeEach(func() {
@@ -22,27 +22,27 @@ var _ = Describe("Dockerfile", func() {
 		buffer = gbytes.NewBuffer()
 	})
 
-  Describe("Getting an empty dockerfile", func() {
+	Describe("Getting an empty dockerfile", func() {
 		It("should return an empty dockerfile", func() {
 			Expect(len(testdockerfile.Commands)).To(Equal(0))
 		})
 	})
-  Describe("Creating a dockerfile", func() {
+	Describe("Creating a dockerfile", func() {
 		It("should populate the dockerfile information", func() {
 			testdockerfile.Create()
 			Expect(len(testdockerfile.Commands)).To(Equal(5))
 		})
 	})
-  Describe("Writing a dockerfile", func() {
+	Describe("Writing a dockerfile", func() {
 		It("should write the dockerfile to a writer", func() {
 			testdockerfile.Create()
 			testdockerfile.Write(buffer)
 			Eventually(buffer).Should(gbytes.Say(`FROM`))
- 		})
+		})
 	})
 	Describe("Persisting a dockerfile", func() {
 		It("should persist the dockerfile to a file", func() {
-			file, _ := ioutil.TempFile("","focker-testing")
+			file, _ := ioutil.TempFile("", "focker-testing")
 			filename := file.Name()
 			file.Close()
 			testdockerfile.Create()
@@ -52,5 +52,5 @@ var _ = Describe("Dockerfile", func() {
 			Expect(contents).ShouldNot(BeEmpty())
 			os.Remove(filename)
 		})
-	})	
+	})
 })

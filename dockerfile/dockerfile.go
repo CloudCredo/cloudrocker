@@ -1,10 +1,10 @@
 package dockerfile
 
 import (
-	"io"
-	"strings"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"strings"
 )
 
 type Dockerfile struct {

@@ -13,7 +13,7 @@ import (
 
 type FakeDockerClient struct {
 	cmdVersionCalled bool
-	cmdImportArgs []string
+	cmdImportArgs    []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
