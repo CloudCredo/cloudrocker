@@ -31,6 +31,14 @@ func main() {
 				focker.ImportRootfsImage(os.Stdout)
 			},
 		},
+		{
+			Name:		"dockerfile",
+			Usage:	"Create a dockerfile for the application",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.WriteDockerfile(os.Stdout)
+			},
+		},
 	}
 
 	app.Run(os.Args)

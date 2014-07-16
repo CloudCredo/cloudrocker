@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/hatofmonkeys/cloudfocker/docker"
+	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
 	"github.com/hatofmonkeys/cloudfocker/utils"
 )
 
@@ -23,4 +24,10 @@ func (Focker) DockerVersion(writer io.Writer) {
 func (Focker) ImportRootfsImage(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
+}
+
+func (Focker) WriteDockerfile(writer io.Writer) {
+	dockerfile := df.NewDockerfile()
+	dockerfile.Create()
+	dockerfile.Write(writer)
 }

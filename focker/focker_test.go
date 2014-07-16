@@ -37,13 +37,14 @@ var _ = Describe("Focker", func() {
 	  	Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
 	  })
 	})
-/*
 
-	  Describe("Writing a dockerfile", func() {
-	  	It("should output a valid dockerfile", func() {
-	  		Expect(true).To(Equal(true))
-	  		})
-	  	})
+  Describe("Writing a dockerfile", func() {
+  	It("should write a valid dockerfile", func() {
+  		testfocker.WriteDockerfile(buffer)
+  		Eventually(buffer).Should(gbytes.Say(`FROM`))
+  		})
+  	})
+/*
 
 	  Describe("Building a docker container", func() {
 	  	It("should output a built container tag", func() {
