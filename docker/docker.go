@@ -4,7 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"strings"
+
+	"github.com/hatofmonkeys/cloudfocker/utils"
 
 	"github.com/dotcloud/docker/api/client"
 )
@@ -12,6 +16,7 @@ import (
 type DockerClient interface {
 	CmdVersion(...string) error
 	CmdImport(...string) error
+	CmdBuild(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -42,6 +47,39 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished bootstrapping", writer)
 	return nil
+}
+
+func BuildImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, cloudfockerfileLocation string) error {
+	dockerfileLocation := cloudfockerfiletoDockerfile(cloudfockerfileLocation)
+
+	fmt.Fprintln(writer, "Building the CloudFocker image...")
+	go func() {
+		err := cli.CmdBuild("--tag=cloudfocker", dockerfileLocation)
+		if err != nil {
+			fmt.Errorf(" %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			fmt.Errorf("Error: %s", err)
+		}
+	}()
+	defer os.RemoveAll(dockerfileLocation)
+
+	PrintToStdout(stdout, stdoutPipe, "Finished building the CloudFocker image", writer)
+	return nil
+}
+
+func cloudfockerfiletoDockerfile(cloudfockerfileLocation string) (dockerfileLocation string) {
+	//copy the cffile to a tmp location Dockerfile
+	dockerfileLocation, err := ioutil.TempDir(os.TempDir(), "cfockerbuilder")
+	if err != nil {
+		fmt.Errorf(" %s", err)
+	}
+
+	err = utils.Cp(cloudfockerfileLocation, dockerfileLocation+"/Dockerfile")
+	if err != nil {
+		fmt.Errorf(" %s", err)
+	}
+	return
 }
 
 //A few of functions stolen from Deis dockercliuitls! Thanks guys

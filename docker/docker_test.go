@@ -3,6 +3,8 @@ package docker_test
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
+	"os"
 
 	"github.com/hatofmonkeys/cloudfocker/docker"
 
@@ -14,6 +16,7 @@ import (
 type FakeDockerClient struct {
 	cmdVersionCalled bool
 	cmdImportArgs    []string
+	cmdBuildArgs     []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
@@ -23,6 +26,11 @@ func (f *FakeDockerClient) CmdVersion(_ ...string) error {
 
 func (f *FakeDockerClient) CmdImport(args ...string) error {
 	f.cmdImportArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdBuild(args ...string) error {
+	f.cmdBuildArgs = args
 	return nil
 }
 
@@ -54,6 +62,20 @@ var _ = Describe("Docker", func() {
 			Expect(len(fakeDockerClient.cmdImportArgs)).To(Equal(2))
 			Expect(fakeDockerClient.cmdImportArgs[0]).To(Equal("http://test.com/test-img"))
 			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudfocker-base"))
+		})
+	})
+
+	Describe("Building a Docker image", func() {
+		It("should ask Docker to build an image from a Dockerfile", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			location := os.TempDir() + "/testCloudFockerFile123"
+			ioutil.WriteFile(location, []byte("FROM hello"), 0644)
+			docker.BuildImage(fakeDockerClient, stdout, stdoutPipe, buffer, location)
+			Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
+			Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal("--tag=cloudfocker"))
+			Expect(fakeDockerClient.cmdBuildArgs[1]).To(ContainSubstring(os.TempDir() + "/cfockerbuilder"))
+			os.Remove(location)
 		})
 	})
 

@@ -1,7 +1,9 @@
 package focker
 
 import (
+	"fmt"
 	"io"
+	"os"
 
 	"github.com/hatofmonkeys/cloudfocker/docker"
 	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
@@ -30,4 +32,21 @@ func (Focker) WriteDockerfile(writer io.Writer) {
 	dockerfile := df.NewDockerfile()
 	dockerfile.Create()
 	dockerfile.Write(writer)
+}
+
+func (Focker) BuildImage(writer io.Writer) {
+	dockerfile := df.NewDockerfile()
+	dockerfile.Create()
+	dockerfile.Persist(cloudFockerfileLocation())
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.BuildImage(cli, Stdout, stdoutpipe, writer, cloudFockerfileLocation())
+}
+
+func cloudFockerfileLocation() (location string) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		fmt.Errorf(" %s", err)
+	}
+	location = pwd + "/CloudFockerfile"
+	return
 }

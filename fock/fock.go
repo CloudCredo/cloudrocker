@@ -39,6 +39,14 @@ func main() {
 				focker.WriteDockerfile(os.Stdout)
 			},
 		},
+		{
+			Name:  "build",
+			Usage: "Create an image for the application",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.BuildImage(os.Stdout)
+			},
+		},
 	}
 
 	app.Run(os.Args)

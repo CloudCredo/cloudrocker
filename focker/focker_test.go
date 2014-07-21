@@ -44,14 +44,15 @@ var _ = Describe("Focker", func() {
 			Eventually(buffer).Should(gbytes.Say(`FROM`))
 		})
 	})
+
+	Describe("Building a docker image", func() {
+		It("should output a built image tag", func() {
+			testfocker.BuildImage(buffer)
+			Eventually(buffer, 20).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+		})
+	})
+
 	/*
-
-	  Describe("Building a docker container", func() {
-	  	It("should output a built container tag", func() {
-	  		Expect(true).To(Equal(true))
-	  		})
-	  	})
-
 	  Describe("Running the docker container", func() {
 	  	It("should output a valid URL for the running application", func() {
 	  		Expect(true).To(Equal(true))
