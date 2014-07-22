@@ -75,7 +75,7 @@ func addExposeCmd(dockerfile *Dockerfile) {
 
 func addEntrypointCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
-		"ENTRYPOINT ['/bin/bash']")
+		"ENTRYPOINT [\"/bin/bash\"]")
 }
 
 func (dockerfile *Dockerfile) tostring() (filestring string) {
