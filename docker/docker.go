@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -24,10 +25,10 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 	go func() {
 		err := cli.CmdVersion()
 		if err != nil {
-			fmt.Errorf(" %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 		if err = closeWrap(stdout, stdoutPipe); err != nil {
-			fmt.Errorf("Error: %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished getting Docker version", writer)
@@ -39,10 +40,10 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 	go func() {
 		err := cli.CmdImport(url, "cloudfocker-base")
 		if err != nil {
-			fmt.Errorf(" %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 		if err = closeWrap(stdout, stdoutPipe); err != nil {
-			fmt.Errorf("Error: %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished bootstrapping", writer)
@@ -56,10 +57,10 @@ func BuildImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWrit
 	go func() {
 		err := cli.CmdBuild("--tag=cloudfocker", dockerfileLocation)
 		if err != nil {
-			fmt.Errorf(" %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 		if err = closeWrap(stdout, stdoutPipe); err != nil {
-			fmt.Errorf("Error: %s", err)
+			log.Fatalf("Error: %s", err)
 		}
 	}()
 	defer os.RemoveAll(dockerfileLocation)
@@ -72,12 +73,12 @@ func cloudfockerfiletoDockerfile(cloudfockerfileLocation string) (dockerfileLoca
 	//copy the cffile to a tmp location Dockerfile
 	dockerfileLocation, err := ioutil.TempDir(os.TempDir(), "cfockerbuilder")
 	if err != nil {
-		fmt.Errorf(" %s", err)
+		log.Fatalf("Error: %s", err)
 	}
 
 	err = utils.Cp(cloudfockerfileLocation, dockerfileLocation+"/Dockerfile")
 	if err != nil {
-		fmt.Errorf(" %s", err)
+		log.Fatalf("Error: %s", err)
 	}
 	return
 }
@@ -97,7 +98,7 @@ func PrintToStdout(stdout *io.PipeReader, stdoutPipe *io.PipeWriter, stoptag str
 			fmt.Fprint(writer, cmdBytes)
 			if strings.Contains(cmdBytes, stoptag) == true {
 				if err := closeWrap(stdout, stdoutPipe); err != nil {
-					fmt.Errorf("Closewraps %s", err)
+					log.Fatalf("Error: Closewraps %s", err)
 				}
 			}
 		} else {

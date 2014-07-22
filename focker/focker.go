@@ -1,8 +1,8 @@
 package focker
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/hatofmonkeys/cloudfocker/docker"
@@ -45,7 +45,7 @@ func (Focker) BuildImage(writer io.Writer) {
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {
-		fmt.Errorf(" %s", err)
+		log.Fatalf(" %s", err)
 	}
 	location = pwd + "/CloudFockerfile"
 	return
