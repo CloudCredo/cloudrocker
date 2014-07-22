@@ -30,7 +30,7 @@ var _ = Describe("Dockerfile", func() {
 	Describe("Creating a dockerfile", func() {
 		It("should populate the dockerfile information", func() {
 			testdockerfile.Create()
-			Expect(len(testdockerfile.Commands)).To(Equal(5))
+			Expect(len(testdockerfile.Commands)).To(Equal(7))
 		})
 	})
 	Describe("Writing a dockerfile", func() {

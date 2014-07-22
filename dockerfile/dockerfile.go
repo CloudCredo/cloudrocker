@@ -34,6 +34,8 @@ func (dockerfile *Dockerfile) Create() {
 		addAddBuildpackCmd,
 		addAddTailorCmd,
 		addRunTailorCmd,
+		addExposeCmd,
+		addEntrypointCmd,
 	}
 
 	for _, cmd := range cmds {
@@ -64,6 +66,16 @@ func addAddTailorCmd(dockerfile *Dockerfile) {
 func addRunTailorCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
 		"RUN echo 'HELLO, WORLD'")
+}
+
+func addExposeCmd(dockerfile *Dockerfile) {
+	dockerfile.Commands = append(dockerfile.Commands,
+		"EXPOSE 8080")
+}
+
+func addEntrypointCmd(dockerfile *Dockerfile) {
+	dockerfile.Commands = append(dockerfile.Commands,
+		"ENTRYPOINT ['/bin/bash']")
 }
 
 func (dockerfile *Dockerfile) tostring() (filestring string) {
