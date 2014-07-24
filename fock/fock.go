@@ -47,6 +47,14 @@ func main() {
 				focker.BuildImage(os.Stdout)
 			},
 		},
+		{
+			Name:  "up",
+			Usage: "Start the container for the application",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.RunContainer(os.Stdout)
+			},
+		},
 	}
 
 	app.Run(os.Args)

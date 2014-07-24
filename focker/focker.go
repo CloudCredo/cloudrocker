@@ -42,6 +42,12 @@ func (Focker) BuildImage(writer io.Writer) {
 	docker.BuildImage(cli, Stdout, stdoutpipe, writer, cloudFockerfileLocation())
 }
 
+func (f Focker) RunContainer(writer io.Writer) {
+	f.BuildImage(writer)
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.RunContainer(cli, Stdout, stdoutpipe, writer)
+}
+
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {

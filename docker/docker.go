@@ -18,6 +18,7 @@ type DockerClient interface {
 	CmdVersion(...string) error
 	CmdImport(...string) error
 	CmdBuild(...string) error
+	CmdRun(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -66,6 +67,22 @@ func BuildImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWrit
 	defer os.RemoveAll(dockerfileLocation)
 
 	PrintToStdout(stdout, stdoutPipe, "Finished building the CloudFocker image", writer)
+	return nil
+}
+
+func RunContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+	fmt.Fprintln(writer, "Running the CloudFocker container...")
+	go func() {
+		err := cli.CmdRun("-d", "--publish=8080:8080", "cloudfocker:latest")
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
+	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 	return nil
 }
 

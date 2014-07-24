@@ -17,6 +17,7 @@ type FakeDockerClient struct {
 	cmdVersionCalled bool
 	cmdImportArgs    []string
 	cmdBuildArgs     []string
+	cmdRunArgs       []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
@@ -31,6 +32,11 @@ func (f *FakeDockerClient) CmdImport(args ...string) error {
 
 func (f *FakeDockerClient) CmdBuild(args ...string) error {
 	f.cmdBuildArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdRun(args ...string) error {
+	f.cmdRunArgs = args
 	return nil
 }
 
@@ -76,6 +82,16 @@ var _ = Describe("Docker", func() {
 			Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal("--tag=cloudfocker"))
 			Expect(fakeDockerClient.cmdBuildArgs[1]).To(ContainSubstring(os.TempDir() + "/cfockerbuilder"))
 			os.Remove(location)
+		})
+	})
+
+	Describe("Running the docker container", func() {
+		It("should tell Docker to run the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.RunContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(3))
+			Expect(fakeDockerClient.cmdRunArgs[2]).To(Equal("cloudfocker:latest"))
 		})
 	})
 

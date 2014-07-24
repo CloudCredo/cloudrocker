@@ -50,17 +50,17 @@ func addBaseImageCmd(dockerfile *Dockerfile) {
 
 func addAddAppCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
-		"RUN echo 'HELLO, WORLD'")
+		"RUN apt-get install -y nginx")
 }
 
 func addAddBuildpackCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
-		"RUN echo 'HELLO, WORLD'")
+		"RUN echo \"daemon off;\" >> /etc/nginx/nginx.conf")
 }
 
 func addAddTailorCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
-		"RUN echo 'HELLO, WORLD'")
+		"RUN sed -i 's/listen   80 default/listen   8080 default/g' /etc/nginx/sites-enabled/default")
 }
 
 func addRunTailorCmd(dockerfile *Dockerfile) {
@@ -75,7 +75,7 @@ func addExposeCmd(dockerfile *Dockerfile) {
 
 func addEntrypointCmd(dockerfile *Dockerfile) {
 	dockerfile.Commands = append(dockerfile.Commands,
-		"ENTRYPOINT [\"/bin/bash\"]")
+		"ENTRYPOINT [\"/usr/sbin/nginx\",\"-c\",\"/etc/nginx/nginx.conf\"]")
 }
 
 func (dockerfile *Dockerfile) tostring() (filestring string) {

@@ -2,6 +2,7 @@ package focker_test
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/hatofmonkeys/cloudfocker/focker"
 
@@ -52,11 +53,22 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
-	/*
-	  Describe("Running the docker container", func() {
-	  	It("should output a valid URL for the running application", func() {
-	  		Expect(true).To(Equal(true))
-	  		})
-	  	})
-	*/
+	Describe("Running the docker container", func() {
+		It("should output a valid URL for the running application", func() {
+			testfocker.RunContainer(buffer)
+			Eventually(buffer, 20).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+			Eventually(buffer).Should(gbytes.Say(`[a-f0-9]{64}`))
+			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
+			Eventually(statusCodeChecker).Should(Equal(200))
+		})
+	})
 })
+
+func statusCodeChecker() int {
+	res, err := http.Get("http://localhost:8080/")
+	if err != nil {
+		return 0
+	} else {
+		return res.StatusCode
+	}
+}
