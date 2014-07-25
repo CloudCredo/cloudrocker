@@ -9,5 +9,5 @@ import (
 
 func TestDockerfileutils(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Dockerfileutils Suite")
+	RunSpecs(t, "Dockerfile Suite")
 }
