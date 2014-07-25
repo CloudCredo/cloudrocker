@@ -19,6 +19,8 @@ type DockerClient interface {
 	CmdImport(...string) error
 	CmdBuild(...string) error
 	CmdRun(...string) error
+	CmdStop(...string) error
+	CmdRm(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -73,7 +75,7 @@ func BuildImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWrit
 func RunContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
 	fmt.Fprintln(writer, "Running the CloudFocker container...")
 	go func() {
-		err := cli.CmdRun("-d", "--publish=8080:8080", "cloudfocker:latest")
+		err := cli.CmdRun("-d", "--publish=8080:8080", "--name=cloudfocker-container", "cloudfocker:latest")
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}
@@ -83,6 +85,38 @@ func RunContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
+	return nil
+}
+
+func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+	fmt.Fprintln(writer, "Stopping the CloudFocker container...")
+	go func() {
+		err := cli.CmdStop("cloudfocker-container")
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished stopping the CloudFocker container", writer)
+	fmt.Fprintln(writer, "Stopped your application.")
+	return nil
+}
+
+func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+	fmt.Fprintln(writer, "Deleting the CloudFocker container...")
+	go func() {
+		err := cli.CmdRm("cloudfocker-container")
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
+	fmt.Fprintln(writer, "Deleted container.")
 	return nil
 }
 

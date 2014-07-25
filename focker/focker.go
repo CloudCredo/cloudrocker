@@ -48,6 +48,17 @@ func (f Focker) RunContainer(writer io.Writer) {
 	docker.RunContainer(cli, Stdout, stdoutpipe, writer)
 }
 
+func (f Focker) StopContainer(writer io.Writer) {
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.StopContainer(cli, Stdout, stdoutpipe, writer)
+	f.DeleteContainer(writer)
+}
+
+func (Focker) DeleteContainer(writer io.Writer) {
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer)
+}
+
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {

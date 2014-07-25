@@ -55,6 +55,14 @@ func main() {
 				focker.RunContainer(os.Stdout)
 			},
 		},
+		{
+			Name:  "off",
+			Usage: "Stop the container and remove it",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.StopContainer(os.Stdout)
+			},
+		},
 	}
 
 	app.Run(os.Args)

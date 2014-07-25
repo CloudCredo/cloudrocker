@@ -60,6 +60,19 @@ var _ = Describe("Focker", func() {
 			Eventually(buffer).Should(gbytes.Say(`[a-f0-9]{64}`))
 			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
 			Eventually(statusCodeChecker).Should(Equal(200))
+			testfocker.StopContainer(buffer)
+		})
+	})
+
+	Describe("Stopping the docker container", func() {
+		It("should output the stopped image ID, not respond to HTTP, and delete the container", func() {
+			testfocker.RunContainer(buffer)
+			testfocker.StopContainer(buffer)
+			Eventually(buffer).Should(gbytes.Say(`Stopping the CloudFocker container...`))
+			Eventually(buffer).Should(gbytes.Say(`cloudfocker-container`))
+			Eventually(statusCodeChecker).Should(Equal(0))
+			Eventually(buffer).Should(gbytes.Say(`Deleting the CloudFocker container...`))
+			Eventually(buffer).Should(gbytes.Say(`cloudfocker-container`))
 		})
 	})
 })

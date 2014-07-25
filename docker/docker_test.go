@@ -18,6 +18,8 @@ type FakeDockerClient struct {
 	cmdImportArgs    []string
 	cmdBuildArgs     []string
 	cmdRunArgs       []string
+	cmdStopArgs      []string
+	cmdRmArgs        []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
@@ -37,6 +39,16 @@ func (f *FakeDockerClient) CmdBuild(args ...string) error {
 
 func (f *FakeDockerClient) CmdRun(args ...string) error {
 	f.cmdRunArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdStop(args ...string) error {
+	f.cmdStopArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdRm(args ...string) error {
+	f.cmdRmArgs = args
 	return nil
 }
 
@@ -90,8 +102,29 @@ var _ = Describe("Docker", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
 			docker.RunContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
-			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(3))
-			Expect(fakeDockerClient.cmdRunArgs[2]).To(Equal("cloudfocker:latest"))
+			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(4))
+			Expect(fakeDockerClient.cmdRunArgs[2]).To(Equal("--name=cloudfocker-container"))
+			Expect(fakeDockerClient.cmdRunArgs[3]).To(Equal("cloudfocker:latest"))
+		})
+	})
+
+	Describe("Stopping the docker container", func() {
+		It("should tell Docker to stop the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			Expect(len(fakeDockerClient.cmdStopArgs)).To(Equal(1))
+			Expect(fakeDockerClient.cmdStopArgs[0]).To(Equal("cloudfocker-container"))
+		})
+	})
+
+	Describe("Deleting the docker container", func() {
+		It("should tell Docker to delete the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			Expect(len(fakeDockerClient.cmdRmArgs)).To(Equal(1))
+			Expect(fakeDockerClient.cmdRmArgs[0]).To(Equal("cloudfocker-container"))
 		})
 	})
 
