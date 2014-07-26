@@ -2,7 +2,9 @@ package focker_test
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/hatofmonkeys/cloudfocker/focker"
 
@@ -73,6 +75,17 @@ var _ = Describe("Focker", func() {
 			Eventually(statusCodeChecker).Should(Equal(0))
 			Eventually(buffer).Should(gbytes.Say(`Deleting the CloudFocker container...`))
 			Eventually(buffer).Should(gbytes.Say(`cloudfocker-container`))
+		})
+	})
+
+	Describe("Adding a buildpack", func() {
+		It("should download the buildpack and add it to the buildpack directory", func() {
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
+			buffer := gbytes.NewBuffer()
+			testfocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/ruby-buildpack", buildpackDir)
+			Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
+			Eventually(buffer, 120).Should(gbytes.Say(`Downloaded buildpack.`))
+			os.RemoveAll(buildpackDir)
 		})
 	})
 })

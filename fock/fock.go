@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/hatofmonkeys/cloudfocker/focker"
 	"os"
@@ -61,6 +62,18 @@ func main() {
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StopContainer(os.Stdout)
+			},
+		},
+		{
+			Name:  "add-buildpack",
+			Usage: "add-buildpack [URL] - add a buildpack from a GitHub URL",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				if url := c.Args().First(); url != "" {
+					focker.AddBuildpack(os.Stdout, url)
+				} else {
+					fmt.Println("Please supply a GitHub URL to download")
+				}
 			},
 		},
 	}

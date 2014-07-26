@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/hatofmonkeys/cloudfocker/buildpack"
 	"github.com/hatofmonkeys/cloudfocker/docker"
 	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
 	"github.com/hatofmonkeys/cloudfocker/utils"
@@ -57,6 +58,14 @@ func (f Focker) StopContainer(writer io.Writer) {
 func (Focker) DeleteContainer(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer)
+}
+
+func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
+	buildpackDir := utils.Cloudfockerhome() + "/buildpacks"
+	if len(buildpackDirOptional) > 0 {
+		buildpackDir = buildpackDirOptional[0]
+	}
+	buildpack.Add(writer, url, buildpackDir)
 }
 
 func cloudFockerfileLocation() (location string) {
