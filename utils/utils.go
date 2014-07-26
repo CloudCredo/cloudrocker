@@ -13,6 +13,14 @@ func GetRootfsUrl() string {
 	return url
 }
 
+func Cloudfockerhome() string {
+	cfhome := os.Getenv("CLOUDFOCKER_HOME")
+	if cfhome == "" {
+		cfhome = os.Getenv("HOME") + "/.cloudfocker"
+	}
+	return cfhome
+}
+
 //C&P(ha!) from https://gist.github.com/elazarl/5507969
 //src and dest swapped for sanity
 func Cp(src, dst string) error {
