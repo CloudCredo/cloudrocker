@@ -23,7 +23,7 @@ func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 			utils.Cloudfockerhome() + "/result":     "/tmp/result",
 			utils.Cloudfockerhome() + "/buildpacks": "/tmp/cloudfockerbuildpacks",
 			utils.Cloudfockerhome() + "/cache":      "/tmp/cache",
-			utils.Cloudfockerhome() + "/focker":     "/fock",
+			utils.Cloudfockerhome() + "/focker":     "/focker",
 		},
 		Command: []string{"/focker/fock", "stage"},
 	}
