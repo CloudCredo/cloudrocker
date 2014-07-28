@@ -9,7 +9,7 @@ type RunConfig struct {
 	ImageTag       string
 	PublishedPorts map[int]int
 	Mounts         map[string]string
-	Command     []string
+	Command        []string
 	Daemon         bool
 }
 
