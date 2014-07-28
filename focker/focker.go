@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/hatofmonkeys/cloudfocker/buildpack"
+	"github.com/hatofmonkeys/cloudfocker/config"
 	"github.com/hatofmonkeys/cloudfocker/docker"
 	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
 	"github.com/hatofmonkeys/cloudfocker/stager"
@@ -67,6 +68,26 @@ func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ..
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Add(writer, url, buildpackDir)
+}
+
+func (f Focker) RunStager(writer io.Writer, appDir string, buildpackDirOptional ...string) {
+	buildpackDir := utils.Cloudfockerhome() + "/buildpacks"
+	if len(buildpackDirOptional) > 0 {
+		buildpackDir = buildpackDirOptional[0]
+	}
+	if err := utils.CreateAndCleanAppDirs(utils.Cloudfockerhome()); err != nil {
+		log.Fatalf(" %s", err)
+	}
+	if err := utils.AtLeastOneBuildpackIn(buildpackDir); err != nil {
+		log.Fatalf(" %s", err)
+	}
+	if err := utils.CopyFockerBinaryToOwnDir(utils.Cloudfockerhome()); err != nil {
+		log.Fatalf(" %s", err)
+	}
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	runConfig := config.NewStageRunConfig(appDir)
+	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
+	f.DeleteContainer(writer, runConfig.ContainerName)
 }
 
 func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {

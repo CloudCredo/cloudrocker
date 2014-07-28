@@ -90,6 +90,23 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
+	Describe("Staging an application", func() {
+		It("should populate the droplet directory", func() {
+			//need to use a buildpack fixture
+			//create an appDir and stick the fixture in it
+			//set a CLOUDFOCKER_HOME env var, and populate it
+			appDir := "/tmp/testapp"
+			//TEMP TEMP TEMP
+			testfocker.RunStager(buffer, appDir, "/home/hato/.cloudfocker/buildpacks/")
+			dropletDir, err := os.Open("/home/hato/.cloudfocker/droplet")
+			dropletDirContents, err := dropletDir.Readdirnames(0)
+			Expect(dropletDirContents, err).Should(ContainElement("app"))
+			Expect(dropletDirContents, err).Should(ContainElement("logs"))
+			Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
+			Expect(dropletDirContents, err).Should(ContainElement("tmp"))
+		})
+	})
+
 	Describe("Building an application droplet", func() {
 		It("should run the buildpack runner from linux-circus", func() {
 			err := testfocker.StageApp(buffer, "/tmp/made-up-directory-that-will-not-exist")
