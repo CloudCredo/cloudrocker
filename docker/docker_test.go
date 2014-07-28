@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/hatofmonkeys/cloudfocker/config"
 	"github.com/hatofmonkeys/cloudfocker/docker"
 
 	. "github.com/onsi/ginkgo"
@@ -105,6 +106,16 @@ var _ = Describe("Docker", func() {
 			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(4))
 			Expect(fakeDockerClient.cmdRunArgs[2]).To(Equal("--name=cloudfocker-container"))
 			Expect(fakeDockerClient.cmdRunArgs[3]).To(Equal("cloudfocker:latest"))
+		})
+	})
+
+	Describe("Running a configured container", func() {
+		It("should tell Docker to run the container with the correct arguments", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.RunConfiguredContainer(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewStageRunConfig("/tmp/fakeappdir"))
+			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(10))
+			Expect(fakeDockerClient.cmdRunArgs[9]).To(Equal("stage"))
 		})
 	})
 

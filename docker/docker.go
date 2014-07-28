@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/hatofmonkeys/cloudfocker/config"
 	"github.com/hatofmonkeys/cloudfocker/utils"
 
 	"github.com/dotcloud/docker/api/client"
@@ -85,6 +86,22 @@ func RunContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
+	return nil
+}
+
+func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, runConfig *config.RunConfig) error {
+	fmt.Fprintln(writer, "Starting the CloudFocker container...")
+	go func() {
+		err := cli.CmdRun(ParseRunCommand(runConfig)...)
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
+	fmt.Fprintln(writer, "Started the CloudFocker container.")
 	return nil
 }
 
