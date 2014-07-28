@@ -104,10 +104,10 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 	return nil
 }
 
-func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
 	fmt.Fprintln(writer, "Deleting the CloudFocker container...")
 	go func() {
-		err := cli.CmdRm("cloudfocker-container")
+		err := cli.CmdRm(name)
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}

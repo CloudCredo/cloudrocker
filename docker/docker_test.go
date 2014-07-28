@@ -122,7 +122,7 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to delete the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
 			Expect(len(fakeDockerClient.cmdRmArgs)).To(Equal(1))
 			Expect(fakeDockerClient.cmdRmArgs[0]).To(Equal("cloudfocker-container"))
 		})
