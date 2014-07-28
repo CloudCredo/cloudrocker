@@ -9,7 +9,7 @@ type RunConfig struct {
 	ImageTag       string
 	PublishedPorts map[int]int
 	Mounts         map[string]string
-	RunCommand     []string
+	Command     []string
 	Daemon         bool
 }
 
@@ -25,7 +25,7 @@ func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 			utils.Cloudfockerhome() + "/cache":      "/tmp/cache",
 			utils.Cloudfockerhome() + "/focker":     "/fock",
 		},
-		RunCommand: []string{"/focker/fock", "stage"},
+		Command: []string{"/focker/fock", "stage"},
 	}
 	return
 }
