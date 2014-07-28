@@ -79,7 +79,8 @@ var _ = Describe("Focker", func() {
 	})
 
 	Describe("Adding a buildpack", func() {
-		It("should download the buildpack and add it to the buildpack directory", func() {
+		XIt("should download the buildpack and add it to the buildpack directory", func() {
+			//This works, but speed depends on your net connection
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
 			buffer := gbytes.NewBuffer()
 			testfocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/ruby-buildpack", buildpackDir)
