@@ -110,4 +110,15 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(parentDir)
 		})
 	})
+	Describe("Copying the focker binary to its own directory", func() {
+		It("should create a focker subdirectory with the fock binary inside it", func() {
+			cloudfockerhome, _ := ioutil.TempDir(os.TempDir(), "utils-test-cp-focker")
+			err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome)
+			Expect(err).ShouldNot(HaveOccurred())
+			fockerOwnDirFile, err := os.Open(cloudfockerhome + "/focker")
+			fockerOwnDirContents, err := fockerOwnDirFile.Readdirnames(0)
+			Expect(fockerOwnDirContents, err).Should(ContainElement("fock"))
+			os.RemoveAll(cloudfockerhome)
+		})
+	})
 })

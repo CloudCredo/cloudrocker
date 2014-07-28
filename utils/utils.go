@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 )
 
 func GetRootfsUrl() string {
@@ -65,6 +66,21 @@ func SubDirs(dir string) ([]string, error) {
 		}
 	}
 	return dirs, nil
+}
+
+func CopyFockerBinaryToOwnDir(cloudfockerhome string) error {
+	if err := os.MkdirAll(cloudfockerhome+"/focker", 0755); err != nil {
+		return err
+	}
+	var fockPath string
+	var err error
+	if fockPath, err = exec.LookPath("fock"); err != nil {
+		return fmt.Errorf("Could not find fock binary, please install it in your path")
+	}
+	if err := Cp(fockPath, cloudfockerhome+"/focker/fock"); err != nil {
+		return err
+	}
+	return nil
 }
 
 //C&P(ha!) from https://gist.github.com/elazarl/5507969
