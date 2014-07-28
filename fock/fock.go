@@ -76,6 +76,15 @@ func main() {
 				}
 			},
 		},
+		{
+			Name:  "stage",
+			Usage: "use to stage the app inside a container",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.StageApp(os.Stdout)
+			},
+			HideHelp: true,
+		},
 	}
 
 	app.Run(os.Args)

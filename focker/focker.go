@@ -8,6 +8,7 @@ import (
 	"github.com/hatofmonkeys/cloudfocker/buildpack"
 	"github.com/hatofmonkeys/cloudfocker/docker"
 	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
+	"github.com/hatofmonkeys/cloudfocker/stager"
 	"github.com/hatofmonkeys/cloudfocker/utils"
 )
 
@@ -66,6 +67,16 @@ func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ..
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Add(writer, url, buildpackDir)
+}
+
+func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
+	buildpackDir := "/tmp/cloudfockerbuildpacks"
+	if len(buildpackDirOptional) > 0 {
+		buildpackDir = buildpackDirOptional[0]
+	}
+	buildpackRunner := stager.NewBuildpackRunner(buildpackDir)
+	err := stager.RunBuildpack(writer, buildpackRunner)
+	return err
 }
 
 func cloudFockerfileLocation() (location string) {

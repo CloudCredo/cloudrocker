@@ -89,6 +89,14 @@ var _ = Describe("Focker", func() {
 			os.RemoveAll(buildpackDir)
 		})
 	})
+
+	Describe("Staging an application", func() {
+		It("should run the buildpack runner from linux-circus", func() {
+			err := testfocker.StageApp(buffer, "/tmp/made-up-directory-that-will-not-exist")
+			Expect(err).Should(MatchError("no valid buildpacks detected"))
+			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
+		})
+	})
 })
 
 func statusCodeChecker() int {
