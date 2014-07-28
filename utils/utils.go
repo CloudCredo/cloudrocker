@@ -3,6 +3,8 @@ package utils
 import (
 	"io"
 	"os"
+	"io/ioutil"
+	"fmt"
 )
 
 func GetRootfsUrl() string {
@@ -19,6 +21,50 @@ func Cloudfockerhome() string {
 		cfhome = os.Getenv("HOME") + "/.cloudfocker"
 	}
 	return cfhome
+}
+
+func CreateAndCleanAppDirs(cloudfockerhomeDir string) error {
+	dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true}
+	for dir, clean := range dirs {
+		if clean {
+			if err := os.RemoveAll(cloudfockerhomeDir + dir); err != nil {
+				return err
+			}
+		}
+	}
+	for dir, _ := range dirs {
+		if err := os.MkdirAll(cloudfockerhomeDir+dir, 0755); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func AtLeastOneBuildpackIn(dir string) error {
+	var subDirs []string
+	var err error
+	if subDirs, err = SubDirs(dir); err != nil {
+		return err
+	}
+	if len(subDirs) == 0 {
+		return fmt.Errorf("No buildpacks detected - please add one")
+	}
+	return nil
+}
+
+func SubDirs(dir string) ([]string, error) {
+	var contents []os.FileInfo
+	var err error
+	dirs := []string{}
+	if contents, err = ioutil.ReadDir(dir); err != nil {
+		return dirs, err
+	}
+	for _, file := range contents {
+		if file.IsDir() {
+			dirs = append(dirs, file.Name())
+		}
+	}
+	return dirs, nil
 }
 
 //C&P(ha!) from https://gist.github.com/elazarl/5507969
