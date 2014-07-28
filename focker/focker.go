@@ -53,12 +53,12 @@ func (f Focker) RunContainer(writer io.Writer) {
 func (f Focker) StopContainer(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.StopContainer(cli, Stdout, stdoutpipe, writer)
-	f.DeleteContainer(writer)
+	f.DeleteContainer(writer, "cloudfocker-container")
 }
 
-func (Focker) DeleteContainer(writer io.Writer) {
+func (Focker) DeleteContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer)
+	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer, name)
 }
 
 func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
