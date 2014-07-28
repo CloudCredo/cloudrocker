@@ -14,9 +14,10 @@ func Add(writer io.Writer, url string, buildpackDir string) {
 		log.Fatalf("Buildpack directory creation error: %s", err)
 	}
 	fmt.Fprintln(writer, "Downloading buildpack...")
-	cmd := exec.Command("git", "clone", "--recursive", url, buildpackDir)
+	cmd := exec.Command("git", "clone", "--recursive", url)
 	cmd.Stdout = writer
 	cmd.Stderr = writer
+	cmd.Dir = buildpackDir
 	err = cmd.Run()
 	if err != nil {
 		log.Fatalf("Error downloading buildpack: %s", err)

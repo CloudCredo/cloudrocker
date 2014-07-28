@@ -19,7 +19,7 @@ var _ = Describe("Buildpack", func() {
 			buildpack.Add(buffer, "https://github.com/hatofmonkeys/ruby-buildpack", buildpackDir)
 			Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
 			Eventually(buffer).Should(gbytes.Say(`Downloaded buildpack.`))
-			contents, err := ioutil.ReadDir(buildpackDir)
+			contents, err := ioutil.ReadDir(buildpackDir+"/ruby-buildpack")
 			Expect(contents, err).Should(HaveLen(23))
 			os.RemoveAll(buildpackDir)
 		})
