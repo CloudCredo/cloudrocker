@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"io"
-	"os"
-	"io/ioutil"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 )
 
 func GetRootfsUrl() string {
