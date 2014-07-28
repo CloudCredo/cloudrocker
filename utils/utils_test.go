@@ -28,7 +28,7 @@ var _ = Describe("Utils", func() {
 		Context("without a CLOUDFOCKER_HOME env var set", func() {
 			It("should return the default URL", func() {
 				os.Setenv("CLOUDFOCKER_HOME", "")
-				Expect(utils.Cloudfockerhome()).To(Equal(os.Getenv("HOME")+"/.cloudfocker"))
+				Expect(utils.Cloudfockerhome()).To(Equal(os.Getenv("HOME") + "/.cloudfocker"))
 			})
 		})
 		Context("with a CLOUDFOCKER_HOME env var set", func() {
