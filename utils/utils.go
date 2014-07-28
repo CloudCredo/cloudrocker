@@ -77,7 +77,11 @@ func CopyFockerBinaryToOwnDir(cloudfockerhome string) error {
 	if fockPath, err = exec.LookPath("fock"); err != nil {
 		return fmt.Errorf("Could not find fock binary, please install it in your path")
 	}
-	if err := Cp(fockPath, cloudfockerhome+"/focker/fock"); err != nil {
+	newFockPath := cloudfockerhome + "/focker/fock"
+	if err := Cp(fockPath, newFockPath); err != nil {
+		return err
+	}
+	if err := os.Chmod(newFockPath, 0755); err != nil {
 		return err
 	}
 	return nil
