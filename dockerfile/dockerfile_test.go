@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/hatofmonkeys/cloudfocker/config"
 	"github.com/hatofmonkeys/cloudfocker/dockerfile"
 
 	. "github.com/onsi/ginkgo"
@@ -31,6 +32,28 @@ var _ = Describe("Dockerfile", func() {
 		It("should populate the dockerfile information", func() {
 			testdockerfile.Create()
 			Expect(len(testdockerfile.Commands)).To(Equal(7))
+		})
+	})
+	Describe("Creating a staging dockerfile", func() {
+		It("should populate the dockerfile information", func() {
+			testdockerfile.CreateStaging()
+			Expect(len(testdockerfile.Commands)).To(Equal(3))
+		})
+	})
+	Describe("Creating a configured dockerfile", func() {
+		Context("when supplied a staging config", func() {
+			It("should populate the staging dockerfile information", func() {
+				testdockerfile.CreateFromConfig(config.NewStageBuildConfig())
+				Expect(len(testdockerfile.Commands)).To(Equal(3))
+				Expect(testdockerfile.Commands).Should(ContainElement("FROM cloudfocker-base:latest"))
+				Expect(testdockerfile.Commands).Should(ContainElement("ADD fock /"))
+				Expect(testdockerfile.Commands).Should(ContainElement("ENTRYPOINT [\"/fock\", \"stage\"]"))
+			})
+		})
+		Context("when supplied a runtime config", func() {
+			It("should populate the runtime dockerfile information", func() {
+
+			})
 		})
 	})
 	Describe("Writing a dockerfile", func() {
