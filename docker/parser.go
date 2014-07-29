@@ -14,6 +14,10 @@ func ParseRunCommand(config *config.RunConfig) (runCmd []string) {
 	runCmd = append(runCmd, mounts...)
 	runCmd = append(runCmd, userString())
 	runCmd = append(runCmd, parseContainerName(config.ContainerName)...)
+	runCmd = append(runCmd, parseDaemon(config.Daemon)...)
+	envVars := parseEnvVars(config.EnvVars)
+	sort.Strings(envVars)
+	runCmd = append(runCmd, envVars...)
 	runCmd = append(runCmd, parseImageTag(config.ImageTag)...)
 	runCmd = append(runCmd, parseCommand(config.Command)...)
 	return
@@ -43,6 +47,23 @@ func parseContainerName(containerName string) (parsedContainerName []string) {
 
 func parseImageTag(imageTag string) (parsedImageTag []string) {
 	parsedImageTag = append(parsedImageTag, imageTag)
+	return
+}
+
+func parseDaemon(daemon bool) (parsedDaemon []string) {
+	var daemonString string
+	if daemon {
+		daemonString = "-d"
+		parsedDaemon = append(parsedDaemon, daemonString)
+	}
+	return
+}
+
+func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
+	for key, val := range envVars {
+		parsedEnvVars = append(parsedEnvVars,
+			"--env=\""+key+"="+val+"\"")
+	}
 	return
 }
 
