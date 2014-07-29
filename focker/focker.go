@@ -75,15 +75,7 @@ func (f Focker) RunStager(writer io.Writer, appDir string, buildpackDirOptional 
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
-	if err := utils.CreateAndCleanAppDirs(utils.Cloudfockerhome()); err != nil {
-		log.Fatalf(" %s", err)
-	}
-	if err := utils.AtLeastOneBuildpackIn(buildpackDir); err != nil {
-		log.Fatalf(" %s", err)
-	}
-	if err := utils.CopyFockerBinaryToOwnDir(utils.Cloudfockerhome()); err != nil {
-		log.Fatalf(" %s", err)
-	}
+	prepareStagingFilesystem(utils.Cloudfockerhome(), buildpackDir)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	runConfig := config.NewStageRunConfig(appDir)
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
@@ -107,4 +99,16 @@ func cloudFockerfileLocation() (location string) {
 	}
 	location = pwd + "/CloudFockerfile"
 	return
+}
+
+func prepareStagingFilesystem(cloudfockerhome string, buildpackDir string) {
+	if err := utils.CreateAndCleanAppDirs(cloudfockerhome); err != nil {
+		log.Fatalf(" %s", err)
+	}
+	if err := utils.AtLeastOneBuildpackIn(buildpackDir); err != nil {
+		log.Fatalf(" %s", err)
+	}
+	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome); err != nil {
+		log.Fatalf(" %s", err)
+	}
 }
