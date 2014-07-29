@@ -83,7 +83,6 @@ var _ = Describe("Focker", func() {
 	Describe("Adding a buildpack", func() {
 		It("should download the buildpack and add it to the buildpack directory", func() {
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
-			buffer := gbytes.NewBuffer()
 			testfocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
 			Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
 			Eventually(buffer, 10).Should(gbytes.Say(`Downloaded buildpack.`))
