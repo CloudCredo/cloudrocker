@@ -25,7 +25,7 @@ func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 			utils.Cloudfockerhome() + "/cache":      "/tmp/cache",
 			utils.Cloudfockerhome() + "/focker":     "/focker",
 		},
-		Command: []string{"/focker/fock", "stage"},
+		Command: []string{"/focker/fock", "stage-internal"},
 	}
 	return
 }

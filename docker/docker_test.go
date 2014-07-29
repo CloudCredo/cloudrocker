@@ -114,8 +114,8 @@ var _ = Describe("Docker", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
 			docker.RunConfiguredContainer(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewStageRunConfig("/tmp/fakeappdir"))
-			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(10))
-			Expect(fakeDockerClient.cmdRunArgs[9]).To(Equal("stage"))
+			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(11))
+			Expect(fakeDockerClient.cmdRunArgs[10]).To(Equal("stage-internal"))
 		})
 	})
 

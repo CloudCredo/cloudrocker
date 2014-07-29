@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/codegangsta/cli"
 	"github.com/hatofmonkeys/cloudfocker/focker"
+	"log"
 	"os"
 )
 
@@ -78,7 +79,20 @@ func main() {
 		},
 		{
 			Name:  "stage",
-			Usage: "use to stage the app inside a container",
+			Usage: "stage an application",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				pwd, err := os.Getwd()
+				if err != nil {
+					log.Fatalf(" %s", err)
+				} else {
+					focker.RunStager(os.Stdout, pwd)
+				}
+			},
+		},
+		{
+			Name:  "stage-internal",
+			Usage: "used to stage the app inside a container",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StageApp(os.Stdout)
