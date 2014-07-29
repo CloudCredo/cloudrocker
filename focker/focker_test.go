@@ -5,12 +5,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 
 	"github.com/hatofmonkeys/cloudfocker/focker"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("Focker", func() {
@@ -92,24 +94,24 @@ var _ = Describe("Focker", func() {
 
 	Describe("Staging an application", func() {
 		It("should populate the droplet directory", func() {
-			//need to use a buildpack fixture
-			//create an appDir and stick the fixture in it
-			//set a CLOUDFOCKER_HOME env var, and populate it
-			appDir := "/tmp/testapp"
-			//TEMP TEMP TEMP
-			testfocker.RunStager(buffer, appDir, "/home/hato/.cloudfocker/buildpacks/")
-			dropletDir, err := os.Open("/home/hato/.cloudfocker/droplet")
+			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
+			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+			cp("fixtures/buildpacks", cloudfockerHome)
+			testfocker.RunStager(buffer, "fixtures/apps")
+			dropletDir, err := os.Open(cloudfockerHome + "/droplet")
 			dropletDirContents, err := dropletDir.Readdirnames(0)
 			Expect(dropletDirContents, err).Should(ContainElement("app"))
 			Expect(dropletDirContents, err).Should(ContainElement("logs"))
 			Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
 			Expect(dropletDirContents, err).Should(ContainElement("tmp"))
+			os.RemoveAll(cloudfockerHome)
 		})
 	})
 
 	Describe("Building an application droplet", func() {
 		It("should run the buildpack runner from linux-circus", func() {
-			err := testfocker.StageApp(buffer, "/tmp/made-up-directory-that-will-not-exist")
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
+			err := testfocker.StageApp(buffer, buildpackDir)
 			Expect(err).Should(MatchError("no valid buildpacks detected"))
 			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
 		})
@@ -123,4 +125,14 @@ func statusCodeChecker() int {
 	} else {
 		return res.StatusCode
 	}
+}
+
+func cp(src string, dst string) {
+	session, err := gexec.Start(
+		exec.Command("cp", "-a", src, dst),
+		GinkgoWriter,
+		GinkgoWriter,
+	)
+	Ω(err).ShouldNot(HaveOccurred())
+	Eventually(session).Should(gexec.Exit(0))
 }

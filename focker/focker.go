@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/hatofmonkeys/cloudfocker/buildpack"
 	"github.com/hatofmonkeys/cloudfocker/config"
@@ -67,17 +68,13 @@ func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ..
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
-	buildpack.Add(writer, url, buildpackDir)
+	buildpack.Add(writer, url, abs(buildpackDir))
 }
 
-func (f Focker) RunStager(writer io.Writer, appDir string, buildpackDirOptional ...string) {
-	buildpackDir := utils.Cloudfockerhome() + "/buildpacks"
-	if len(buildpackDirOptional) > 0 {
-		buildpackDir = buildpackDirOptional[0]
-	}
-	prepareStagingFilesystem(utils.Cloudfockerhome(), buildpackDir)
+func (f Focker) RunStager(writer io.Writer, appDir string) {
+	prepareStagingFilesystem(utils.Cloudfockerhome())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	runConfig := config.NewStageRunConfig(appDir)
+	runConfig := config.NewStageRunConfig(abs(appDir))
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	f.DeleteContainer(writer, runConfig.ContainerName)
 }
@@ -87,7 +84,7 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
-	buildpackRunner := stager.NewBuildpackRunner(buildpackDir)
+	buildpackRunner := stager.NewBuildpackRunner(abs(buildpackDir))
 	err := stager.RunBuildpack(writer, buildpackRunner)
 	return err
 }
@@ -101,14 +98,22 @@ func cloudFockerfileLocation() (location string) {
 	return
 }
 
-func prepareStagingFilesystem(cloudfockerhome string, buildpackDir string) {
+func prepareStagingFilesystem(cloudfockerhome string) {
 	if err := utils.CreateAndCleanAppDirs(cloudfockerhome); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := utils.AtLeastOneBuildpackIn(buildpackDir); err != nil {
+	if err := utils.AtLeastOneBuildpackIn(cloudfockerhome + "/buildpacks"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome); err != nil {
 		log.Fatalf(" %s", err)
 	}
+}
+
+func abs(relative string) string {
+	absolute, err := filepath.Abs(relative)
+	if err != nil {
+		log.Fatalf(" %s", err)
+	}
+	return absolute
 }
