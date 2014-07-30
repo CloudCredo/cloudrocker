@@ -90,6 +90,15 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
+	Describe("Building an application droplet", func() {
+		It("should run the buildpack runner from linux-circus", func() {
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
+			err := testfocker.StageApp(buffer, buildpackDir)
+			Expect(err).Should(MatchError("no valid buildpacks detected"))
+			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
+		})
+	})
+
 	Describe("Staging an application", func() {
 		It("should populate the droplet directory", func() {
 			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
@@ -103,15 +112,6 @@ var _ = Describe("Focker", func() {
 			Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
 			Expect(dropletDirContents, err).Should(ContainElement("tmp"))
 			os.RemoveAll(cloudfockerHome)
-		})
-	})
-
-	Describe("Building an application droplet", func() {
-		It("should run the buildpack runner from linux-circus", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
-			err := testfocker.StageApp(buffer, buildpackDir)
-			Expect(err).Should(MatchError("no valid buildpacks detected"))
-			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
 		})
 	})
 })
