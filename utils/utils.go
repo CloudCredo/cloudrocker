@@ -8,6 +8,25 @@ import (
 	"os/exec"
 )
 
+const soldier = `
+if [ -z "$1" ]; then
+  echo "usage: $0 <app dir> <command to run>" >&2
+  exit 1
+fi
+
+cd "$1"
+
+if [ -d .profile.d ]; then
+  for env_file in .profile.d/*; do
+    source $env_file
+  done
+fi
+
+shift
+
+eval "$@"
+`
+
 func GetRootfsUrl() string {
 	url := os.Getenv("FOCKER_ROOTFS_URL")
 	if url == "" {
@@ -85,6 +104,10 @@ func CopyFockerBinaryToOwnDir(cloudfockerhome string) error {
 		return err
 	}
 	return nil
+}
+
+func AddSoldierRunScript(appDir string) error {
+	return ioutil.WriteFile(appDir+"/cloudfocker-start.sh", []byte(soldier), 0644)
 }
 
 //C&P(ha!) from https://gist.github.com/elazarl/5507969

@@ -124,4 +124,14 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(cloudfockerhome)
 		})
 	})
+	Describe("Adding the soldier run script to a directory", func() {
+		It("should create a script called cloudfocker-start.sh with expected contents", func() {
+			appDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-soldier")
+			utils.AddSoldierRunScript(appDir)
+			written, _ := ioutil.ReadFile(appDir + "/cloudfocker-start.sh")
+			fixture, _ := ioutil.ReadFile("fixtures/cloudfocker-start.sh")
+			Expect(written).To(Equal(fixture))
+			os.RemoveAll(appDir)
+		})
+	})
 })
