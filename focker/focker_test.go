@@ -104,7 +104,7 @@ var _ = Describe("Focker", func() {
 			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
 			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
 			cp("fixtures/buildpacks", cloudfockerHome)
-			testfocker.RunStager(buffer, "fixtures/apps")
+			testfocker.RunStager(buffer, "fixtures/apps/bash-app")
 			dropletDir, err := os.Open(cloudfockerHome + "/droplet")
 			dropletDirContents, err := dropletDir.Readdirnames(0)
 			Expect(dropletDirContents, err).Should(ContainElement("app"))
