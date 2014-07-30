@@ -4,6 +4,7 @@ import (
 	"log"
 	"os/user"
 	"sort"
+	"strconv"
 
 	"github.com/hatofmonkeys/cloudfocker/config"
 )
@@ -18,6 +19,9 @@ func ParseRunCommand(config *config.RunConfig) (runCmd []string) {
 	envVars := parseEnvVars(config.EnvVars)
 	sort.Strings(envVars)
 	runCmd = append(runCmd, envVars...)
+	publishedPorts := parsePublishedPorts(config.PublishedPorts)
+	sort.Strings(publishedPorts)
+	runCmd = append(runCmd, publishedPorts...)
 	runCmd = append(runCmd, parseImageTag(config.ImageTag)...)
 	runCmd = append(runCmd, parseCommand(config.Command)...)
 	return
@@ -63,6 +67,14 @@ func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
 	for key, val := range envVars {
 		parsedEnvVars = append(parsedEnvVars,
 			"--env=\""+key+"="+val+"\"")
+	}
+	return
+}
+
+func parsePublishedPorts(publishedPorts map[int]int) (parsedEnvVars []string) {
+	for host, cont := range publishedPorts {
+		parsedEnvVars = append(parsedEnvVars,
+			"--publish="+strconv.Itoa(host)+":"+strconv.Itoa(cont))
 	}
 	return
 }

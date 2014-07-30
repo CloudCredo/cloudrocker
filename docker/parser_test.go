@@ -31,7 +31,7 @@ var _ = Describe("Parser", func() {
 				userId := thisUser.Uid
 				testStageConfig := testRuntimeRunConfig()
 				parsedRunCommand := docker.ParseRunCommand(testStageConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("--volume=/home/testuser/testapp/app:/app -u=" + userId + " --name=cloudfocker-runtime -d --env=\"HOME=/app\" --env=\"PORT=8080\" --env=\"TMPDIR=/app/tmp\" cloudfocker-base:latest /bin/bash /app/cloudfocker-start.sh /app test test test"))
+				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("--volume=/home/testuser/testapp/app:/app -u=" + userId + " --name=cloudfocker-runtime -d --env=\"HOME=/app\" --env=\"PORT=8080\" --env=\"TMPDIR=/app/tmp\" --publish=8080:8080 cloudfocker-base:latest /bin/bash /app/cloudfocker-start.sh /app test test test"))
 			})
 		})
 	})
