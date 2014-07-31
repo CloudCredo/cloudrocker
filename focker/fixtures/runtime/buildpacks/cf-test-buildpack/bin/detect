@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -f $1/cache-test.txt ]; then
+  echo "CACHETEST" && exit 0
+else
+  echo "no" && exit 1
+fi
+

@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+echo "Running cache test..."
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+BUILD_PACK_DIR=$(dirname $(dirname $0))
+
+if [ ! -d "$BUILD_DIR" ]; then
+  echo "Build directory [$BUILD_DIR] does not exist, creating"
+  mkdir -p "$BUILD_DIR"
+else
+  echo "Build directory [$BUILD_DIR] exists"
+  echo "Build directory contents..."
+  ls -lRh $BUILD_DIR
+fi
+
+if [ ! -d "$CACHE_DIR" ]; then
+  echo "Cache directory [$CACHE_DIR] does not exist, creating"
+  mkdir -p "$CACHE_DIR"
+else
+  echo "Cache directory [$CACHE_DIR] exists"
+fi
+
+echo "The compile script is at [$0]"
+echo "The build pack is situated at [$BUILD_PACK_DIR]"
+
+echo "Moving to the cache dir..."
+cd "$CACHE_DIR"
+echo "Now in [$(pwd)]"
+
+echo "Directory listing:"
+ls -la
+
+echo "Listing Build Pack Directory:"
+ls -la /tmp/buildpacks
+
+echo "Listing Build Pack Cache:"
+ls -la "$BUILDPACK_CACHE"
+
+echo "Listing Environment:"
+env
+
+echo "Listing OS Info:"
+cat /etc/issue
+
+echo "Listing script versions:"
+python -V
+echo
+ruby -v
+echo
+perl -v
+
+echo "User Limits:"
+ulimit -a
+echo
+
+echo "Check for FUSE support"
+/sbin/mount.fuse -h
+ls -l /usr/share/doc/fuse-utils
+
+echo "CPU Info"
+cat /proc/cpuinfo
+
+echo "Look for staging_info.yml file"
+cat "$BUILD_DIR/staging_info.yml"
+
+cd ../
+echo "Creating start script"
+cat > "$BUILD_DIR/start.sh" <<EOF
+#!/bin/bash
+#
+# Start Python Web Server & SSH Reverse Tunnel
+#
+# Copy SSH keys if included with the app
+if [ -d "/app/.ssh" ]; then
+    echo "Copied SSH keys"
+    cp -R /app/.ssh /home/vcap/
+    # Start reverse SSH Tunnel
+    echo "Starting SSH Reverse Tunnel"
+    ssh -f -N -T -R 2222:localhost:\$VCAP_APP_PORT daniel@\$SSH_HOST
+fi
+# Start Python Server
+echo "Starting Web Server"
+python /app/boot.py /
+
+# Start Web Socket Server
+#echo "Starting WebSocketD"
+#curl -s https://raw.github.com/dmikusa-pivotal/cf-debug-console/master/debug.sh | bash
+EOF
+chmod 755 "$BUILD_DIR/start.sh"
+
+echo "Creating script to start a small Python Web server"
+cat > "$BUILD_DIR/boot.py" <<EOF
+#!/usr/bin/env python
+#
+# Simple HTTP Server for accessing files in target director
+#
+import SimpleHTTPServer
+import SocketServer
+import os
+import sys
+
+fin = open('/proc/cpuinfo', 'rt')
+fout = open('cpuinfo', 'wt')
+fout.write(fin.read())
+fin.close()
+fout.close()
+
+if len(sys.argv) == 2:
+    print 'Serving files from [%s]' % sys.argv[1]
+    os.chdir(sys.argv[1])
+else:
+    print 'Service files from [%s]' % os.getcwd()
+
+from socket import socket, SOCK_DGRAM, AF_INET 
+s = socket(AF_INET, SOCK_DGRAM) 
+s.connect(('google.com', 0)) 
+localHostPort = s.getsockname() 
+
+httpd = SocketServer.TCPServer(
+     (localHostPort[0], 8080),
+    SimpleHTTPServer.SimpleHTTPRequestHandler)
+httpd.serve_forever()
+EOF
+
