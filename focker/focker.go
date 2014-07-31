@@ -52,10 +52,10 @@ func (f Focker) RunContainer(writer io.Writer) {
 	docker.RunContainer(cli, Stdout, stdoutpipe, writer)
 }
 
-func (f Focker) StopContainer(writer io.Writer) {
+func (f Focker) StopContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.StopContainer(cli, Stdout, stdoutpipe, writer)
-	f.DeleteContainer(writer, "cloudfocker-container")
+	docker.StopContainer(cli, Stdout, stdoutpipe, writer, name)
+	f.DeleteContainer(writer, name)
 }
 
 func (Focker) DeleteContainer(writer io.Writer, name string) {
