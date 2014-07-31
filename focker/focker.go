@@ -1,6 +1,7 @@
 package focker
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -89,6 +90,14 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	return err
 }
 
+func (f Focker) RunRuntime(writer io.Writer) {
+	prepareRuntimeFilesystem(utils.Cloudfockerhome())
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	runConfig := config.NewRuntimeRunConfig(utils.Cloudfockerhome() + "/droplet")
+	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
+	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
+}
+
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -106,6 +115,12 @@ func prepareStagingFilesystem(cloudfockerhome string) {
 		log.Fatalf(" %s", err)
 	}
 	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome); err != nil {
+		log.Fatalf(" %s", err)
+	}
+}
+
+func prepareRuntimeFilesystem(cloudfockerhome string) {
+	if err := utils.AddSoldierRunScript(cloudfockerhome + "/droplet/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

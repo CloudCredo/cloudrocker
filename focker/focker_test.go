@@ -103,8 +103,8 @@ var _ = Describe("Focker", func() {
 		It("should populate the droplet directory", func() {
 			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
 			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
-			cp("fixtures/buildpacks", cloudfockerHome)
-			testfocker.RunStager(buffer, "fixtures/apps/bash-app")
+			cp("fixtures/stage/buildpacks", cloudfockerHome)
+			testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
 			dropletDir, err := os.Open(cloudfockerHome + "/droplet")
 			dropletDirContents, err := dropletDir.Readdirnames(0)
 			Expect(dropletDirContents, err).Should(ContainElement("app"))
@@ -112,6 +112,21 @@ var _ = Describe("Focker", func() {
 			Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
 			Expect(dropletDirContents, err).Should(ContainElement("tmp"))
 			os.RemoveAll(cloudfockerHome)
+		})
+	})
+
+	Describe("Running an application", func() {
+		It("should output a valid URL for the running application", func() {
+			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-runtime-test")
+			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+			cp("fixtures/runtime/buildpacks", cloudfockerHome)
+			appDir, _ := ioutil.TempDir(os.TempDir(), "focker-runtime-test-app")
+			cp("fixtures/runtime/apps/cf-test-buildpack-app", appDir)
+			testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+			testfocker.RunRuntime(buffer)
+			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
+			Eventually(statusCodeChecker).Should(Equal(200))
+			testfocker.StopContainer(buffer, "cloudfocker-runtime")
 		})
 	})
 })
