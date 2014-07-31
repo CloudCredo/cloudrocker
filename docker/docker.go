@@ -22,6 +22,7 @@ type DockerClient interface {
 	CmdRun(...string) error
 	CmdStop(...string) error
 	CmdRm(...string) error
+	CmdKill(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -117,6 +118,22 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 		}
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished stopping the CloudFocker container", writer)
+	fmt.Fprintln(writer, "Stopped your application.")
+	return nil
+}
+
+func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+	fmt.Fprintln(writer, "Killing the CloudFocker container...")
+	go func() {
+		err := cli.CmdKill("cloudfocker-container")
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	PrintToStdout(stdout, stdoutPipe, "Finished killing the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }

@@ -21,6 +21,7 @@ type FakeDockerClient struct {
 	cmdRunArgs       []string
 	cmdStopArgs      []string
 	cmdRmArgs        []string
+	cmdKillArgs      []string
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
@@ -50,6 +51,11 @@ func (f *FakeDockerClient) CmdStop(args ...string) error {
 
 func (f *FakeDockerClient) CmdRm(args ...string) error {
 	f.cmdRmArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdKill(args ...string) error {
+	f.cmdKillArgs = args
 	return nil
 }
 
@@ -126,6 +132,16 @@ var _ = Describe("Docker", func() {
 			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
 			Expect(len(fakeDockerClient.cmdStopArgs)).To(Equal(1))
 			Expect(fakeDockerClient.cmdStopArgs[0]).To(Equal("cloudfocker-container"))
+		})
+	})
+
+	Describe("Killing the docker container", func() {
+		It("should tell Docker to kill the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			docker.KillContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			Expect(len(fakeDockerClient.cmdKillArgs)).To(Equal(1))
+			Expect(fakeDockerClient.cmdKillArgs[0]).To(Equal("cloudfocker-container"))
 		})
 	})
 
