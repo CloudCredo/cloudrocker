@@ -54,7 +54,13 @@ func main() {
 			Usage: "Start the container for the application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
-				focker.RunContainer(os.Stdout)
+				pwd, err := os.Getwd()
+				if err != nil {
+					log.Fatalf(" %s", err)
+				} else {
+					focker.RunStager(os.Stdout, pwd)
+				}
+				focker.RunRuntime(os.Stdout)
 			},
 		},
 		{
@@ -62,7 +68,7 @@ func main() {
 			Usage: "Stop the container and remove it",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
-				focker.StopContainer(os.Stdout)
+				focker.StopContainer(os.Stdout, "cloudfocker-runtime")
 			},
 		},
 		{
@@ -88,6 +94,14 @@ func main() {
 				} else {
 					focker.RunStager(os.Stdout, pwd)
 				}
+			},
+		},
+		{
+			Name:  "run",
+			Usage: "Run the staged container",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.RunRuntime(os.Stdout)
 			},
 		},
 		{
