@@ -129,7 +129,7 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to stop the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
 			Expect(len(fakeDockerClient.cmdStopArgs)).To(Equal(1))
 			Expect(fakeDockerClient.cmdStopArgs[0]).To(Equal("cloudfocker-container"))
 		})
@@ -139,7 +139,7 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to kill the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.KillContainer(fakeDockerClient, stdout, stdoutPipe, buffer)
+			docker.KillContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
 			Expect(len(fakeDockerClient.cmdKillArgs)).To(Equal(1))
 			Expect(fakeDockerClient.cmdKillArgs[0]).To(Equal("cloudfocker-container"))
 		})

@@ -106,10 +106,10 @@ func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe 
 	return nil
 }
 
-func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
 	fmt.Fprintln(writer, "Stopping the CloudFocker container...")
 	go func() {
-		err := cli.CmdStop("cloudfocker-container")
+		err := cli.CmdStop(name)
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}
@@ -122,10 +122,10 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 	return nil
 }
 
-func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
+func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
 	fmt.Fprintln(writer, "Killing the CloudFocker container...")
 	go func() {
-		err := cli.CmdKill("cloudfocker-container")
+		err := cli.CmdKill(name)
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}
