@@ -105,6 +105,8 @@ var _ = Describe("Focker", func() {
 			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
 			Eventually(statusCodeChecker).Should(Equal(200))
 			testfocker.StopRuntime(buffer)
+			os.RemoveAll(cloudfockerHome)
+			os.RemoveAll(appDir)
 		})
 	})
 	Describe("Stopping a running an application", func() {
@@ -119,6 +121,8 @@ var _ = Describe("Focker", func() {
 			Eventually(statusCodeChecker).Should(Equal(200))
 			testfocker.StopRuntime(buffer)
 			Eventually(statusCodeChecker).Should(Equal(0))
+			os.RemoveAll(cloudfockerHome)
+			os.RemoveAll(appDir)
 		})
 	})
 })
