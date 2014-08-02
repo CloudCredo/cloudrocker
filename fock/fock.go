@@ -10,10 +10,10 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "Focker"
-	app.Usage = "Fock the Cloud, run apps locally!"
+	app.Name = "Fock"
+	app.Usage = "Cloud Focker - fock the Cloud, run apps locally!"
 	app.Action = func(c *cli.Context) {
-
+		cli.ShowAppHelp(c)
 	}
 
 	app.Commands = []cli.Command{
