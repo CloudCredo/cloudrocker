@@ -34,22 +34,6 @@ func main() {
 			},
 		},
 		{
-			Name:  "dockerfile",
-			Usage: "Create a dockerfile for the application",
-			Action: func(c *cli.Context) {
-				focker := focker.NewFocker()
-				focker.WriteDockerfile(os.Stdout)
-			},
-		},
-		{
-			Name:  "build",
-			Usage: "Create an image for the application",
-			Action: func(c *cli.Context) {
-				focker := focker.NewFocker()
-				focker.BuildImage(os.Stdout)
-			},
-		},
-		{
 			Name:  "up",
 			Usage: "Start the container for the application",
 			Action: func(c *cli.Context) {
@@ -98,7 +82,7 @@ func main() {
 		},
 		{
 			Name:  "run",
-			Usage: "Run the staged container",
+			Usage: "run the staged container",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.RunRuntime(os.Stdout)
@@ -106,7 +90,6 @@ func main() {
 		},
 		{
 			Name:  "stage-internal",
-			Usage: "used to stage the app inside a container",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StageApp(os.Stdout)
