@@ -59,6 +59,7 @@ var _ = Describe("Focker", func() {
 			err := testfocker.StageApp(buffer, buildpackDir)
 			Expect(err).Should(MatchError("no valid buildpacks detected"))
 			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
+			os.RemoveAll(buildpackDir)
 		})
 	})
 
