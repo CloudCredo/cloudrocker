@@ -52,7 +52,7 @@ func main() {
 			Usage: "Stop the container and remove it",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
-				focker.StopRuntime()
+				focker.StopRuntime(os.Stdout)
 			},
 		},
 		{
