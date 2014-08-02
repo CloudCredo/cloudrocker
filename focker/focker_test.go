@@ -100,18 +100,31 @@ var _ = Describe("Focker", func() {
 	})
 
 	Describe("Staging an application", func() {
-		It("should populate the droplet directory", func() {
-			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
-			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
-			cp("fixtures/stage/buildpacks", cloudfockerHome)
-			testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
-			dropletDir, err := os.Open(cloudfockerHome + "/droplet")
-			dropletDirContents, err := dropletDir.Readdirnames(0)
-			Expect(dropletDirContents, err).Should(ContainElement("app"))
-			Expect(dropletDirContents, err).Should(ContainElement("logs"))
-			Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
-			Expect(dropletDirContents, err).Should(ContainElement("tmp"))
-			os.RemoveAll(cloudfockerHome)
+		Context("with a detected buildpack", func() {
+			It("should populate the droplet directory", func() {
+				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
+				os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+				cp("fixtures/stage/buildpacks", cloudfockerHome)
+				err := testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
+				Expect(err).ShouldNot(HaveOccurred())
+				dropletDir, err := os.Open(cloudfockerHome + "/droplet")
+				dropletDirContents, err := dropletDir.Readdirnames(0)
+				Expect(dropletDirContents, err).Should(ContainElement("app"))
+				Expect(dropletDirContents, err).Should(ContainElement("logs"))
+				Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
+				Expect(dropletDirContents, err).Should(ContainElement("tmp"))
+				os.RemoveAll(cloudfockerHome)
+			})
+		})
+		Context("with a buildpack that doesn't detect", func() {
+			It("tell us we don't have a valid buildpack", func() {
+				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-nobuildpack-test")
+				os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+				cp("fixtures/runtime/buildpacks", cloudfockerHome)
+				err := testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
+				Expect(err).Should(MatchError("Staging failed - have you added a buildpack for this type of application?"))
+				os.RemoveAll(cloudfockerHome)
+			})
 		})
 	})
 
@@ -122,7 +135,8 @@ var _ = Describe("Focker", func() {
 			cp("fixtures/runtime/buildpacks", cloudfockerHome)
 			appDir, _ := ioutil.TempDir(os.TempDir(), "focker-runtime-test-app")
 			cp("fixtures/runtime/apps/cf-test-buildpack-app", appDir)
-			testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+			err := testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+			Expect(err).ShouldNot(HaveOccurred())
 			testfocker.RunRuntime(buffer)
 			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
 			Eventually(statusCodeChecker).Should(Equal(200))

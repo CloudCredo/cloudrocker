@@ -72,12 +72,13 @@ func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ..
 	buildpack.Add(writer, url, abs(buildpackDir))
 }
 
-func (f Focker) RunStager(writer io.Writer, appDir string) {
+func (f Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(utils.Cloudfockerhome())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	runConfig := config.NewStageRunConfig(abs(appDir))
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	f.DeleteContainer(writer, runConfig.ContainerName)
+	return stager.ValidateStagedApp(utils.Cloudfockerhome())
 }
 
 func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
