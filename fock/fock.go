@@ -89,7 +89,7 @@ func main() {
 			},
 		},
 		{
-			Name:  "stage-internal",
+			Name: "stage-internal",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StageApp(os.Stdout)
