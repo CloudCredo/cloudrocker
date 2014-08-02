@@ -21,7 +21,7 @@ var _ = Describe("Parser", func() {
 				userId := thisUser.Uid
 				stageConfig := config.NewStageRunConfig("/home/testuser/testapp")
 				parsedRunCommand := docker.ParseRunCommand(stageConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("--volume=/home/testuser/.cloudfocker/buildpacks:/tmp/cloudfockerbuildpacks --volume=/home/testuser/.cloudfocker/cache:/tmp/cache --volume=/home/testuser/.cloudfocker/droplet:/tmp/droplet --volume=/home/testuser/.cloudfocker/focker:/focker --volume=/home/testuser/.cloudfocker/result:/tmp/result --volume=/home/testuser/testapp:/app -u=" + userId + " --name=cloudfocker-staging cloudfocker-base:latest /focker/fock stage-internal"))
+				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId + " --name=cloudfocker-staging --volume=/home/testuser/.cloudfocker/buildpacks:/tmp/cloudfockerbuildpacks --volume=/home/testuser/.cloudfocker/cache:/tmp/cache --volume=/home/testuser/.cloudfocker/droplet:/tmp/droplet --volume=/home/testuser/.cloudfocker/focker:/focker --volume=/home/testuser/.cloudfocker/result:/tmp/result --volume=/home/testuser/testapp:/app cloudfocker-base:latest /focker/fock stage-internal"))
 			})
 		})
 		Context("with a runtime config ", func() {
@@ -31,7 +31,7 @@ var _ = Describe("Parser", func() {
 				userId := thisUser.Uid
 				testRuntimeRunConfig := testRuntimeRunConfig()
 				parsedRunCommand := docker.ParseRunCommand(testRuntimeRunConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("--volume=/home/testuser/testapp/app:/app -u=" + userId + " --name=cloudfocker-runtime -d --env=\"HOME=/app\" --env=\"PORT=8080\" --env=\"TMPDIR=/app/tmp\" --publish=8080:8080 cloudfocker-base:latest /bin/bash /app/cloudfocker-start.sh /app test test test"))
+				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId + " --name=cloudfocker-runtime -d --volume=/home/testuser/testapp/app:/app --publish=8080:8080 --env=\"HOME=/app\" --env=\"PORT=8080\" --env=\"TMPDIR=/app/tmp\" cloudfocker-base:latest /bin/bash /app/cloudfocker-start.sh /app test test test"))
 			})
 		})
 	})
