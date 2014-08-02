@@ -11,18 +11,17 @@ import (
 
 type RunConfig struct {
 	ContainerName  string
-	ImageTag       string
-	PublishedPorts map[int]int
-	Mounts         map[string]string
-	Command        []string
 	Daemon         bool
+	Mounts         map[string]string
+	PublishedPorts map[int]int
 	EnvVars        map[string]string
+	ImageTag       string
+	Command        []string
 }
 
 func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 	runConfig = &RunConfig{
 		ContainerName: "cloudfocker-staging",
-		ImageTag:      "cloudfocker-base:latest",
 		Mounts: map[string]string{
 			cloudfoundryAppDir:                      "/app",
 			utils.CloudfockerHome() + "/droplet":    "/tmp/droplet",
@@ -31,27 +30,28 @@ func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 			utils.CloudfockerHome() + "/cache":      "/tmp/cache",
 			utils.CloudfockerHome() + "/focker":     "/focker",
 		},
-		Command: []string{"/focker/fock", "stage-internal"},
+		ImageTag: "cloudfocker-base:latest",
+		Command:  []string{"/focker/fock", "stage-internal"},
 	}
 	return
 }
 
 func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
 	runConfig = &RunConfig{
-		ContainerName:  "cloudfocker-runtime",
-		ImageTag:       "cloudfocker-base:latest",
-		PublishedPorts: map[int]int{8080: 8080},
+		ContainerName: "cloudfocker-runtime",
+		Daemon:        true,
 		Mounts: map[string]string{
 			cloudfoundryDropletDir + "/app": "/app",
 		},
-		Command: append([]string{"/bin/bash", "/app/cloudfocker-start.sh", "/app"},
-			parseStartCommand(cloudfoundryDropletDir)...),
-		Daemon: true,
+		PublishedPorts: map[int]int{8080: 8080},
 		EnvVars: map[string]string{
 			"HOME":   "/app",
 			"TMPDIR": "/app/tmp",
 			"PORT":   "8080",
 		},
+		ImageTag: "cloudfocker-base:latest",
+		Command: append([]string{"/bin/bash", "/app/cloudfocker-start.sh", "/app"},
+			parseStartCommand(cloudfoundryDropletDir)...),
 	}
 	return
 }
