@@ -143,6 +143,20 @@ var _ = Describe("Focker", func() {
 			testfocker.StopContainer(buffer, "cloudfocker-runtime")
 		})
 	})
+	Describe("Stopping a running an application", func() {
+		It("should stop the application", func() {
+			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-runtime-test")
+			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+			cp("fixtures/runtime/buildpacks", cloudfockerHome)
+			appDir, _ := ioutil.TempDir(os.TempDir(), "focker-runtime-test-app")
+			cp("fixtures/runtime/apps/cf-test-buildpack-app", appDir)
+			testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+			testfocker.RunRuntime(buffer)
+			Eventually(statusCodeChecker).Should(Equal(200))
+			testfocker.StopRuntime(buffer)
+			Eventually(statusCodeChecker).Should(Equal(0))
+		})
+	})
 })
 
 func statusCodeChecker() int {

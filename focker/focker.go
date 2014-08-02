@@ -99,6 +99,10 @@ func (f Focker) RunRuntime(writer io.Writer) {
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 
+func (f Focker) StopRuntime(writer io.Writer) {
+	f.StopContainer(writer, "cloudfocker-runtime")
+}
+
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {
