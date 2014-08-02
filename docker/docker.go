@@ -4,13 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/hatofmonkeys/cloudfocker/config"
-	"github.com/hatofmonkeys/cloudfocker/utils"
 
 	"github.com/dotcloud/docker/api/client"
 )
@@ -18,7 +15,6 @@ import (
 type DockerClient interface {
 	CmdVersion(...string) error
 	CmdImport(...string) error
-	CmdBuild(...string) error
 	CmdRun(...string) error
 	CmdStop(...string) error
 	CmdRm(...string) error
@@ -52,41 +48,6 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 		}
 	}()
 	PrintToStdout(stdout, stdoutPipe, "Finished bootstrapping", writer)
-	return nil
-}
-
-func BuildImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, cloudfockerfileLocation string) error {
-	dockerfileLocation := cloudfockerfiletoDockerfile(cloudfockerfileLocation)
-
-	fmt.Fprintln(writer, "Building the CloudFocker image...")
-	go func() {
-		err := cli.CmdBuild("--tag=cloudfocker", dockerfileLocation)
-		if err != nil {
-			log.Fatalf("Error: %s", err)
-		}
-		if err = closeWrap(stdout, stdoutPipe); err != nil {
-			log.Fatalf("Error: %s", err)
-		}
-	}()
-	defer os.RemoveAll(dockerfileLocation)
-
-	PrintToStdout(stdout, stdoutPipe, "Finished building the CloudFocker image", writer)
-	return nil
-}
-
-func RunContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
-	fmt.Fprintln(writer, "Running the CloudFocker container...")
-	go func() {
-		err := cli.CmdRun("-d", "--publish=8080:8080", "--name=cloudfocker-container", "cloudfocker:latest")
-		if err != nil {
-			log.Fatalf("Error: %s", err)
-		}
-		if err = closeWrap(stdout, stdoutPipe); err != nil {
-			log.Fatalf("Error: %s", err)
-		}
-	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
-	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 	return nil
 }
 
@@ -152,20 +113,6 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 	PrintToStdout(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Deleted container.")
 	return nil
-}
-
-func cloudfockerfiletoDockerfile(cloudfockerfileLocation string) (dockerfileLocation string) {
-	//copy the cffile to a tmp location Dockerfile
-	dockerfileLocation, err := ioutil.TempDir(os.TempDir(), "cfockerbuilder")
-	if err != nil {
-		log.Fatalf("Error: %s", err)
-	}
-
-	err = utils.Cp(cloudfockerfileLocation, dockerfileLocation+"/Dockerfile")
-	if err != nil {
-		log.Fatalf("Error: %s", err)
-	}
-	return
 }
 
 //A few of functions stolen from Deis dockercliuitls! Thanks guys

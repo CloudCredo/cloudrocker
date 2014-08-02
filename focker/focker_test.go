@@ -43,43 +43,6 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
-	Describe("Writing a dockerfile", func() {
-		It("should write a valid dockerfile", func() {
-			testfocker.WriteDockerfile(buffer)
-			Eventually(buffer).Should(gbytes.Say(`FROM`))
-		})
-	})
-
-	Describe("Building a docker image", func() {
-		It("should output a built image tag", func() {
-			testfocker.BuildImage(buffer)
-			Eventually(buffer, 20).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
-		})
-	})
-
-	Describe("Running the docker container", func() {
-		It("should output a valid URL for the running application", func() {
-			testfocker.RunContainer(buffer)
-			Eventually(buffer, 20).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
-			Eventually(buffer).Should(gbytes.Say(`[a-f0-9]{64}`))
-			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
-			Eventually(statusCodeChecker).Should(Equal(200))
-			testfocker.StopContainer(buffer, "cloudfocker-container")
-		})
-	})
-
-	Describe("Stopping the docker container", func() {
-		It("should output the stopped image ID, not respond to HTTP, and delete the container", func() {
-			testfocker.RunContainer(buffer)
-			testfocker.StopContainer(buffer, "cloudfocker-container")
-			Eventually(buffer).Should(gbytes.Say(`Stopping the CloudFocker container...`))
-			Eventually(buffer).Should(gbytes.Say(`cloudfocker-container`))
-			Eventually(statusCodeChecker).Should(Equal(0))
-			Eventually(buffer).Should(gbytes.Say(`Deleting the CloudFocker container...`))
-			Eventually(buffer).Should(gbytes.Say(`cloudfocker-container`))
-		})
-	})
-
 	Describe("Adding a buildpack", func() {
 		It("should download the buildpack and add it to the buildpack directory", func() {
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
@@ -140,7 +103,7 @@ var _ = Describe("Focker", func() {
 			testfocker.RunRuntime(buffer)
 			Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
 			Eventually(statusCodeChecker).Should(Equal(200))
-			testfocker.StopContainer(buffer, "cloudfocker-runtime")
+			testfocker.StopRuntime(buffer)
 		})
 	})
 	Describe("Stopping a running an application", func() {

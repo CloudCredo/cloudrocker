@@ -10,7 +10,6 @@ import (
 	"github.com/hatofmonkeys/cloudfocker/buildpack"
 	"github.com/hatofmonkeys/cloudfocker/config"
 	"github.com/hatofmonkeys/cloudfocker/docker"
-	df "github.com/hatofmonkeys/cloudfocker/dockerfile"
 	"github.com/hatofmonkeys/cloudfocker/stager"
 	"github.com/hatofmonkeys/cloudfocker/utils"
 )
@@ -33,30 +32,9 @@ func (Focker) ImportRootfsImage(writer io.Writer) {
 	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
 }
 
-func (Focker) WriteDockerfile(writer io.Writer) {
-	dockerfile := df.NewDockerfile()
-	dockerfile.Create()
-	dockerfile.Write(writer)
-}
-
-func (Focker) BuildImage(writer io.Writer) {
-	dockerfile := df.NewDockerfile()
-	dockerfile.Create()
-	dockerfile.Persist(cloudFockerfileLocation())
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.BuildImage(cli, Stdout, stdoutpipe, writer, cloudFockerfileLocation())
-}
-
-func (f Focker) RunContainer(writer io.Writer) {
-	f.BuildImage(writer)
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.RunContainer(cli, Stdout, stdoutpipe, writer)
-}
-
 func (f Focker) StopContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.StopContainer(cli, Stdout, stdoutpipe, writer, name)
-	f.DeleteContainer(writer, name)
 }
 
 func (Focker) DeleteContainer(writer io.Writer, name string) {
@@ -101,6 +79,7 @@ func (f Focker) RunRuntime(writer io.Writer) {
 
 func (f Focker) StopRuntime(writer io.Writer) {
 	f.StopContainer(writer, "cloudfocker-runtime")
+	f.DeleteContainer(writer, "cloudfocker-runtime")
 }
 
 func cloudFockerfileLocation() (location string) {
