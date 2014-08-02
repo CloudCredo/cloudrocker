@@ -27,7 +27,7 @@ func main() {
 		},
 		{
 			Name:  "this",
-			Usage: "Download the Cloud Foundry base image",
+			Usage: "download the Cloud Foundry base image",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.ImportRootfsImage(os.Stdout)
@@ -35,7 +35,7 @@ func main() {
 		},
 		{
 			Name:  "up",
-			Usage: "Start the container for the application",
+			Usage: "start the container for the application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				pwd, err := os.Getwd()
@@ -49,7 +49,7 @@ func main() {
 		},
 		{
 			Name:  "off",
-			Usage: "Stop the container and remove it",
+			Usage: "stop the container and remove it",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StopRuntime(os.Stdout)
