@@ -35,7 +35,7 @@ func GetRootfsUrl() string {
 	return url
 }
 
-func Cloudfockerhome() string {
+func CloudfockerHome() string {
 	cfhome := os.Getenv("CLOUDFOCKER_HOME")
 	if cfhome == "" {
 		cfhome = os.Getenv("HOME") + "/.cloudfocker"
@@ -43,17 +43,17 @@ func Cloudfockerhome() string {
 	return cfhome
 }
 
-func CreateAndCleanAppDirs(cloudfockerhomeDir string) error {
+func CreateAndCleanAppDirs(cloudfockerHomeDir string) error {
 	dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true}
 	for dir, clean := range dirs {
 		if clean {
-			if err := os.RemoveAll(cloudfockerhomeDir + dir); err != nil {
+			if err := os.RemoveAll(cloudfockerHomeDir + dir); err != nil {
 				return err
 			}
 		}
 	}
 	for dir, _ := range dirs {
-		if err := os.MkdirAll(cloudfockerhomeDir+dir, 0755); err != nil {
+		if err := os.MkdirAll(cloudfockerHomeDir+dir, 0755); err != nil {
 			return err
 		}
 	}
@@ -87,8 +87,8 @@ func SubDirs(dir string) ([]string, error) {
 	return dirs, nil
 }
 
-func CopyFockerBinaryToOwnDir(cloudfockerhome string) error {
-	if err := os.MkdirAll(cloudfockerhome+"/focker", 0755); err != nil {
+func CopyFockerBinaryToOwnDir(cloudfockerHome string) error {
+	if err := os.MkdirAll(cloudfockerHome+"/focker", 0755); err != nil {
 		return err
 	}
 	var fockPath string
@@ -96,7 +96,7 @@ func CopyFockerBinaryToOwnDir(cloudfockerhome string) error {
 	if fockPath, err = exec.LookPath("fock"); err != nil {
 		return fmt.Errorf("Could not find fock binary, please install it in your path")
 	}
-	newFockPath := cloudfockerhome + "/focker/fock"
+	newFockPath := cloudfockerHome + "/focker/fock"
 	if err := Cp(fockPath, newFockPath); err != nil {
 		return err
 	}

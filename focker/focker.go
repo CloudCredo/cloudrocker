@@ -43,7 +43,7 @@ func (Focker) DeleteContainer(writer io.Writer, name string) {
 }
 
 func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
-	buildpackDir := utils.Cloudfockerhome() + "/buildpacks"
+	buildpackDir := utils.CloudfockerHome() + "/buildpacks"
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
@@ -51,12 +51,12 @@ func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ..
 }
 
 func (f Focker) RunStager(writer io.Writer, appDir string) error {
-	prepareStagingFilesystem(utils.Cloudfockerhome())
+	prepareStagingFilesystem(utils.CloudfockerHome())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	runConfig := config.NewStageRunConfig(abs(appDir))
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	f.DeleteContainer(writer, runConfig.ContainerName)
-	return stager.ValidateStagedApp(utils.Cloudfockerhome())
+	return stager.ValidateStagedApp(utils.CloudfockerHome())
 }
 
 func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
@@ -70,9 +70,9 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 }
 
 func (f Focker) RunRuntime(writer io.Writer) {
-	prepareRuntimeFilesystem(utils.Cloudfockerhome())
+	prepareRuntimeFilesystem(utils.CloudfockerHome())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	runConfig := config.NewRuntimeRunConfig(utils.Cloudfockerhome() + "/droplet")
+	runConfig := config.NewRuntimeRunConfig(utils.CloudfockerHome() + "/droplet")
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
@@ -91,20 +91,20 @@ func cloudFockerfileLocation() (location string) {
 	return
 }
 
-func prepareStagingFilesystem(cloudfockerhome string) {
-	if err := utils.CreateAndCleanAppDirs(cloudfockerhome); err != nil {
+func prepareStagingFilesystem(cloudfockerHome string) {
+	if err := utils.CreateAndCleanAppDirs(cloudfockerHome); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := utils.AtLeastOneBuildpackIn(cloudfockerhome + "/buildpacks"); err != nil {
+	if err := utils.AtLeastOneBuildpackIn(cloudfockerHome + "/buildpacks"); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome); err != nil {
+	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }
 
-func prepareRuntimeFilesystem(cloudfockerhome string) {
-	if err := utils.AddSoldierRunScript(cloudfockerhome + "/droplet/app"); err != nil {
+func prepareRuntimeFilesystem(cloudfockerHome string) {
+	if err := utils.AddSoldierRunScript(cloudfockerHome + "/droplet/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

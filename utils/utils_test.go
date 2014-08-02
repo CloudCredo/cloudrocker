@@ -29,43 +29,43 @@ var _ = Describe("Utils", func() {
 		Context("without a CLOUDFOCKER_HOME env var set", func() {
 			It("should return the default URL", func() {
 				os.Setenv("CLOUDFOCKER_HOME", "")
-				Expect(utils.Cloudfockerhome()).To(Equal(os.Getenv("HOME") + "/.cloudfocker"))
+				Expect(utils.CloudfockerHome()).To(Equal(os.Getenv("HOME") + "/.cloudfocker"))
 			})
 		})
 		Context("with a CLOUDFOCKER_HOME env var set", func() {
 			It("should return the specified URL", func() {
 				os.Setenv("CLOUDFOCKER_HOME", "/dave")
-				Expect(utils.Cloudfockerhome()).To(Equal("/dave"))
+				Expect(utils.CloudfockerHome()).To(Equal("/dave"))
 			})
 		})
 	})
 	Describe("Creating and cleaning application directories", func() {
 		Context("without a previously staged application", func() {
 			It("should create the correct directory structure", func() {
-				cloudfockerhome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				err := utils.CreateAndCleanAppDirs(cloudfockerhome)
+				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
+				err := utils.CreateAndCleanAppDirs(cloudfockerHome)
 				Expect(err).ShouldNot(HaveOccurred())
-				cloudfockerhomeFile, err := os.Open(cloudfockerhome)
-				cloudfockerhomeContents, err := cloudfockerhomeFile.Readdirnames(0)
-				Expect(cloudfockerhomeContents, err).Should(ContainElement("buildpacks"))
-				Expect(cloudfockerhomeContents, err).Should(ContainElement("droplet"))
-				Expect(cloudfockerhomeContents, err).Should(ContainElement("cache"))
-				Expect(cloudfockerhomeContents, err).Should(ContainElement("result"))
-				os.RemoveAll(cloudfockerhome)
+				cloudfockerHomeFile, err := os.Open(cloudfockerHome)
+				cloudfockerHomeContents, err := cloudfockerHomeFile.Readdirnames(0)
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("buildpacks"))
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("droplet"))
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("cache"))
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("result"))
+				os.RemoveAll(cloudfockerHome)
 			})
 		})
 		Context("with a previously staged application", func() {
 			It("should clean the directory structure appropriately", func() {
-				cloudfockerhome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
+				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
 				dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true}
 				for dir, _ := range dirs {
-					os.MkdirAll(cloudfockerhome+dir, 0755)
-					ioutil.WriteFile(cloudfockerhome+dir+"/testfile", []byte("test"), 0644)
+					os.MkdirAll(cloudfockerHome+dir, 0755)
+					ioutil.WriteFile(cloudfockerHome+dir+"/testfile", []byte("test"), 0644)
 				}
-				err := utils.CreateAndCleanAppDirs(cloudfockerhome)
+				err := utils.CreateAndCleanAppDirs(cloudfockerHome)
 				Expect(err).ShouldNot(HaveOccurred())
 				for dir, clean := range dirs {
-					dirFile, err := os.Open(cloudfockerhome + dir)
+					dirFile, err := os.Open(cloudfockerHome + dir)
 					dirContents, err := dirFile.Readdirnames(0)
 					if clean {
 						Expect(dirContents, err).ShouldNot(ContainElement("testfile"))
@@ -73,7 +73,7 @@ var _ = Describe("Utils", func() {
 						Expect(dirContents, err).Should(ContainElement("testfile"))
 					}
 				}
-				os.RemoveAll(cloudfockerhome)
+				os.RemoveAll(cloudfockerHome)
 			})
 		})
 	})
@@ -112,16 +112,16 @@ var _ = Describe("Utils", func() {
 	})
 	Describe("Copying the focker binary to its own directory", func() {
 		It("should create a focker subdirectory with the fock binary inside it", func() {
-			cloudfockerhome, _ := ioutil.TempDir(os.TempDir(), "utils-test-cp-focker")
-			err := utils.CopyFockerBinaryToOwnDir(cloudfockerhome)
+			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-cp-focker")
+			err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome)
 			Expect(err).ShouldNot(HaveOccurred())
-			fockerOwnDirFile, err := os.Open(cloudfockerhome + "/focker")
+			fockerOwnDirFile, err := os.Open(cloudfockerHome + "/focker")
 			fockerOwnDirContents, err := fockerOwnDirFile.Readdirnames(0)
 			Expect(fockerOwnDirContents, err).Should(ContainElement("fock"))
-			info, _ := os.Stat(cloudfockerhome + "/focker/fock")
+			info, _ := os.Stat(cloudfockerHome + "/focker/fock")
 			mode := info.Mode()
 			Expect(mode).To(Equal(os.FileMode(0755)))
-			os.RemoveAll(cloudfockerhome)
+			os.RemoveAll(cloudfockerHome)
 		})
 	})
 	Describe("Adding the soldier run script to a directory", func() {
