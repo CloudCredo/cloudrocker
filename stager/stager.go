@@ -33,6 +33,16 @@ func NewBuildpackRunner(buildpackDir string) *buildpackrunner.Runner {
 	return buildpackrunner.New(&config)
 }
 
+func ValidateStagedApp(cloudfockerHome string) error {
+	if _, err := os.Stat(cloudfockerHome + "/droplet/app"); err != nil {
+		return fmt.Errorf("Staging failed - have you added a buildpack for this type of application?")
+	}
+	if _, err := os.Stat(cloudfockerHome + "/droplet/staging_info.yml"); err != nil {
+		return fmt.Errorf("Staging failed - no staging info was produced by the matching buildpack!")
+	}
+	return nil
+}
+
 func prepareMd5BuildpacksDir(src string, dst string) {
 	os.MkdirAll(src, 0755)
 	os.MkdirAll(dst, 0755)

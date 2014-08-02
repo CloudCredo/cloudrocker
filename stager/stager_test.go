@@ -54,4 +54,36 @@ var _ = Describe("Stager", func() {
 			os.RemoveAll("/tmp/buildpacks")
 		})
 	})
+
+	Describe("Validating a staged application", func() {
+		Context("with something that looks like a staged application", func() {
+			It("should not return an error", func() {
+				cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
+				os.MkdirAll(cfhome+"/droplet/app", 0755)
+				ioutil.WriteFile(cfhome+"/droplet"+"/staging_info.yml", []byte("test-staging-info"), 0644)
+				err := stager.ValidateStagedApp(cfhome)
+				Expect(err).ShouldNot(HaveOccurred())
+				os.RemoveAll(cfhome)
+			})
+		})
+		Context("without something that looks like a staged application", func() {
+			Context("because we have no droplet", func() {
+				It("should return an error about a missing droplet", func() {
+					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
+					err := stager.ValidateStagedApp(cfhome)
+					Expect(err).Should(MatchError("Staging failed - have you added a buildpack for this type of application?"))
+					os.RemoveAll(cfhome)
+				})
+			})
+			Context("because we have no staging_info.yml", func() {
+				It("should return an error about missing staging info", func() {
+					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
+					os.MkdirAll(cfhome+"/droplet/app", 0755)
+					err := stager.ValidateStagedApp(cfhome)
+					Expect(err).Should(MatchError("Staging failed - no staging info was produced by the matching buildpack!"))
+					os.RemoveAll(cfhome)
+				})
+			})
+		})
+	})
 })
