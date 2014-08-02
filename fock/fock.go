@@ -42,7 +42,9 @@ func main() {
 				if err != nil {
 					log.Fatalf(" %s", err)
 				} else {
-					focker.RunStager(os.Stdout, pwd)
+					if err := focker.RunStager(os.Stdout, pwd); err != nil {
+						log.Fatalf(" %s", err)
+					}
 				}
 				focker.RunRuntime(os.Stdout)
 			},
