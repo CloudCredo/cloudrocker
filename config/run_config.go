@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"io/ioutil"
 
 	"github.com/cloudfoundry-incubator/candiedyaml"
 	"github.com/hatofmonkeys/cloudfocker/utils"
@@ -48,11 +49,21 @@ func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
 			"HOME":   "/app",
 			"TMPDIR": "/app/tmp",
 			"PORT":   "8080",
+			"VCAP_SERVICES": vcapServices(cloudfoundryDropletDir),
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudfocker-start.sh", "/app"},
 			parseStartCommand(cloudfoundryDropletDir)...),
 	}
+	return
+}
+
+func vcapServices(cloudfoundryDropletDir string) (services string) {
+	servicesBytes, err := ioutil.ReadFile(cloudfoundryDropletDir + "/app/vcap_services.json")
+	if err != nil {
+		return
+	}
+	services = string(servicesBytes)
 	return
 }
 
