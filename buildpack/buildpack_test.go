@@ -52,4 +52,29 @@ var _ = Describe("Buildpack", func() {
 			})
 		})
 	})
+	Describe("Listing buildpacks", func() {
+		Context("with buildpacks", func() {
+			It("should list the buildpacks in the buildpack directory", func() {
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-list-test")
+				os.Mkdir(buildpackDir+"/testbuildpack", 0755)
+				ioutil.WriteFile(buildpackDir+"/testbuildpack/testfile", []byte("test"), 0644)
+				os.Mkdir(buildpackDir+"/testbuildpack2", 0755)
+				ioutil.WriteFile(buildpackDir+"/testbuildpack2/testfile", []byte("test"), 0644)
+				err := buildpack.List(buffer, buildpackDir)
+				Expect(err).ShouldNot(HaveOccurred())
+				Eventually(buffer).Should(gbytes.Say(`testbuildpack`))
+				Eventually(buffer).Should(gbytes.Say(`testbuildpack2`))
+				os.RemoveAll(buildpackDir)
+			})
+		})
+		Context("without buildpacks", func() {
+			It("should say there are no buildpacks installed", func() {
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-list-test")
+				err := buildpack.List(buffer, buildpackDir)
+				Expect(err).ShouldNot(HaveOccurred())
+				Eventually(buffer).Should(gbytes.Say(`No buildpacks installed`))
+				os.RemoveAll(buildpackDir)
+			})
+		})
+	})
 })

@@ -58,6 +58,14 @@ func (Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOption
 	buildpack.Delete(writer, bpack, abs(buildpackDir))
 }
 
+func (Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
+	buildpackDir := utils.CloudfockerHome() + "/buildpacks"
+	if len(buildpackDirOptional) > 0 {
+		buildpackDir = buildpackDirOptional[0]
+	}
+	buildpack.List(writer, abs(buildpackDir))
+}
+
 func (f Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(utils.CloudfockerHome())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()

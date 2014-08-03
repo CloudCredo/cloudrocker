@@ -82,6 +82,14 @@ func main() {
 			},
 		},
 		{
+			Name:  "buildpacks",
+			Usage: "show the buildpacks installed on the local system",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.ListBuildpacks(os.Stdout)
+			},
+		},
+		{
 			Name:  "stage",
 			Usage: "stage an application",
 			Action: func(c *cli.Context) {

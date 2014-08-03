@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/hatofmonkeys/cloudfocker/utils"
 )
 
 func Add(writer io.Writer, url string, buildpackDir string) {
@@ -31,4 +33,16 @@ func Delete(writer io.Writer, buildpack string, buildpackDir string) error {
 	}
 	fmt.Fprintln(writer, "Deleted buildpack.")
 	return nil
+}
+
+func List(writer io.Writer, buildpackDir string) (err error) {
+	if buildpacks, err := utils.SubDirs(buildpackDir); err == nil {
+		for _, buildpack := range buildpacks {
+			fmt.Fprintln(writer, buildpack)
+		}
+		if len(buildpacks) == 0 {
+			fmt.Fprintln(writer, "No buildpacks installed")
+		}
+	}
+	return err
 }

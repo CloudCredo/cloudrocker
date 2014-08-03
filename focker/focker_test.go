@@ -63,6 +63,16 @@ var _ = Describe("Focker", func() {
 		})
 	})
 
+	Describe("Listing buildpacks", func() {
+		It("should list the buildpacks in the buildpack directory", func() {
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
+			testfocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
+			testfocker.ListBuildpacks(buffer)
+			Eventually(buffer).Should(gbytes.Say(`not-a-buildpack`))
+			os.RemoveAll(buildpackDir)
+		})
+	})
+
 	Describe("Building an application droplet", func() {
 		It("should run the buildpack runner from linux-circus", func() {
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
