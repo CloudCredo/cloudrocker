@@ -70,6 +70,18 @@ func main() {
 			},
 		},
 		{
+			Name:  "delete-buildpack",
+			Usage: "delete-buildpack [BUILDPACK] - delete a buildpack the local system",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				if buildpack := c.Args().First(); buildpack != "" {
+					focker.DeleteBuildpack(os.Stdout, buildpack)
+				} else {
+					fmt.Println("Please supply a buildpack to delete")
+				}
+			},
+		},
+		{
 			Name:  "stage",
 			Usage: "stage an application",
 			Action: func(c *cli.Context) {

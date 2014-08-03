@@ -24,3 +24,11 @@ func Add(writer io.Writer, url string, buildpackDir string) {
 	}
 	fmt.Fprintln(writer, "Downloaded buildpack.")
 }
+
+func Delete(writer io.Writer, buildpack string, buildpackDir string) error {
+	if err := os.RemoveAll(buildpackDir + "/" + buildpack); err != nil {
+		return err
+	}
+	fmt.Fprintln(writer, "Deleted buildpack.")
+	return nil
+}
