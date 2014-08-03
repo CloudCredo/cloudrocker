@@ -87,8 +87,13 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 
 func (f Focker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(utils.CloudfockerHome())
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	runConfig := config.NewRuntimeRunConfig(utils.CloudfockerHome() + "/droplet")
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
+		fmt.Println("Deleting running runtime container...")
+		f.StopRuntime(writer)
+	}
+	cli, Stdout, stdoutpipe = docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
