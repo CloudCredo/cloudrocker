@@ -46,3 +46,15 @@ func List(writer io.Writer, buildpackDir string) (err error) {
 	}
 	return err
 }
+
+func AtLeastOneBuildpackIn(dir string) error {
+	var subDirs []string
+	var err error
+	if subDirs, err = utils.SubDirs(dir); err != nil {
+		return err
+	}
+	if len(subDirs) == 0 {
+		return fmt.Errorf("No buildpacks detected - please add one")
+	}
+	return nil
+}
