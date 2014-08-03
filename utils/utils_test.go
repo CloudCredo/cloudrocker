@@ -77,25 +77,6 @@ var _ = Describe("Utils", func() {
 			})
 		})
 	})
-	Describe("Checking for the presence of at least one buildpack", func() {
-		Context("with one buildpack", func() {
-			It("should return without error", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-buildpack")
-				os.Mkdir(buildpackDir+"/testbuildpack", 0755)
-				err := utils.AtLeastOneBuildpackIn(buildpackDir)
-				Expect(err).ShouldNot(HaveOccurred())
-				os.RemoveAll(buildpackDir)
-			})
-		})
-		Context("with no buildpacks", func() {
-			It("should return an error", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-buildpack")
-				err := utils.AtLeastOneBuildpackIn(buildpackDir)
-				Expect(err).Should(HaveOccurred())
-				os.RemoveAll(buildpackDir)
-			})
-		})
-	})
 	Describe("Finding the subdirectories in a directory", func() {
 		It("should return a slice of found subdirectories", func() {
 			parentDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-subdirs")

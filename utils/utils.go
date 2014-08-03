@@ -60,18 +60,6 @@ func CreateAndCleanAppDirs(cloudfockerHomeDir string) error {
 	return nil
 }
 
-func AtLeastOneBuildpackIn(dir string) error {
-	var subDirs []string
-	var err error
-	if subDirs, err = SubDirs(dir); err != nil {
-		return err
-	}
-	if len(subDirs) == 0 {
-		return fmt.Errorf("No buildpacks detected - please add one")
-	}
-	return nil
-}
-
 func SubDirs(dir string) ([]string, error) {
 	var contents []os.FileInfo
 	var err error
