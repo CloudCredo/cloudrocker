@@ -19,6 +19,7 @@ type DockerClient interface {
 	CmdStop(...string) error
 	CmdRm(...string) error
 	CmdKill(...string) error
+	CmdPs(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -113,6 +114,30 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 	PrintToStdout(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Deleted container.")
 	return nil
+}
+
+func GetContainerId(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, containerName string) (containerId string) {
+	go func() {
+		err := cli.CmdPs()
+		if err != nil {
+			log.Fatalf("getContainerId %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("getContainerId %s", err)
+		}
+	}()
+	reader := bufio.NewReader(stdout)
+	for {
+		cmdBytes, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		}
+		if strings.Contains(cmdBytes, containerName) {
+			containerId = strings.Fields(cmdBytes)[0]
+			return
+		}
+	}
+	return
 }
 
 //A few of functions stolen from Deis dockercliuitls! Thanks guys

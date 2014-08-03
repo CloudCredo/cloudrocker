@@ -19,6 +19,7 @@ type FakeDockerClient struct {
 	cmdStopArgs      []string
 	cmdRmArgs        []string
 	cmdKillArgs      []string
+	cmdPsCalled      bool
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {
@@ -48,6 +49,11 @@ func (f *FakeDockerClient) CmdRm(args ...string) error {
 
 func (f *FakeDockerClient) CmdKill(args ...string) error {
 	f.cmdKillArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdPs(_ ...string) error {
+	f.cmdPsCalled = true
 	return nil
 }
 
@@ -119,6 +125,35 @@ var _ = Describe("Docker", func() {
 			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
 			Expect(len(fakeDockerClient.cmdRmArgs)).To(Equal(1))
 			Expect(fakeDockerClient.cmdRmArgs[0]).To(Equal("cloudfocker-container"))
+		})
+	})
+
+	Describe("Getting a cloudfocker runtime container ID", func() {
+		Context("with no cloudfocker runtime container running", func() {
+			It("should return empty string", func() {
+				fakeDockerClient = new(FakeDockerClient)
+				stdout, stdoutPipe := io.Pipe()
+				containerId := make(chan string)
+				go func() {
+					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudfocker-runtime")
+				}()
+				io.Copy(stdoutPipe, bytes.NewBufferString("CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                    NAMES\n"))
+				Eventually(fakeDockerClient.cmdPsCalled).Should(Equal(true))
+				Eventually(containerId).Should(Receive(Equal("")))
+			})
+		})
+		Context("with a cloudfocker runtime container running", func() {
+			It("should return the container ID", func() {
+				fakeDockerClient = new(FakeDockerClient)
+				stdout, stdoutPipe := io.Pipe()
+				containerId := make(chan string)
+				go func() {
+					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudfocker-runtime")
+				}()
+				io.Copy(stdoutPipe, bytes.NewBufferString("CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                    NAMES\n180e16d9ef28        cloudfocker:latest   /usr/sbin/nginx -c /   13 minutes ago      Up 13 minutes       0.0.0.0:8080->8080/tcp   cloudfocker-runtime\n"))
+				Eventually(fakeDockerClient.cmdPsCalled).Should(Equal(true))
+				Eventually(containerId).Should(Receive(Equal("180e16d9ef28")))
+			})
 		})
 	})
 
