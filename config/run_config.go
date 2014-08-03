@@ -61,16 +61,32 @@ type StagingInfoYml struct {
 	StartCommand      string `yaml:"start_command"`
 }
 
+type ProcfileYml struct {
+	Web string `yaml:"web"`
+}
+
 func parseStartCommand(cloudfoundryDropletDir string) []string {
-	file, err := os.Open(cloudfoundryDropletDir + "/staging_info.yml")
-	if err != nil {
-		log.Fatalf("File does not exist: %s", err)
+	stagingInfoFile, err := os.Open(cloudfoundryDropletDir + "/staging_info.yml")
+	if err == nil {
+		stagingInfo := new(StagingInfoYml)
+		decoder := candiedyaml.NewDecoder(stagingInfoFile)
+		err = decoder.Decode(stagingInfo)
+		if err != nil {
+			log.Fatalf("Failed to decode document: %s", err)
+		}
+		return strings.Split(stagingInfo.StartCommand, " ")
+	} else {
+		procfileFile, err := os.Open(cloudfoundryDropletDir + "/app/Procfile")
+		if err == nil {
+			procfileInfo := new(ProcfileYml)
+			decoder := candiedyaml.NewDecoder(procfileFile)
+			err = decoder.Decode(procfileInfo)
+			if err != nil {
+				log.Fatalf("Failed to decode document: %s", err)
+			}
+			return strings.Split(procfileInfo.Web, " ")
+		}
 	}
-	stagingInfo := new(StagingInfoYml)
-	decoder := candiedyaml.NewDecoder(file)
-	err = decoder.Decode(stagingInfo)
-	if err != nil {
-		log.Fatalf("Failed to decode document: %s", err)
-	}
-	return strings.Split(stagingInfo.StartCommand, " ")
+	log.Fatal("Unable to find staging_info.yml or Procfile - no start command available")
+	return []string{}
 }
