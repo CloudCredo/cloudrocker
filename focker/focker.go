@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"os/exec"
+	"path"
 
 	"github.com/hatofmonkeys/cloudfocker/buildpack"
 	"github.com/hatofmonkeys/cloudfocker/config"
@@ -68,8 +70,9 @@ func (Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
 
 func (f Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(utils.CloudfockerHome())
+	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome() + "/staging")
+	runConfig := config.NewStageRunConfig(stagingAppDir)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	runConfig := config.NewStageRunConfig(abs(appDir))
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	f.DeleteContainer(writer, runConfig.ContainerName)
 	return stager.ValidateStagedApp(utils.CloudfockerHome())
@@ -120,6 +123,17 @@ func prepareStagingFilesystem(cloudfockerHome string) {
 		log.Fatalf(" %s", err)
 	}
 	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome); err != nil {
+		log.Fatalf(" %s", err)
+	}
+}
+
+func prepareStagingApp(appDir string, stagingDir string) string {
+	copyDir(appDir, stagingDir)
+	return abs(stagingDir)+"/"+path.Base(appDir)
+}
+
+func copyDir(src string, dest string) {
+	if err := exec.Command("cp", "-a", src, dest).Run(); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }
