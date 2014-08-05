@@ -44,7 +44,7 @@ func CloudfockerHome() string {
 }
 
 func CreateAndCleanAppDirs(cloudfockerHomeDir string) error {
-	dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true}
+	dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true, "/staging": true}
 	for dir, clean := range dirs {
 		if clean {
 			if err := os.RemoveAll(cloudfockerHomeDir + dir); err != nil {

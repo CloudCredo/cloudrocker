@@ -51,13 +51,14 @@ var _ = Describe("Utils", func() {
 				Expect(cloudfockerHomeContents, err).Should(ContainElement("droplet"))
 				Expect(cloudfockerHomeContents, err).Should(ContainElement("cache"))
 				Expect(cloudfockerHomeContents, err).Should(ContainElement("result"))
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("staging"))
 				os.RemoveAll(cloudfockerHome)
 			})
 		})
 		Context("with a previously staged application", func() {
 			It("should clean the directory structure appropriately", func() {
 				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true}
+				dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true, "/staging": true}
 				for dir, _ := range dirs {
 					os.MkdirAll(cloudfockerHome+dir, 0755)
 					ioutil.WriteFile(cloudfockerHome+dir+"/testfile", []byte("test"), 0644)
