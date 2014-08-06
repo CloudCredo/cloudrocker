@@ -1,7 +1,19 @@
 {
-	"ImportPath": "github.com/hatofmonkeys/cloudfocker/fock",
+	"ImportPath": "github.com/hatofmonkeys/cloudfocker",
 	"GoVersion": "go1.3",
 	"Deps": [
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/candiedyaml",
+			"Rev": "50e233a7fb31a32b174c1263c7b786eba1fa79d4"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/linux-circus/buildpackrunner",
+			"Rev": "cb8d174e4e5f864c98286927942288f6c773f524"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/runtime-schema/models",
+			"Rev": "5fb57f46c2dc59cef1afa8f541be71b475bc554e"
+		},
 		{
 			"ImportPath": "github.com/codegangsta/cli",
 			"Comment": "1.0.0-72-gbb91895",
@@ -106,6 +118,15 @@
 			"ImportPath": "github.com/dotcloud/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar",
 			"Comment": "v1.1.0-14-g02ef943",
 			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.0.0-17-gd3d2576",
+			"Rev": "d3d25767b7af0efa7b12a900d0f4ac5477ed9fa1"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Rev": "10de1801308b4539b475abea274354cdd9bd5112"
 		}
 	]
 }
