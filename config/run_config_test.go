@@ -35,7 +35,7 @@ var _ = Describe("RunConfig", func() {
 				Expect(runtimeConfig.EnvVars["VCAP_SERVICES"]).To(Equal("{ \"elephantsql\": [ { \"name\": \"elephantsql-c6c60\", \"label\": \"elephantsql\", \"tags\": [ \"postgres\", \"postgresql\", \"relational\" ], \"plan\": \"turtle\", \"credentials\": { \"uri\": \"postgres://seilbmbd:PHxTPJSbkcDakfK4cYwXHiIX9Q8p5Bxn@babar.elephantsql.com:5432/seilbmbd\" } } ], \"sendgrid\": [ { \"name\": \"mysendgrid\", \"label\": \"sendgrid\", \"tags\": [ \"smtp\" ], \"plan\": \"free\", \"credentials\": { \"hostname\": \"smtp.sendgrid.net\", \"username\": \"QvsXMbJ3rK\", \"password\": \"HCHMOYluTv\" } } ] }"))
 				Expect(runtimeConfig.ImageTag).To(Equal("cloudfocker-base:latest"))
 				Expect(runtimeConfig.Command).To(Equal([]string{"/bin/bash",
-					"/app/cloudfocker-start.sh",
+					"/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
 					"/app",
 					"bundle", "exec", "rackup", "config.ru", "-p", "$PORT"}))
 			})
@@ -55,7 +55,7 @@ var _ = Describe("RunConfig", func() {
 				Expect(runtimeConfig.EnvVars["VCAP_SERVICES"]).To(Equal(""))
 				Expect(runtimeConfig.ImageTag).To(Equal("cloudfocker-base:latest"))
 				Expect(runtimeConfig.Command).To(Equal([]string{"/bin/bash",
-					"/app/cloudfocker-start.sh",
+					"/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
 					"/app",
 					"server"}))
 			})

@@ -95,7 +95,7 @@ func CopyFockerBinaryToOwnDir(cloudfockerHome string) error {
 }
 
 func AddSoldierRunScript(appDir string) error {
-	return ioutil.WriteFile(appDir+"/cloudfocker-start.sh", []byte(soldier), 0644)
+	return ioutil.WriteFile(appDir+"/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(soldier), 0644)
 }
 
 //C&P(ha!) from https://gist.github.com/elazarl/5507969

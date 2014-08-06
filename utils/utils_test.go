@@ -110,7 +110,7 @@ var _ = Describe("Utils", func() {
 		It("should create a script called cloudfocker-start.sh with expected contents", func() {
 			appDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-soldier")
 			utils.AddSoldierRunScript(appDir)
-			written, _ := ioutil.ReadFile(appDir + "/cloudfocker-start.sh")
+			written, _ := ioutil.ReadFile(appDir + "/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh")
 			fixture, _ := ioutil.ReadFile("fixtures/cloudfocker-start.sh")
 			Expect(written).To(Equal(fixture))
 			os.RemoveAll(appDir)
