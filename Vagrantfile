@@ -28,6 +28,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Add vagrant user to the docker group
     pkg_cmd << "usermod -a -G docker vagrant; "
 
+    # Install redis for services demo
+    pkg_cmd << "apt-get install -q -y --force-yes redis-server; "
+    pkg_cmd << "sed -i 's/bind 127.0.0.1/#bind 127.0.0.1/g' /etc/redis/redis.conf; "
+    pkg_cmd << "/etc/init.d/redis-server restart; "
+
     # Install golang + focker
     pkg_cmd << "wget -q -O /tmp/go.tgz http://golang.org/dl/go1.3.linux-amd64.tar.gz; "
     pkg_cmd << "tar xzf /tmp/go.tgz -C /usr/lib; "
