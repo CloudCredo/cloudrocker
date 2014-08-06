@@ -1,0 +1,14 @@
+applications:
+  - name: gocf
+    memory: 64M
+    instances: 1
+    host: gocf
+    domain: cfapps.io
+    path: .
+    buildpack: git://github.com/hmalphettes/heroku-buildpack-go.git
+    env:
+      APP_ID: 0000000000000000000.apps.googleusercontent.com
+      APP_SECRET: xxxxxxxxxxxx
+      STOIC_SPREADSHEET_VERSION: stable
+      STOIC_AUTO_UPGRADER: resetAll
+      MAPPERJS_DEFAULT_STORE: es

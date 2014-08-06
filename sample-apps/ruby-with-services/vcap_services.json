@@ -1,0 +1,11 @@
+{
+  "redis": [
+    {
+      "name": "redis",
+      "credentials": {
+        "port": "6379",
+        "hostname": "172.17.42.1"
+      }
+    }
+  ]
+}
