@@ -10,7 +10,7 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "Fock"
+	app.Name = "fock"
 	app.Usage = "Cloud Focker - fock the Cloud, run apps locally!"
 	app.Action = func(c *cli.Context) {
 		cli.ShowAppHelp(c)
@@ -35,7 +35,7 @@ func main() {
 		},
 		{
 			Name:  "up",
-			Usage: "start the container for the application",
+			Usage: "stage and run the application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				pwd, err := os.Getwd()
@@ -58,8 +58,16 @@ func main() {
 			},
 		},
 		{
+			Name:  "buildpacks",
+			Usage: "show the buildpacks installed on the local system",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.ListBuildpacks(os.Stdout)
+			},
+		},
+		{
 			Name:  "add-buildpack",
-			Usage: "add-buildpack [URL] - add a buildpack from a GitHub URL",
+			Usage: "add-buildpack [URL] - add a buildpack from a GitHub URL to the local system",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				if url := c.Args().First(); url != "" {
@@ -71,7 +79,7 @@ func main() {
 		},
 		{
 			Name:  "delete-buildpack",
-			Usage: "delete-buildpack [BUILDPACK] - delete a buildpack the local system",
+			Usage: "delete-buildpack [BUILDPACK] - delete a buildpack from the local system",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				if buildpack := c.Args().First(); buildpack != "" {
@@ -82,16 +90,8 @@ func main() {
 			},
 		},
 		{
-			Name:  "buildpacks",
-			Usage: "show the buildpacks installed on the local system",
-			Action: func(c *cli.Context) {
-				focker := focker.NewFocker()
-				focker.ListBuildpacks(os.Stdout)
-			},
-		},
-		{
 			Name:  "stage",
-			Usage: "stage an application",
+			Usage: "only execute the staging phase for the application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				if internal := c.Args().First(); internal == "internal" {
@@ -112,7 +112,7 @@ func main() {
 		},
 		{
 			Name:  "run",
-			Usage: "run the staged application",
+			Usage: "only run the current staged application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.RunRuntime(os.Stdout)
