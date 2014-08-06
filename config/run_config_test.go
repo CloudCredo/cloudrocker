@@ -15,7 +15,7 @@ var _ = Describe("RunConfig", func() {
 			Expect(len(stageConfig.Mounts)).To(Equal(6))
 			Expect(stageConfig.Mounts["/home/testuser/testapp"]).To(Equal("/app"))
 			Expect(stageConfig.ImageTag).To(Equal("cloudfocker-base:latest"))
-			Expect(stageConfig.Command).To(Equal([]string{"/focker/fock", "stage-internal"}))
+			Expect(stageConfig.Command).To(Equal([]string{"/focker/fock", "stage", "internal"}))
 		})
 	})
 

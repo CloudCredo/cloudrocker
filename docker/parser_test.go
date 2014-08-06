@@ -21,7 +21,7 @@ var _ = Describe("Parser", func() {
 				userId := thisUser.Uid
 				stageConfig := config.NewStageRunConfig("/home/testuser/testapp")
 				parsedRunCommand := docker.ParseRunCommand(stageConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId + " --name=cloudfocker-staging --volume=/home/testuser/.cloudfocker/buildpacks:/tmp/cloudfockerbuildpacks --volume=/home/testuser/.cloudfocker/cache:/tmp/cache --volume=/home/testuser/.cloudfocker/droplet:/tmp/droplet --volume=/home/testuser/.cloudfocker/focker:/focker --volume=/home/testuser/.cloudfocker/result:/tmp/result --volume=/home/testuser/testapp:/app cloudfocker-base:latest /focker/fock stage-internal"))
+				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId + " --name=cloudfocker-staging --volume=/home/testuser/.cloudfocker/buildpacks:/tmp/cloudfockerbuildpacks --volume=/home/testuser/.cloudfocker/cache:/tmp/cache --volume=/home/testuser/.cloudfocker/droplet:/tmp/droplet --volume=/home/testuser/.cloudfocker/focker:/focker --volume=/home/testuser/.cloudfocker/result:/tmp/result --volume=/home/testuser/testapp:/app cloudfocker-base:latest /focker/fock stage internal"))
 			})
 		})
 		Context("with a runtime config ", func() {

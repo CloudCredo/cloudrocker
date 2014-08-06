@@ -94,12 +94,18 @@ func main() {
 			Usage: "stage an application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
-				pwd, err := os.Getwd()
-				if err != nil {
-					log.Fatalf(" %s", err)
+				if internal := c.Args().First(); internal == "internal" {
+					//this is focker being called inside the staging container
+					focker.StageApp(os.Stdout)
 				} else {
-					if err := focker.RunStager(os.Stdout, pwd); err != nil {
+					//this is focker being called by the user, outside of the staging container
+					pwd, err := os.Getwd()
+					if err != nil {
 						log.Fatalf(" %s", err)
+					} else {
+						if err := focker.RunStager(os.Stdout, pwd); err != nil {
+							log.Fatalf(" %s", err)
+						}
 					}
 				}
 			},
@@ -111,14 +117,6 @@ func main() {
 				focker := focker.NewFocker()
 				focker.RunRuntime(os.Stdout)
 			},
-		},
-		{
-			Name: "stage-internal",
-			Action: func(c *cli.Context) {
-				focker := focker.NewFocker()
-				focker.StageApp(os.Stdout)
-			},
-			HideHelp: true,
 		},
 	}
 

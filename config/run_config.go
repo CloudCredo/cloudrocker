@@ -32,7 +32,7 @@ func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
 			utils.CloudfockerHome() + "/focker":     "/focker",
 		},
 		ImageTag: "cloudfocker-base:latest",
-		Command:  []string{"/focker/fock", "stage-internal"},
+		Command:  []string{"/focker/fock", "stage", "internal"},
 	}
 	return
 }
