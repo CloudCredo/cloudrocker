@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/hatofmonkeys/cloudfocker",
+	"ImportPath": "github.com/hatofmonkeys/cloudfocker/fock",
 	"GoVersion": "go1.3",
 	"Deps": [
 		{
