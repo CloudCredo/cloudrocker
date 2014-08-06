@@ -51,7 +51,7 @@ func main() {
 		},
 		{
 			Name:  "off",
-			Usage: "stop the container and remove it",
+			Usage: "stop the application container and remove it",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.StopRuntime(os.Stdout)
@@ -112,7 +112,7 @@ func main() {
 		},
 		{
 			Name:  "run",
-			Usage: "run the staged container",
+			Usage: "run the staged application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
 				focker.RunRuntime(os.Stdout)
