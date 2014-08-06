@@ -11,6 +11,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "fock"
+	app.Version = "0.0.1"
 	app.Usage = "Cloud Focker - fock the Cloud, run apps locally!"
 	app.Action = func(c *cli.Context) {
 		cli.ShowAppHelp(c)
