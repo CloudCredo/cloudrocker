@@ -1,10 +1,10 @@
 package config
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"io/ioutil"
 
 	"github.com/cloudfoundry-incubator/candiedyaml"
 	"github.com/hatofmonkeys/cloudfocker/utils"
@@ -46,9 +46,9 @@ func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
 		},
 		PublishedPorts: map[int]int{8080: 8080},
 		EnvVars: map[string]string{
-			"HOME":   "/app",
-			"TMPDIR": "/app/tmp",
-			"PORT":   "8080",
+			"HOME":          "/app",
+			"TMPDIR":        "/app/tmp",
+			"PORT":          "8080",
 			"VCAP_SERVICES": vcapServices(cloudfoundryDropletDir),
 		},
 		ImageTag: "cloudfocker-base:latest",
