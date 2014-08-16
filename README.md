@@ -118,7 +118,29 @@ Sample applications to use with the buildpacks are in [sample-apps](https://gith
 
 ##External Services
   
-Services can be connected to your application by adding a *vcap_services.json* file to the root directory of your application. This is demonstrated in the [ruby-with-services sample application](https://github.com/CloudCredo/cloudfocker/tree/master/sample-apps/ruby-with-services). 
+Services can be connected to your application by adding a *vcap_services.json* file to the root directory of your application. This is demonstrated in the [ruby-with-services sample application](https://github.com/CloudCredo/cloudfocker/tree/master/sample-apps/ruby-with-services).
+
+#####Note - the following steps are only appropriate to users of the Vagrant image (tutorial option 1 above).
+
+Change PWD to the sample ruby-with-services sample application.
+
+```$ cd /vagrant/sample-apps/ruby-with-services```
+
+If necessary, install a Ruby buildpack.
+
+```$ fock add-buildpack https://github.com/cloudfoundry/cf-buildpack-ruby```
+
+Start the application.
+
+```$ fock up```
+
+Set a value for a key.
+
+[http://localhost:8080/set/hello/to/world](http://localhost:8080/set/hello/to/world)
+
+Get the value.
+
+[http://localhost:8080/get/hello](http://localhost:8080/get/hello)
 
 ##Potential Uses
   
