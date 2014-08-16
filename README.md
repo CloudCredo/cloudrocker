@@ -8,15 +8,17 @@ This is a brief tutorial to ease you through your first focking experience.
 
 ###Set up your Docker environment
 
-####Option 1 : Easy - using Vagrant
+Select either option 1 or option 2, then move to [Test your Docker environment](https://github.com/CloudCredo/cloudfocker#test-your-docker-environment).
+
+####Option 1 : Easy - Mac/Windows/Linux - using Vagrant
 
 ```
-vagrant up
+vagrant up --provider virtualbox
 vagrant ssh
 ```
 All later commands are entered as the vagrant user's shell in the vagrant VM.
 
-####Option 2 : Advanced - using a local Docker daemon
+####Option 2 : Advanced users - Linux only - using a local Docker daemon
 
 ```
 $ go get github.com/cloudcredo/cloudfocker/fock
@@ -144,7 +146,7 @@ There is a public tracker for this project [here](https://www.pivotaltracker.com
 
 #####Why have you built Cloud Focker?
 
-Cloud Foundry, at a high level, has two responsibilities for applications: *staging* - so they are ready to be run, and then - *running* them. [Decker](http://www.cloudcredo.com/decker-docker-cloud-foundry/) brought Cloud Foundry's *running* experience to container developers. Cloud Focker brings the Cloud Foundry *staging* experience to application developers. By seperating these responsibilities we can discuss the right way to build containers, and the right way to run them.
+Cloud Foundry, at a high level, has two responsibilities for applications: *staging* - so they are ready to be run, and then - *running* them. [Decker](http://www.cloudcredo.com/decker-docker-cloud-foundry/) brought Cloud Foundry's *running* experience to container developers. Cloud Focker brings the Cloud Foundry *staging* experience to application developers. By separating these responsibilities we can discuss the right way to build containers, and the right way to run them.
 
 As a [Cloud Foundry Community Advisory Board](http://cloudfoundry.org/about/index.html) member - anything I can do to illustrate the great experience Cloud Foundry brings to developers is worthwhile. I think everybody benefits from fast-feedback and small batch sizes. Get code into a production-like environment as soon as possible. Let's iterate faster.
 
