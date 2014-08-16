@@ -2,6 +2,11 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+#comment out the two lines below, and uncomment the following block, to change the VM
+  config.vm.box = "cloudfocker-0.0.1-amd64"
+  config.vm.box_url = "https://s3.amazonaws.com/cloudfocker/vagrantboxes/cloudfocker-0.0.1-vbox.box"
+
+=begin
   config.vm.box = "phusion-open-ubuntu-14.04-amd64"
   config.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box"
   # Or, for Ubuntu 12.04:
@@ -45,4 +50,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.provision :shell, :inline => pkg_cmd
   end
+=end
 end
