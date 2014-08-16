@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pkg_cmd << "echo 'export GOPATH=/home/vagrant/go' >> /home/vagrant/.bashrc; "
     pkg_cmd << "echo 'export GOROOT=/usr/lib/go' >> /home/vagrant/.bashrc; "
     pkg_cmd << "echo 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' >> /home/vagrant/.bashrc; "
-    pkg_cmd << "cd /home/vagrant/go; su vagrant -c 'export GOROOT=/usr/lib/go; export GOPATH=/home/vagrant/go; /usr/lib/go/bin/go get github.com/tools/godep; /usr/lib/go/bin/go get -v github.com/hatofmonkeys/cloudfocker/fock; cd /home/vagrant/go/src/github.com/hatofmonkeys/cloudfocker/fock; PATH=$PATH:/usr/lib/go/bin /home/vagrant/go/bin/godep restore; /usr/lib/go/bin/go install'"
+    pkg_cmd << "cd /home/vagrant/go; su vagrant -c 'export GOROOT=/usr/lib/go; export GOPATH=/home/vagrant/go; /usr/lib/go/bin/go get github.com/tools/godep; /usr/lib/go/bin/go get -v github.com/cloudcredo/cloudfocker/fock; cd /home/vagrant/go/src/github.com/cloudcredo/cloudfocker/fock; PATH=$PATH:/usr/lib/go/bin /home/vagrant/go/bin/godep restore; /usr/lib/go/bin/go install'"
 
     config.vm.provision :shell, :inline => pkg_cmd
   end

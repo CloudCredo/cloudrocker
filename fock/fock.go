@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/cli"
-	"github.com/hatofmonkeys/cloudfocker/focker"
+	"github.com/cloudcredo/cloudfocker/focker"
 	"log"
 	"os"
 )

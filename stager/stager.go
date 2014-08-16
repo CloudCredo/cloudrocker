@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/hatofmonkeys/cloudfocker/utils"
+	"github.com/cloudcredo/cloudfocker/utils"
 
 	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
 	"github.com/cloudfoundry-incubator/runtime-schema/models"

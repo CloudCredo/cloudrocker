@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/hatofmonkeys/cloudfocker/focker"
+	"github.com/cloudcredo/cloudfocker/focker"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

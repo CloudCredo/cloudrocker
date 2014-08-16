@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/hatofmonkeys/cloudfocker/utils"
+	"github.com/cloudcredo/cloudfocker/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

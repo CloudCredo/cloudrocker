@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/hatofmonkeys/cloudfocker/buildpack"
+	"github.com/cloudcredo/cloudfocker/buildpack"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

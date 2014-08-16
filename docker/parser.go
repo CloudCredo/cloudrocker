@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/hatofmonkeys/cloudfocker/config"
+	"github.com/cloudcredo/cloudfocker/config"
 )
 
 func ParseRunCommand(config *config.RunConfig) (runCmd []string) {

@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/hatofmonkeys/cloudfocker/config"
+	"github.com/cloudcredo/cloudfocker/config"
 
 	"github.com/dotcloud/docker/api/client"
 )

@@ -5,8 +5,8 @@ import (
 	"os/user"
 	"strings"
 
-	"github.com/hatofmonkeys/cloudfocker/config"
-	"github.com/hatofmonkeys/cloudfocker/docker"
+	"github.com/cloudcredo/cloudfocker/config"
+	"github.com/cloudcredo/cloudfocker/docker"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

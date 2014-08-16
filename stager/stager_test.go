@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
-	"github.com/hatofmonkeys/cloudfocker/stager"
+	"github.com/cloudcredo/cloudfocker/stager"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
