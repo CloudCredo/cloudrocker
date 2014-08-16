@@ -2,6 +2,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+
 #comment out the two lines below, and uncomment the following block, to change the VM
   config.vm.box = "cloudfocker-0.0.1-amd64"
   config.vm.box_url = "https://s3.amazonaws.com/cloudfocker/vagrantboxes/cloudfocker-0.0.1-vbox.box"
@@ -22,8 +24,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
     #override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-12.04-amd64-vmwarefusion.box"
   end
-
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
     # Install Docker
