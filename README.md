@@ -28,13 +28,15 @@ The user for 'fock' commands must have permissions to access the Docker daemon.
 ```$ fock docker```
 
 You should see output similar to this:
-> Checking Docker version
-> Client API version: 1.13
-> Go version (client): go1.3
-> Server version: 1.1.2
-> Server API version: 1.13
-> Go version (server): go1.2.1
-> Git commit (server): d84a070
+```
+Checking Docker version
+Client API version: 1.13
+Go version (client): go1.3
+Server version: 1.1.2
+Server API version: 1.13
+Go version (server): go1.2.1
+Git commit (server): d84a070
+```
 
 ###Fock your local machine
 
@@ -56,20 +58,20 @@ Start the application.
 
 ```$ fock up```
 
-> Starting the CloudFocker container...
-> Running Buildpacks...
-> -----> Java Buildpack Version: 120c640
-
+```
+Starting the CloudFocker container...
+Running Buildpacks...
+-----> Java Buildpack Version: 120c640
 *--Buildpack output omitted--*
-
-> Started the CloudFocker container.
-> Deleting the CloudFocker container...
-> cloudfocker-staging
-> Deleted container.
-> Starting the CloudFocker container...
-> 5b69950f351d2c843fe2ffd531edd87c09f19a368241ae37a6d2e025000dd6c8
-> Started the CloudFocker container.
-> Connect to your running application at http://localhost:8080/
+Started the CloudFocker container.
+Deleting the CloudFocker container...
+cloudfocker-staging
+Deleted container.
+Starting the CloudFocker container...
+5b69950f351d2c843fe2ffd531edd87c09f19a368241ae37a6d2e025000dd6c8
+Started the CloudFocker container.
+Connect to your running application at http://localhost:8080/
+```
 
 You should now be able to browse the output on the vagrant machine.
 
@@ -93,12 +95,14 @@ List buildpacks
 
 ```$ fock buildpacks```
 
-> cf-buildpack-php
-> go-buildpack
-> java-buildpack
-> nodejs-buildpack
-> python-buildpack
-> ruby-buildpack
+```
+cf-buildpack-php
+go-buildpack
+java-buildpack
+nodejs-buildpack
+python-buildpack
+ruby-buildpack
+```
 
 Add a buildpack
 
