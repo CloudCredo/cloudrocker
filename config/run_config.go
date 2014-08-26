@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"encoding/json"
 
 	"github.com/cloudfoundry-incubator/candiedyaml"
 	"github.com/cloudcredo/cloudfocker/utils"
@@ -50,6 +51,7 @@ func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
 			"TMPDIR":        "/app/tmp",
 			"PORT":          "8080",
 			"VCAP_SERVICES": vcapServices(cloudfoundryDropletDir),
+			"DATABASE_URL": databaseURL(cloudfoundryDropletDir),
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
@@ -64,6 +66,31 @@ func vcapServices(cloudfoundryDropletDir string) (services string) {
 		return
 	}
 	services = string(servicesBytes)
+	return
+}
+
+type database struct {
+	Credentials struct {
+		URI string
+	}
+}
+
+func databaseURL(cloudfoundryDropletDir string) (databaseURL string) {
+	servicesBytes, err := ioutil.ReadFile(cloudfoundryDropletDir + "/app/vcap_services.json")
+	if err != nil {
+		return
+	}
+
+	var services map[string][]database
+
+	json.Unmarshal(servicesBytes, &services)
+
+	for _, serviceDatabase := range services {
+		if len(serviceDatabase) > 0 && serviceDatabase[0].Credentials.URI != "" {
+			databaseURL = serviceDatabase[0].Credentials.URI
+		}
+	}
+
 	return
 }
 
