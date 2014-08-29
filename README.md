@@ -16,7 +16,7 @@ Select either option 1 or option 2, then move to [Test your Docker environment](
 vagrant up --provider virtualbox
 vagrant ssh
 ```
-All later commands are entered as the vagrant user's shell in the vagrant VM.
+Please use the Vagrantfile in the root of this repository. All later commands are entered as the vagrant user's shell in the vagrant VM.
 
 ####Option 2 : Advanced users - Linux only - using a local Docker daemon
 
