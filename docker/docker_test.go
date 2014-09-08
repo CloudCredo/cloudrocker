@@ -174,16 +174,5 @@ var _ = Describe("Docker", func() {
 			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A TEST STRING\n"))
 			Eventually(buffer).Should(gbytes.Say(`THIS IS A TEST STRING`))
 		})
-		It("should stop printing when it reaches a stoptag", func() {
-			stdout, stdoutPipe := io.Pipe()
-			go func() {
-				docker.PrintToStdout(stdout, stdoutPipe, "stoptag", buffer)
-			}()
-			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A TEST STRING\n"))
-			io.Copy(stdoutPipe, bytes.NewBufferString("stoptag\n"))
-			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A NAUGHTY TEST STRING\n"))
-			Eventually(buffer).Should(gbytes.Say(`THIS IS A TEST STRING`))
-			Consistently(buffer).ShouldNot(gbytes.Say(`THIS IS A NAUGHTY TEST STRING`))
-		})
 	})
 })
