@@ -33,7 +33,7 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished getting Docker version", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished getting Docker version", writer)
 	return nil
 }
 
@@ -48,7 +48,7 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished bootstrapping", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished bootstrapping", writer)
 	return nil
 }
 
@@ -63,7 +63,7 @@ func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe 
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Started the CloudFocker container.")
 	return nil
 }
@@ -79,7 +79,7 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished stopping the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished stopping the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -95,7 +95,7 @@ func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished killing the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished killing the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -111,7 +111,7 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	PrintToStdout(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
 	fmt.Fprintln(writer, "Deleted container.")
 	return nil
 }
@@ -149,7 +149,7 @@ func GetNewClient() (
 	return
 }
 
-func PrintToStdout(stdout *io.PipeReader, stdoutPipe *io.PipeWriter, stoptag string, writer io.Writer) {
+func CopyFromPipeToPipe(stdout *io.PipeReader, stdoutPipe *io.PipeWriter, stoptag string, writer io.Writer) {
 	for {
 		if cmdBytes, err := bufio.NewReader(stdout).ReadString('\n'); err == nil {
 			fmt.Fprint(writer, cmdBytes)

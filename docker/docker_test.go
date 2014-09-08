@@ -165,11 +165,11 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
-	Describe("Printing to stdout", func() {
-		It("should print from a pipe", func() {
+	Describe("Container I/O plumbing", func() {
+		It("Copies from one pipe to another", func() {
 			stdout, stdoutPipe := io.Pipe()
 			go func() {
-				docker.PrintToStdout(stdout, stdoutPipe, "stoptag", buffer)
+				docker.CopyFromPipeToPipe(stdout, stdoutPipe, "stoptag", buffer)
 			}()
 			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A TEST STRING\n"))
 			Eventually(buffer).Should(gbytes.Say(`THIS IS A TEST STRING`))
