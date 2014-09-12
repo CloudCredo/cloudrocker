@@ -170,7 +170,7 @@ var _ = Describe("Docker", func() {
 			stdout, stdoutPipe := io.Pipe()
 
 			go func() {
-				docker.CopyFromPipeToPipe(stdout, buffer)
+				docker.CopyFromPipeToPipe(buffer, stdout)
 			}()
 
 			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A TEST STRING\n"))

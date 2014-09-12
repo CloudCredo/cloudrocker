@@ -34,7 +34,7 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	return nil
 }
 
@@ -49,7 +49,7 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	return nil
 }
 
@@ -64,7 +64,7 @@ func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe 
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Started the CloudFocker container.")
 	return nil
 }
@@ -80,7 +80,7 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -96,7 +96,7 @@ func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -112,7 +112,7 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, writer)
+	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Deleted container.")
 	return nil
 }
@@ -150,10 +150,10 @@ func GetNewClient() (
 	return
 }
 
-func CopyFromPipeToPipe(reader *io.PipeReader, writer io.Writer) {
-	rawBytes, _ := ioutil.ReadAll(reader)
-	s := string(rawBytes[:])
-	fmt.Fprint(writer, s)
+func CopyFromPipeToPipe(outputPipe io.Writer, inputPipe *io.PipeReader) {
+	rawBytes, _ := ioutil.ReadAll(inputPipe)
+	input := string(rawBytes[:])
+	fmt.Fprint(outputPipe, input)
 }
 
 func closeWrap(args ...io.Closer) error {
