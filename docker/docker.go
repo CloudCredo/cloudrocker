@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"strings"
 
@@ -33,7 +34,7 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished getting Docker version", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	return nil
 }
 
@@ -48,7 +49,7 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished bootstrapping", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	return nil
 }
 
@@ -63,7 +64,7 @@ func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe 
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished starting the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	fmt.Fprintln(writer, "Started the CloudFocker container.")
 	return nil
 }
@@ -79,7 +80,7 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished stopping the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -95,7 +96,7 @@ func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished killing the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
@@ -111,7 +112,7 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 			log.Fatalf("Error: %s", err)
 		}
 	}()
-	CopyFromPipeToPipe(stdout, stdoutPipe, "Finished deleting the CloudFocker container", writer)
+	CopyFromPipeToPipe(stdout, writer)
 	fmt.Fprintln(writer, "Deleted container.")
 	return nil
 }
@@ -149,19 +150,10 @@ func GetNewClient() (
 	return
 }
 
-func CopyFromPipeToPipe(stdout *io.PipeReader, stdoutPipe *io.PipeWriter, stoptag string, writer io.Writer) {
-	for {
-		if cmdBytes, err := bufio.NewReader(stdout).ReadString('\n'); err == nil {
-			fmt.Fprint(writer, cmdBytes)
-			if strings.Contains(cmdBytes, stoptag) == true {
-				if err := closeWrap(stdout, stdoutPipe); err != nil {
-					log.Fatalf("Error: Closewraps %s", err)
-				}
-			}
-		} else {
-			break
-		}
-	}
+func CopyFromPipeToPipe(reader *io.PipeReader, writer io.Writer) {
+	rawBytes, _ := ioutil.ReadAll(reader)
+	s := string(rawBytes[:])
+	fmt.Fprint(writer, s)
 }
 
 func closeWrap(args ...io.Closer) error {
