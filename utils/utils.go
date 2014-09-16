@@ -43,23 +43,6 @@ func CloudfockerHome() string {
 	return cfhome
 }
 
-func CreateAndCleanAppDirs(cloudfockerHomeDir string) error {
-	dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true, "/staging": true}
-	for dir, clean := range dirs {
-		if clean {
-			if err := os.RemoveAll(cloudfockerHomeDir + dir); err != nil {
-				return err
-			}
-		}
-	}
-	for dir, _ := range dirs {
-		if err := os.MkdirAll(cloudfockerHomeDir+dir, 0755); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func SubDirs(dir string) ([]string, error) {
 	var contents []os.FileInfo
 	var err error

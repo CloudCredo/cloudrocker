@@ -39,45 +39,6 @@ var _ = Describe("Utils", func() {
 			})
 		})
 	})
-	Describe("Creating and cleaning application directories", func() {
-		Context("without a previously staged application", func() {
-			It("should create the correct directory structure", func() {
-				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				err := utils.CreateAndCleanAppDirs(cloudfockerHome)
-				Expect(err).ShouldNot(HaveOccurred())
-				cloudfockerHomeFile, err := os.Open(cloudfockerHome)
-				cloudfockerHomeContents, err := cloudfockerHomeFile.Readdirnames(0)
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("buildpacks"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("droplet"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("cache"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("result"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("staging"))
-				os.RemoveAll(cloudfockerHome)
-			})
-		})
-		Context("with a previously staged application", func() {
-			It("should clean the directory structure appropriately", func() {
-				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true, "/staging": true}
-				for dir, _ := range dirs {
-					os.MkdirAll(cloudfockerHome+dir, 0755)
-					ioutil.WriteFile(cloudfockerHome+dir+"/testfile", []byte("test"), 0644)
-				}
-				err := utils.CreateAndCleanAppDirs(cloudfockerHome)
-				Expect(err).ShouldNot(HaveOccurred())
-				for dir, clean := range dirs {
-					dirFile, err := os.Open(cloudfockerHome + dir)
-					dirContents, err := dirFile.Readdirnames(0)
-					if clean {
-						Expect(dirContents, err).ShouldNot(ContainElement("testfile"))
-					} else {
-						Expect(dirContents, err).Should(ContainElement("testfile"))
-					}
-				}
-				os.RemoveAll(cloudfockerHome)
-			})
-		})
-	})
 	Describe("Finding the subdirectories in a directory", func() {
 		It("should return a slice of found subdirectories", func() {
 			parentDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-subdirs")

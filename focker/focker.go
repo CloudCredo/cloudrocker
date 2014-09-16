@@ -119,7 +119,7 @@ func cloudFockerfileLocation() (location string) {
 }
 
 func prepareStagingFilesystem(cloudfockerHome string, directories *config.Directories) {
-	if err := utils.CreateAndCleanAppDirs(cloudfockerHome); err != nil {
+	if err := CreateAndCleanAppDirs(cloudfockerHome, directories); err != nil {
 		log.Fatalf(" %s", err)
 	}
 	if err := buildpack.AtLeastOneBuildpackIn(directories.Buildpacks()); err != nil {
@@ -153,4 +153,28 @@ func abs(relative string) string {
 		log.Fatalf(" %s", err)
 	}
 	return absolute
+}
+
+func CreateAndCleanAppDirs(cloudfockerHomeDir string, directories *config.Directories) error {
+	dirs := map[string]bool{
+		directories.Buildpacks():        false,
+		cloudfockerHomeDir + "/droplet": true,
+		cloudfockerHomeDir + "/cache":   false,
+		cloudfockerHomeDir + "/result":  true,
+		cloudfockerHomeDir + "/staging": true,
+	}
+
+	for dir, clean := range dirs {
+		if clean {
+			if err := os.RemoveAll(dir); err != nil {
+				return err
+			}
+		}
+	}
+	for dir, _ := range dirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return err
+		}
+	}
+	return nil
 }
