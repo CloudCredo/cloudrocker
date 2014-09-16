@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/stager"
 	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
 
@@ -59,8 +60,9 @@ var _ = Describe("Stager", func() {
 		Context("with something that looks like a staged application", func() {
 			It("should not return an error", func() {
 				cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
-				os.MkdirAll(cfhome+"/droplet/app", 0755)
-				ioutil.WriteFile(cfhome+"/droplet"+"/staging_info.yml", []byte("test-staging-info"), 0644)
+				dropletDir := config.NewDirectories(cfhome).Droplet()
+				os.MkdirAll(dropletDir+"/app", 0755)
+				ioutil.WriteFile(dropletDir+"/staging_info.yml", []byte("test-staging-info"), 0644)
 				err := stager.ValidateStagedApp(cfhome)
 				Expect(err).ShouldNot(HaveOccurred())
 				os.RemoveAll(cfhome)

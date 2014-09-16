@@ -104,7 +104,7 @@ var _ = Describe("Focker", func() {
 				cp("fixtures/stage/buildpacks", cloudfockerHome)
 				err := testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
 				Expect(err).ShouldNot(HaveOccurred())
-				dropletDir, err := os.Open(cloudfockerHome + "/droplet")
+				dropletDir, err := os.Open(config.NewDirectories(cloudfockerHome).Droplet())
 				dropletDirContents, err := dropletDir.Readdirnames(0)
 				Expect(dropletDirContents, err).Should(ContainElement("app"))
 				Expect(dropletDirContents, err).Should(ContainElement("logs"))

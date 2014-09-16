@@ -1,9 +1,6 @@
 package config_test
 
 import (
-	"io/ioutil"
-	"os"
-
 	"github.com/cloudcredo/cloudfocker/config"
 
 	. "github.com/onsi/ginkgo"
@@ -12,11 +9,22 @@ import (
 
 var _ = Describe("Directories", func() {
 	Describe("Provide a structure for directories", func() {
+		var (
+			cloudFockerHomeDir string
+			testDirectories    *config.Directories
+		)
+
+		BeforeEach(func() {
+			cloudFockerHomeDir = "/path/to/buildpacks"
+			testDirectories = config.NewDirectories(cloudFockerHomeDir)
+		})
+
 		It("should return the buildpacks directory", func() {
-			cloudFockerHomeDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-			testDirectories := config.NewDirectories(cloudFockerHomeDir)
 			Expect(testDirectories.Buildpacks()).To(Equal(cloudFockerHomeDir + "/buildpacks"))
-			os.RemoveAll(cloudFockerHomeDir)
+		})
+
+		It("should return the droplet directory", func() {
+			Expect(testDirectories.Droplet()).To(Equal(cloudFockerHomeDir + "/droplet"))
 		})
 	})
 })

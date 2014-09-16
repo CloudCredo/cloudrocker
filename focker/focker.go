@@ -91,13 +91,13 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	return err
 }
 
-func (f Focker) RunRuntime(writer io.Writer) {
+func (focker *Focker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(utils.CloudfockerHome())
-	runConfig := config.NewRuntimeRunConfig(utils.CloudfockerHome() + "/droplet")
+	runConfig := config.NewRuntimeRunConfig(focker.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
 		fmt.Println("Deleting running runtime container...")
-		f.StopRuntime(writer)
+		focker.StopRuntime(writer)
 	}
 	cli, Stdout, stdoutpipe = docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
