@@ -47,10 +47,10 @@ func List(writer io.Writer, buildpackDir string) (err error) {
 	return err
 }
 
-func AtLeastOneBuildpackIn(dir string) error {
+func AtLeastOneBuildpackIn(buildpackDir string) error {
 	var subDirs []string
 	var err error
-	if subDirs, err = utils.SubDirs(dir); err != nil {
+	if subDirs, err = utils.SubDirs(buildpackDir); err != nil {
 		return err
 	}
 	if len(subDirs) == 0 {
