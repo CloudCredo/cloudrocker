@@ -17,11 +17,14 @@ import (
 )
 
 type Focker struct {
-	Stdout *io.PipeReader
+	Stdout      *io.PipeReader
+	directories *config.Directories
 }
 
 func NewFocker() *Focker {
-	return &Focker{}
+	return &Focker{
+		directories: config.NewDirectories(utils.CloudfockerHome()),
+	}
 }
 
 func (Focker) DockerVersion(writer io.Writer) {
@@ -44,37 +47,37 @@ func (Focker) DeleteContainer(writer io.Writer, name string) {
 	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer, name)
 }
 
-func (Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
-	buildpackDir := utils.CloudfockerHome() + "/buildpacks"
+func (focker *Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
+	buildpackDir := focker.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Add(writer, url, abs(buildpackDir))
 }
 
-func (Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
-	buildpackDir := utils.CloudfockerHome() + "/buildpacks"
+func (focker *Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
+	buildpackDir := focker.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Delete(writer, bpack, abs(buildpackDir))
 }
 
-func (Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
-	buildpackDir := utils.CloudfockerHome() + "/buildpacks"
+func (focker *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
+	buildpackDir := focker.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.List(writer, abs(buildpackDir))
 }
 
-func (f Focker) RunStager(writer io.Writer, appDir string) error {
-	prepareStagingFilesystem(utils.CloudfockerHome())
+func (focker *Focker) RunStager(writer io.Writer, appDir string) error {
+	prepareStagingFilesystem(utils.CloudfockerHome(), focker.directories)
 	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome()+"/staging")
 	runConfig := config.NewStageRunConfig(stagingAppDir)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
-	f.DeleteContainer(writer, runConfig.ContainerName)
+	focker.DeleteContainer(writer, runConfig.ContainerName)
 	return stager.ValidateStagedApp(utils.CloudfockerHome())
 }
 
@@ -115,11 +118,11 @@ func cloudFockerfileLocation() (location string) {
 	return
 }
 
-func prepareStagingFilesystem(cloudfockerHome string) {
+func prepareStagingFilesystem(cloudfockerHome string, directories *config.Directories) {
 	if err := utils.CreateAndCleanAppDirs(cloudfockerHome); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := buildpack.AtLeastOneBuildpackIn(cloudfockerHome + "/buildpacks"); err != nil {
+	if err := buildpack.AtLeastOneBuildpackIn(directories.Buildpacks()); err != nil {
 		log.Fatalf(" %s", err)
 	}
 	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome); err != nil {

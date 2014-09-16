@@ -1,14 +1,14 @@
 package config
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-	"encoding/json"
 
-	"github.com/cloudfoundry-incubator/candiedyaml"
 	"github.com/cloudcredo/cloudfocker/utils"
+	"github.com/cloudfoundry-incubator/candiedyaml"
 )
 
 type RunConfig struct {
@@ -51,7 +51,7 @@ func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
 			"TMPDIR":        "/app/tmp",
 			"PORT":          "8080",
 			"VCAP_SERVICES": vcapServices(cloudfoundryDropletDir),
-			"DATABASE_URL": databaseURL(cloudfoundryDropletDir),
+			"DATABASE_URL":  databaseURL(cloudfoundryDropletDir),
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},

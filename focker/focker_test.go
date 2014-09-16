@@ -84,10 +84,22 @@ var _ = Describe("Focker", func() {
 	})
 
 	Describe("Staging an application", func() {
+		var (
+			cloudfockerHome string
+		)
+
+		BeforeEach(func() {
+			cloudfockerHome, _ = ioutil.TempDir(os.TempDir(), "focker-staging-test")
+			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+			testfocker = focker.NewFocker()
+		})
+
+		AfterEach(func() {
+			os.RemoveAll(cloudfockerHome)
+		})
+
 		Context("with a detected buildpack", func() {
 			It("should populate the droplet directory", func() {
-				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-test")
-				os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
 				cp("fixtures/stage/buildpacks", cloudfockerHome)
 				err := testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
 				Expect(err).ShouldNot(HaveOccurred())
@@ -97,71 +109,73 @@ var _ = Describe("Focker", func() {
 				Expect(dropletDirContents, err).Should(ContainElement("logs"))
 				Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
 				Expect(dropletDirContents, err).Should(ContainElement("tmp"))
-				os.RemoveAll(cloudfockerHome)
 			})
 		})
 		Context("with a buildpack that doesn't detect", func() {
 			It("tell us we don't have a valid buildpack", func() {
-				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "focker-staging-nobuildpack-test")
-				os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
 				cp("fixtures/runtime/buildpacks", cloudfockerHome)
 				err := testfocker.RunStager(buffer, "fixtures/stage/apps/bash-app")
 				Expect(err).Should(MatchError("Staging failed - have you added a buildpack for this type of application?"))
-				os.RemoveAll(cloudfockerHome)
 			})
 		})
 	})
 
-	Describe("Running an application", func() {
-		Context("without a currently running application", func() {
-			It("should output a valid URL for the running application", func() {
-				cloudfockerHome, appDir := setUpTestingCloudfockerHomeAndAppDir()
-				testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
-				testfocker.RunRuntime(buffer)
-				Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
-				Eventually(statusCodeChecker).Should(Equal(200))
-				testfocker.StopRuntime(buffer)
-				os.RemoveAll(cloudfockerHome)
-				os.RemoveAll(appDir)
-			})
+	Describe("Managing applications", func() {
+		var (
+			cloudfockerHome string
+			appDir          string
+		)
+
+		BeforeEach(func() {
+			cloudfockerHome, _ = ioutil.TempDir(os.TempDir(), "focker-staging-test")
+			os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
+			cp("fixtures/runtime/buildpacks", cloudfockerHome)
+
+			appDir, _ = ioutil.TempDir(os.TempDir(), "focker-test-app")
+			cp("fixtures/runtime/apps/cf-test-buildpack-app", appDir)
+
+			testfocker = focker.NewFocker()
 		})
-		Context("with a currently running application", func() {
-			It("should delete the current container and output a valid URL for the new running application", func() {
-				cloudfockerHome, appDir := setUpTestingCloudfockerHomeAndAppDir()
-				testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
-				testfocker.RunRuntime(buffer)
-				Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
-				Eventually(statusCodeChecker).Should(Equal(200))
-				testfocker.RunRuntime(buffer)
-				Consistently(buffer).ShouldNot(gbytes.Say(`Conflict`))
-				Eventually(statusCodeChecker).Should(Equal(200))
-				os.RemoveAll(cloudfockerHome)
-				os.RemoveAll(appDir)
-			})
-		})
-	})
-	Describe("Stopping a running an application", func() {
-		It("should stop the application", func() {
-			cloudfockerHome, appDir := setUpTestingCloudfockerHomeAndAppDir()
-			testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
-			testfocker.RunRuntime(buffer)
-			Eventually(statusCodeChecker).Should(Equal(200))
-			testfocker.StopRuntime(buffer)
-			Eventually(statusCodeChecker).Should(Equal(0))
+
+		AfterEach(func() {
 			os.RemoveAll(cloudfockerHome)
 			os.RemoveAll(appDir)
 		})
+
+		Describe("when running an application", func() {
+			Context("without a currently running application", func() {
+				It("should output a valid URL for the running application", func() {
+					testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+					testfocker.RunRuntime(buffer)
+					Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
+					Eventually(statusCodeChecker).Should(Equal(200))
+					testfocker.StopRuntime(buffer)
+				})
+			})
+			Context("with a currently running application", func() {
+				It("should delete the current container and output a valid URL for the new running application", func() {
+					testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+					testfocker.RunRuntime(buffer)
+					Eventually(buffer).Should(gbytes.Say(`Connect to your running application at http://localhost:8080/`))
+					Eventually(statusCodeChecker).Should(Equal(200))
+					testfocker.RunRuntime(buffer)
+					Consistently(buffer).ShouldNot(gbytes.Say(`Conflict`))
+					Eventually(statusCodeChecker).Should(Equal(200))
+				})
+			})
+		})
+
+		Describe("when stopping a running an application", func() {
+			It("should stop the application", func() {
+				testfocker.RunStager(buffer, appDir+"/cf-test-buildpack-app")
+				testfocker.RunRuntime(buffer)
+				Eventually(statusCodeChecker).Should(Equal(200))
+				testfocker.StopRuntime(buffer)
+				Eventually(statusCodeChecker).Should(Equal(0))
+			})
+		})
 	})
 })
-
-func setUpTestingCloudfockerHomeAndAppDir() (cloudfockerHome string, appDir string) {
-	cloudfockerHome, _ = ioutil.TempDir(os.TempDir(), "focker-test")
-	os.Setenv("CLOUDFOCKER_HOME", cloudfockerHome)
-	cp("fixtures/runtime/buildpacks", cloudfockerHome)
-	appDir, _ = ioutil.TempDir(os.TempDir(), "focker-test-app")
-	cp("fixtures/runtime/apps/cf-test-buildpack-app", appDir)
-	return
-}
 
 func statusCodeChecker() int {
 	res, err := http.Get("http://localhost:8080/")
