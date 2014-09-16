@@ -74,7 +74,7 @@ func (focker *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...s
 func (focker *Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(utils.CloudfockerHome(), focker.directories)
 	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome()+"/staging")
-	runConfig := config.NewStageRunConfig(stagingAppDir)
+	runConfig := config.NewStageRunConfig(stagingAppDir, focker.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	focker.DeleteContainer(writer, runConfig.ContainerName)

@@ -92,7 +92,7 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to run the container with the correct arguments", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.RunConfiguredContainer(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewStageRunConfig("/tmp/fakeappdir"))
+			docker.RunConfiguredContainer(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewStageRunConfig("/tmp/fakeappdir", config.NewDirectories("test")))
 			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(12))
 			Expect(fakeDockerClient.cmdRunArgs[11]).To(Equal("internal"))
 		})

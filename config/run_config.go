@@ -21,16 +21,16 @@ type RunConfig struct {
 	Command        []string
 }
 
-func NewStageRunConfig(cloudfoundryAppDir string) (runConfig *RunConfig) {
+func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (runConfig *RunConfig) {
 	runConfig = &RunConfig{
 		ContainerName: "cloudfocker-staging",
 		Mounts: map[string]string{
-			cloudfoundryAppDir:                      "/app",
-			utils.CloudfockerHome() + "/droplet":    "/tmp/droplet",
-			utils.CloudfockerHome() + "/result":     "/tmp/result",
-			utils.CloudfockerHome() + "/buildpacks": "/tmp/cloudfockerbuildpacks",
-			utils.CloudfockerHome() + "/cache":      "/tmp/cache",
-			utils.CloudfockerHome() + "/focker":     "/focker",
+			cloudfoundryAppDir:                   "/app",
+			utils.CloudfockerHome() + "/droplet": "/tmp/droplet",
+			utils.CloudfockerHome() + "/result":  "/tmp/result",
+			directories.Buildpacks():             "/tmp/cloudfockerbuildpacks",
+			utils.CloudfockerHome() + "/cache":   "/tmp/cache",
+			utils.CloudfockerHome() + "/focker":  "/focker",
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command:  []string{"/focker/fock", "stage", "internal"},

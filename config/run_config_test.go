@@ -10,10 +10,11 @@ import (
 var _ = Describe("RunConfig", func() {
 	Describe("Generating a RunConfig for staging", func() {
 		It("should return a valid RunConfig with the correct staging information", func() {
-			stageConfig := config.NewStageRunConfig("/home/testuser/testapp")
+			stageConfig := config.NewStageRunConfig("/home/testuser/testapp", config.NewDirectories("TEST_CLOUDFOCKERHOME"))
 			Expect(stageConfig.ContainerName).To(Equal("cloudfocker-staging"))
 			Expect(len(stageConfig.Mounts)).To(Equal(6))
 			Expect(stageConfig.Mounts["/home/testuser/testapp"]).To(Equal("/app"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/buildpacks"]).To(Equal("/tmp/cloudfockerbuildpacks"))
 			Expect(stageConfig.ImageTag).To(Equal("cloudfocker-base:latest"))
 			Expect(stageConfig.Command).To(Equal([]string{"/focker/fock", "stage", "internal"}))
 		})
