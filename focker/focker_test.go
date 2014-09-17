@@ -180,7 +180,7 @@ var _ = Describe("Focker", func() {
 		Context("without a previously staged application", func() {
 			It("should create the correct directory structure", func() {
 				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				err := focker.CreateAndCleanAppDirs(cloudfockerHome, config.NewDirectories(cloudfockerHome))
+				err := focker.CreateAndCleanAppDirs(config.NewDirectories(cloudfockerHome))
 				Expect(err).ShouldNot(HaveOccurred())
 				cloudfockerHomeFile, err := os.Open(cloudfockerHome)
 				cloudfockerHomeContents, err := cloudfockerHomeFile.Readdirnames(0)
@@ -200,7 +200,7 @@ var _ = Describe("Focker", func() {
 					os.MkdirAll(cloudfockerHome+dir, 0755)
 					ioutil.WriteFile(cloudfockerHome+dir+"/testfile", []byte("test"), 0644)
 				}
-				err := focker.CreateAndCleanAppDirs(cloudfockerHome, config.NewDirectories(cloudfockerHome))
+				err := focker.CreateAndCleanAppDirs(config.NewDirectories(cloudfockerHome))
 				Expect(err).ShouldNot(HaveOccurred())
 				for dir, clean := range dirs {
 					dirFile, err := os.Open(cloudfockerHome + dir)

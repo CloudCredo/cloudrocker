@@ -72,7 +72,7 @@ func (focker *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...s
 }
 
 func (focker *Focker) RunStager(writer io.Writer, appDir string) error {
-	prepareStagingFilesystem(utils.CloudfockerHome(), focker.directories)
+	prepareStagingFilesystem(focker.directories)
 	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome()+"/staging")
 	runConfig := config.NewStageRunConfig(stagingAppDir, focker.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
@@ -118,8 +118,8 @@ func cloudFockerfileLocation() (location string) {
 	return
 }
 
-func prepareStagingFilesystem(cloudfockerHome string, directories *config.Directories) {
-	if err := CreateAndCleanAppDirs(cloudfockerHome, directories); err != nil {
+func prepareStagingFilesystem(directories *config.Directories) {
+	if err := CreateAndCleanAppDirs(directories); err != nil {
 		log.Fatalf(" %s", err)
 	}
 	if err := buildpack.AtLeastOneBuildpackIn(directories.Buildpacks()); err != nil {
@@ -155,13 +155,13 @@ func abs(relative string) string {
 	return absolute
 }
 
-func CreateAndCleanAppDirs(cloudfockerHomeDir string, directories *config.Directories) error {
+func CreateAndCleanAppDirs(directories *config.Directories) error {
 	dirs := map[string]bool{
 		directories.Buildpacks():        false,
 		directories.Droplet():           true,
 		directories.Cache():             false,
 		directories.Result():            true,
-		cloudfockerHomeDir + "/staging": true,
+		directories.Home() + "/staging": true,
 	}
 
 	for dir, clean := range dirs {
