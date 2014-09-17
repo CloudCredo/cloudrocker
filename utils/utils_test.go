@@ -56,7 +56,7 @@ var _ = Describe("Utils", func() {
 	Describe("Copying the focker binary to its own directory", func() {
 		It("should create a focker subdirectory with the fock binary inside it", func() {
 			cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-cp-focker")
-			err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome)
+			err := utils.CopyFockerBinaryToDir(cloudfockerHome + "/focker")
 			Expect(err).ShouldNot(HaveOccurred())
 			fockerOwnDirFile, err := os.Open(cloudfockerHome + "/focker")
 			fockerOwnDirContents, err := fockerOwnDirFile.Readdirnames(0)

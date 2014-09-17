@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/utils"
 	"github.com/cloudfoundry-incubator/candiedyaml"
 )
 
@@ -25,12 +24,12 @@ func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (run
 	runConfig = &RunConfig{
 		ContainerName: "cloudfocker-staging",
 		Mounts: map[string]string{ // host dir: container dir
-			cloudfoundryAppDir:                  "/app",
-			directories.Droplet():               "/tmp/droplet",
-			directories.Result():                "/tmp/result",
-			directories.Buildpacks():            "/tmp/cloudfockerbuildpacks",
-			directories.Cache():                 "/tmp/cache",
-			utils.CloudfockerHome() + "/focker": "/focker",
+			cloudfoundryAppDir:       "/app",
+			directories.Droplet():    "/tmp/droplet",
+			directories.Result():     "/tmp/result",
+			directories.Buildpacks(): "/tmp/cloudfockerbuildpacks",
+			directories.Cache():      "/tmp/cache",
+			directories.Focker():     "/focker",
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command:  []string{"/focker/fock", "stage", "internal"},

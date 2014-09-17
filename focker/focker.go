@@ -125,7 +125,7 @@ func prepareStagingFilesystem(cloudfockerHome string, directories *config.Direct
 	if err := buildpack.AtLeastOneBuildpackIn(directories.Buildpacks()); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := utils.CopyFockerBinaryToOwnDir(cloudfockerHome); err != nil {
+	if err := utils.CopyFockerBinaryToDir(directories.Focker()); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

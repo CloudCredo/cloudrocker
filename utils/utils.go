@@ -58,8 +58,8 @@ func SubDirs(dir string) ([]string, error) {
 	return dirs, nil
 }
 
-func CopyFockerBinaryToOwnDir(cloudfockerHome string) error {
-	if err := os.MkdirAll(cloudfockerHome+"/focker", 0755); err != nil {
+func CopyFockerBinaryToDir(destinationDir string) error {
+	if err := os.MkdirAll(destinationDir, 0755); err != nil {
 		return err
 	}
 	var fockPath string
@@ -67,7 +67,7 @@ func CopyFockerBinaryToOwnDir(cloudfockerHome string) error {
 	if fockPath, err = exec.LookPath("fock"); err != nil {
 		return fmt.Errorf("Could not find fock binary, please install it in your path")
 	}
-	newFockPath := cloudfockerHome + "/focker/fock"
+	newFockPath := destinationDir + "/fock"
 	if err := Cp(fockPath, newFockPath); err != nil {
 		return err
 	}

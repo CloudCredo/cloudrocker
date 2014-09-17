@@ -11,6 +11,7 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 			"droplet":    cloudFockerHomeDir + "/droplet",
 			"result":     cloudFockerHomeDir + "/result",
 			"cache":      cloudFockerHomeDir + "/cache",
+			"focker":     cloudFockerHomeDir + "/focker",
 		},
 	}
 	return directories
@@ -30,4 +31,8 @@ func (directories *Directories) Result() string {
 
 func (directories *Directories) Cache() string {
 	return directories.mounts["cache"]
+}
+
+func (directories *Directories) Focker() string {
+	return directories.mounts["focker"]
 }
