@@ -74,10 +74,10 @@ func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string
 func (f *Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(f.directories)
 	stagingAppDir := prepareStagingApp(appDir, f.directories.Staging())
-	runConfig := config.NewStageRunConfig(stagingAppDir, f.directories)
+	containerConfig := config.NewStageContainerConfig(stagingAppDir, f.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
-	DeleteContainer(writer, runConfig.ContainerName)
+	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)
+	DeleteContainer(writer, containerConfig.ContainerName)
 	return stager.ValidateStagedApp(f.directories)
 }
 
@@ -93,14 +93,14 @@ func StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 
 func (f *Focker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(f.directories.Droplet())
-	runConfig := config.NewRuntimeRunConfig(f.directories.Droplet())
+	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
+	if docker.GetContainerId(cli, Stdout, stdoutpipe, containerConfig.ContainerName) != "" {
 		fmt.Println("Deleting running runtime container...")
 		f.StopRuntime(writer)
 	}
 	cli, Stdout, stdoutpipe = docker.GetNewClient()
-	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
+	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 

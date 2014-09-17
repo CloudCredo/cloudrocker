@@ -53,10 +53,10 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 	return nil
 }
 
-func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, runConfig *config.RunConfig) error {
+func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Starting the CloudFocker container...")
 	go func() {
-		err := cli.CmdRun(ParseRunCommand(runConfig)...)
+		err := cli.CmdRun(ParseRunCommand(containerConfig)...)
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}

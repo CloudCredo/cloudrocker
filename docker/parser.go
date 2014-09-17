@@ -9,7 +9,7 @@ import (
 	"github.com/cloudcredo/cloudfocker/config"
 )
 
-func ParseRunCommand(config *config.RunConfig) (runCmd []string) {
+func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {
 	runCmd = append(runCmd, userString())
 	runCmd = append(runCmd, parseContainerName(config.ContainerName)...)
 	runCmd = append(runCmd, parseDaemon(config.Daemon)...)

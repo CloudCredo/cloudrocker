@@ -10,7 +10,7 @@ import (
 	"github.com/cloudfoundry-incubator/candiedyaml"
 )
 
-type RunConfig struct {
+type ContainerConfig struct {
 	ContainerName  string
 	Daemon         bool
 	Mounts         map[string]string
@@ -20,8 +20,8 @@ type RunConfig struct {
 	Command        []string
 }
 
-func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (runConfig *RunConfig) {
-	runConfig = &RunConfig{
+func NewStageContainerConfig(cloudfoundryAppDir string, directories *Directories) (containerConfig *ContainerConfig) {
+	containerConfig = &ContainerConfig{
 		ContainerName: "cloudfocker-staging",
 		Mounts: map[string]string{ // host dir: container dir
 			cloudfoundryAppDir:       "/app",
@@ -37,8 +37,8 @@ func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (run
 	return
 }
 
-func NewRuntimeRunConfig(cloudfoundryDropletDir string) (runConfig *RunConfig) {
-	runConfig = &RunConfig{
+func NewRuntimeContainerConfig(cloudfoundryDropletDir string) (containerConfig *ContainerConfig) {
+	containerConfig = &ContainerConfig{
 		ContainerName: "cloudfocker-runtime",
 		Daemon:        true,
 		Mounts: map[string]string{

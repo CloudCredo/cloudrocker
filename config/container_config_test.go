@@ -7,10 +7,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("RunConfig", func() {
-	Describe("Generating a RunConfig for staging", func() {
-		It("should return a valid RunConfig with the correct staging information", func() {
-			stageConfig := config.NewStageRunConfig("/home/testuser/testapp", config.NewDirectories("TEST_CLOUDFOCKERHOME"))
+var _ = Describe("ContainerConfig", func() {
+	Describe("Generating a ContainerConfig for staging", func() {
+		It("should return a valid ContainerConfig with the correct staging information", func() {
+			stageConfig := config.NewStageContainerConfig("/home/testuser/testapp", config.NewDirectories("TEST_CLOUDFOCKERHOME"))
 			Expect(stageConfig.ContainerName).To(Equal("cloudfocker-staging"))
 			Expect(len(stageConfig.Mounts)).To(Equal(6))
 			Expect(stageConfig.Mounts["/home/testuser/testapp"]).To(Equal("/app"))
@@ -21,10 +21,10 @@ var _ = Describe("RunConfig", func() {
 		})
 	})
 
-	Describe("Generating a RunConfig for runtime", func() {
+	Describe("Generating a ContainerConfig for runtime", func() {
 		Context("with a valid staging_info.yml", func() {
-			It("should return a valid RunConfig with the correct runtime information", func() {
-				runtimeConfig := config.NewRuntimeRunConfig("fixtures/testdroplet")
+			It("should return a valid ContainerConfig with the correct runtime information", func() {
+				runtimeConfig := config.NewRuntimeContainerConfig("fixtures/testdroplet")
 				Expect(runtimeConfig.ContainerName).To(Equal("cloudfocker-runtime"))
 				Expect(runtimeConfig.Daemon).To(Equal(true))
 				Expect(len(runtimeConfig.Mounts)).To(Equal(1))
@@ -44,8 +44,8 @@ var _ = Describe("RunConfig", func() {
 			})
 		})
 		Context("with no staging_info.yml, but a valid Procfile", func() {
-			It("should return a valid RunConfig with the correct runtime information", func() {
-				runtimeConfig := config.NewRuntimeRunConfig("fixtures/procfiletestdroplet")
+			It("should return a valid ContainerConfig with the correct runtime information", func() {
+				runtimeConfig := config.NewRuntimeContainerConfig("fixtures/procfiletestdroplet")
 				Expect(runtimeConfig.ContainerName).To(Equal("cloudfocker-runtime"))
 				Expect(runtimeConfig.Daemon).To(Equal(true))
 				Expect(len(runtimeConfig.Mounts)).To(Equal(1))
