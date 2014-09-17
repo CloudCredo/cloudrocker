@@ -159,7 +159,7 @@ func CreateAndCleanAppDirs(cloudfockerHomeDir string, directories *config.Direct
 	dirs := map[string]bool{
 		directories.Buildpacks():        false,
 		directories.Droplet():           true,
-		cloudfockerHomeDir + "/cache":   false,
+		directories.Cache():             false,
 		directories.Result():            true,
 		cloudfockerHomeDir + "/staging": true,
 	}

@@ -29,7 +29,7 @@ func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (run
 			directories.Droplet():               "/tmp/droplet",
 			directories.Result():                "/tmp/result",
 			directories.Buildpacks():            "/tmp/cloudfockerbuildpacks",
-			utils.CloudfockerHome() + "/cache":  "/tmp/cache",
+			directories.Cache():                 "/tmp/cache",
 			utils.CloudfockerHome() + "/focker": "/focker",
 		},
 		ImageTag: "cloudfocker-base:latest",

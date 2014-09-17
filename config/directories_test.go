@@ -30,5 +30,9 @@ var _ = Describe("Directories", func() {
 		It("should return the result directory", func() {
 			Expect(testDirectories.Result()).To(Equal(cloudFockerHomeDir + "/result"))
 		})
+
+		It("should return the cache directory", func() {
+			Expect(testDirectories.Cache()).To(Equal(cloudFockerHomeDir + "/cache"))
+		})
 	})
 })
