@@ -7,6 +7,7 @@ type Directories struct {
 func NewDirectories(cloudFockerHomeDir string) *Directories {
 	directories := &Directories{
 		mounts: map[string]string{
+			"home":       cloudFockerHomeDir,
 			"buildpacks": cloudFockerHomeDir + "/buildpacks",
 			"droplet":    cloudFockerHomeDir + "/droplet",
 			"result":     cloudFockerHomeDir + "/result",
@@ -15,6 +16,10 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 		},
 	}
 	return directories
+}
+
+func (directories *Directories) Home() string {
+	return directories.mounts["home"]
 }
 
 func (directories *Directories) Buildpacks() string {

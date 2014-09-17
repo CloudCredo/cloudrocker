@@ -19,6 +19,9 @@ var _ = Describe("Directories", func() {
 			testDirectories = config.NewDirectories(cloudFockerHomeDir)
 		})
 
+		It("should return the cloudfocker home directory", func() {
+			Expect(testDirectories.Home()).To(Equal(cloudFockerHomeDir))
+		})
 		It("should return the buildpacks directory", func() {
 			Expect(testDirectories.Buildpacks()).To(Equal(cloudFockerHomeDir + "/buildpacks"))
 		})
