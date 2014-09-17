@@ -63,7 +63,7 @@ var _ = Describe("Stager", func() {
 				dropletDir := config.NewDirectories(cfhome).Droplet()
 				os.MkdirAll(dropletDir+"/app", 0755)
 				ioutil.WriteFile(dropletDir+"/staging_info.yml", []byte("test-staging-info"), 0644)
-				err := stager.ValidateStagedApp(cfhome)
+				err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
 				Expect(err).ShouldNot(HaveOccurred())
 				os.RemoveAll(cfhome)
 			})
@@ -72,7 +72,7 @@ var _ = Describe("Stager", func() {
 			Context("because we have no droplet", func() {
 				It("should return an error about a missing droplet", func() {
 					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
-					err := stager.ValidateStagedApp(cfhome)
+					err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
 					Expect(err).Should(MatchError("Staging failed - have you added a buildpack for this type of application?"))
 					os.RemoveAll(cfhome)
 				})
@@ -81,7 +81,7 @@ var _ = Describe("Stager", func() {
 				It("should return an error about missing staging info", func() {
 					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
 					os.MkdirAll(cfhome+"/droplet/app", 0755)
-					err := stager.ValidateStagedApp(cfhome)
+					err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
 					Expect(err).Should(MatchError("Staging failed - no staging info was produced by the matching buildpack!"))
 					os.RemoveAll(cfhome)
 				})

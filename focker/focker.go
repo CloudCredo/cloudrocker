@@ -78,7 +78,7 @@ func (focker *Focker) RunStager(writer io.Writer, appDir string) error {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	focker.DeleteContainer(writer, runConfig.ContainerName)
-	return stager.ValidateStagedApp(utils.CloudfockerHome())
+	return stager.ValidateStagedApp(focker.directories)
 }
 
 func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
@@ -92,7 +92,7 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 }
 
 func (focker *Focker) RunRuntime(writer io.Writer) {
-	prepareRuntimeFilesystem(utils.CloudfockerHome())
+	prepareRuntimeFilesystem(focker.directories)
 	runConfig := config.NewRuntimeRunConfig(focker.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
@@ -141,8 +141,8 @@ func copyDir(src string, dest string) {
 	}
 }
 
-func prepareRuntimeFilesystem(cloudfockerHome string) {
-	if err := utils.AddSoldierRunScript(cloudfockerHome + "/droplet/app"); err != nil {
+func prepareRuntimeFilesystem(directories *config.Directories) {
+	if err := utils.AddSoldierRunScript(directories.Droplet() + "/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }
@@ -158,7 +158,7 @@ func abs(relative string) string {
 func CreateAndCleanAppDirs(cloudfockerHomeDir string, directories *config.Directories) error {
 	dirs := map[string]bool{
 		directories.Buildpacks():        false,
-		cloudfockerHomeDir + "/droplet": true,
+		directories.Droplet():           true,
 		cloudfockerHomeDir + "/cache":   false,
 		cloudfockerHomeDir + "/result":  true,
 		cloudfockerHomeDir + "/staging": true,

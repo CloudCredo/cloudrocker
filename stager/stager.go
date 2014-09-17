@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/utils"
 
 	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
@@ -33,11 +34,11 @@ func NewBuildpackRunner(buildpackDir string) *buildpackrunner.Runner {
 	return buildpackrunner.New(&config)
 }
 
-func ValidateStagedApp(cloudfockerHome string) error {
-	if _, err := os.Stat(cloudfockerHome + "/droplet/app"); err != nil {
+func ValidateStagedApp(directories *config.Directories) error {
+	if _, err := os.Stat(directories.Droplet() + "/app"); err != nil {
 		return fmt.Errorf("Staging failed - have you added a buildpack for this type of application?")
 	}
-	if _, err := os.Stat(cloudfockerHome + "/droplet/staging_info.yml"); err != nil {
+	if _, err := os.Stat(directories.Droplet() + "/staging_info.yml"); err != nil {
 		return fmt.Errorf("Staging failed - no staging info was produced by the matching buildpack!")
 	}
 	return nil
