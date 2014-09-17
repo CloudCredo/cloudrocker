@@ -27,61 +27,61 @@ func NewFocker() *Focker {
 	}
 }
 
-func (Focker) DockerVersion(writer io.Writer) {
+func DockerVersion(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.PrintVersion(cli, Stdout, stdoutpipe, writer)
 }
 
-func (Focker) ImportRootfsImage(writer io.Writer) {
+func ImportRootfsImage(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
 }
 
-func (f Focker) StopContainer(writer io.Writer, name string) {
+func StopContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.StopContainer(cli, Stdout, stdoutpipe, writer, name)
 }
 
-func (Focker) DeleteContainer(writer io.Writer, name string) {
+func DeleteContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer, name)
 }
 
-func (focker *Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
-	buildpackDir := focker.directories.Buildpacks()
+func (f *Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
+	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Add(writer, url, abs(buildpackDir))
 }
 
-func (focker *Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
-	buildpackDir := focker.directories.Buildpacks()
+func (f *Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
+	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.Delete(writer, bpack, abs(buildpackDir))
 }
 
-func (focker *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
-	buildpackDir := focker.directories.Buildpacks()
+func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
+	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
 	buildpack.List(writer, abs(buildpackDir))
 }
 
-func (focker *Focker) RunStager(writer io.Writer, appDir string) error {
-	prepareStagingFilesystem(focker.directories)
+func (f *Focker) RunStager(writer io.Writer, appDir string) error {
+	prepareStagingFilesystem(f.directories)
 	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome()+"/staging")
-	runConfig := config.NewStageRunConfig(stagingAppDir, focker.directories)
+	runConfig := config.NewStageRunConfig(stagingAppDir, f.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
-	focker.DeleteContainer(writer, runConfig.ContainerName)
-	return stager.ValidateStagedApp(focker.directories)
+	DeleteContainer(writer, runConfig.ContainerName)
+	return stager.ValidateStagedApp(f.directories)
 }
 
-func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
+func StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	buildpackDir := "/tmp/cloudfockerbuildpacks"
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
@@ -91,22 +91,22 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	return err
 }
 
-func (focker *Focker) RunRuntime(writer io.Writer) {
-	prepareRuntimeFilesystem(focker.directories.Droplet())
-	runConfig := config.NewRuntimeRunConfig(focker.directories.Droplet())
+func (f *Focker) RunRuntime(writer io.Writer) {
+	prepareRuntimeFilesystem(f.directories.Droplet())
+	runConfig := config.NewRuntimeRunConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
 		fmt.Println("Deleting running runtime container...")
-		focker.StopRuntime(writer)
+		f.StopRuntime(writer)
 	}
 	cli, Stdout, stdoutpipe = docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 
-func (f Focker) StopRuntime(writer io.Writer) {
-	f.StopContainer(writer, "cloudfocker-runtime")
-	f.DeleteContainer(writer, "cloudfocker-runtime")
+func (f *Focker) StopRuntime(writer io.Writer) {
+	StopContainer(writer, "cloudfocker-runtime")
+	DeleteContainer(writer, "cloudfocker-runtime")
 }
 
 func cloudFockerfileLocation() (location string) {

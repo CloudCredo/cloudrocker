@@ -28,7 +28,7 @@ var _ = Describe("Focker", func() {
 
 	Describe("Displaying the docker version", func() {
 		It("should tell Docker to output its version", func() {
-			testfocker.DockerVersion(buffer)
+			focker.DockerVersion(buffer)
 			Eventually(buffer).Should(gbytes.Say(`Checking Docker version`))
 			Eventually(buffer).Should(gbytes.Say(`Client API version: `))
 			Eventually(buffer).Should(gbytes.Say(`Go version \(client\): go`))
@@ -39,7 +39,7 @@ var _ = Describe("Focker", func() {
 		//This works, but speed depends on your net connection
 		XIt("should download and tag the lucid64 filesystem", func() {
 			fmt.Println("Downloading lucid64 - this could take a while")
-			testfocker.ImportRootfsImage(buffer)
+			focker.ImportRootfsImage(buffer)
 			Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
 		})
 	})
@@ -77,7 +77,7 @@ var _ = Describe("Focker", func() {
 	Describe("Building an application droplet", func() {
 		It("should run the buildpack runner from linux-circus", func() {
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
-			err := testfocker.StageApp(buffer, buildpackDir)
+			err := focker.StageApp(buffer, buildpackDir)
 			Expect(err).Should(MatchError("no valid buildpacks detected"))
 			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
 			os.RemoveAll(buildpackDir)
