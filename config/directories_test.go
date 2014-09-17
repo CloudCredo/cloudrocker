@@ -26,5 +26,9 @@ var _ = Describe("Directories", func() {
 		It("should return the droplet directory", func() {
 			Expect(testDirectories.Droplet()).To(Equal(cloudFockerHomeDir + "/droplet"))
 		})
+
+		It("should return the result directory", func() {
+			Expect(testDirectories.Result()).To(Equal(cloudFockerHomeDir + "/result"))
+		})
 	})
 })

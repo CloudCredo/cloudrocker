@@ -9,6 +9,7 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 		mounts: map[string]string{
 			"buildpacks": cloudFockerHomeDir + "/buildpacks",
 			"droplet":    cloudFockerHomeDir + "/droplet",
+			"result":     cloudFockerHomeDir + "/result",
 		},
 	}
 	return directories
@@ -20,4 +21,8 @@ func (directories *Directories) Buildpacks() string {
 
 func (directories *Directories) Droplet() string {
 	return directories.mounts["droplet"]
+}
+
+func (directories *Directories) Result() string {
+	return directories.mounts["result"]
 }

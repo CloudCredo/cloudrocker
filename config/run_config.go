@@ -27,7 +27,7 @@ func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (run
 		Mounts: map[string]string{ // host dir: container dir
 			cloudfoundryAppDir:                  "/app",
 			directories.Droplet():               "/tmp/droplet",
-			utils.CloudfockerHome() + "/result": "/tmp/result",
+			directories.Result():                "/tmp/result",
 			directories.Buildpacks():            "/tmp/cloudfockerbuildpacks",
 			utils.CloudfockerHome() + "/cache":  "/tmp/cache",
 			utils.CloudfockerHome() + "/focker": "/focker",
