@@ -1,12 +1,12 @@
 package config
 
 type Directories struct {
-	Mounts map[string]string
+	mounts map[string]string
 }
 
 func NewDirectories(cloudFockerHomeDir string) *Directories {
 	directories := &Directories{
-		Mounts: map[string]string{
+		mounts: map[string]string{
 			"buildpacks": cloudFockerHomeDir + "/buildpacks",
 			"droplet":    cloudFockerHomeDir + "/droplet",
 		},
@@ -15,9 +15,9 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 }
 
 func (directories *Directories) Buildpacks() string {
-	return directories.Mounts["buildpacks"]
+	return directories.mounts["buildpacks"]
 }
 
 func (directories *Directories) Droplet() string {
-	return directories.Mounts["droplet"]
+	return directories.mounts["droplet"]
 }
