@@ -13,6 +13,7 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 			"result":     cloudFockerHomeDir + "/result",
 			"cache":      cloudFockerHomeDir + "/cache",
 			"focker":     cloudFockerHomeDir + "/focker",
+			"staging":    cloudFockerHomeDir + "/staging",
 		},
 	}
 	return directories
@@ -40,4 +41,8 @@ func (directories *Directories) Cache() string {
 
 func (directories *Directories) Focker() string {
 	return directories.mounts["focker"]
+}
+
+func (directories *Directories) Staging() string {
+	return directories.mounts["staging"]
 }

@@ -73,7 +73,7 @@ func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string
 
 func (f *Focker) RunStager(writer io.Writer, appDir string) error {
 	prepareStagingFilesystem(f.directories)
-	stagingAppDir := prepareStagingApp(appDir, utils.CloudfockerHome()+"/staging")
+	stagingAppDir := prepareStagingApp(appDir, f.directories.Staging())
 	runConfig := config.NewStageRunConfig(stagingAppDir, f.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, runConfig)
@@ -157,11 +157,11 @@ func abs(relative string) string {
 
 func CreateAndCleanAppDirs(directories *config.Directories) error {
 	dirs := map[string]bool{
-		directories.Buildpacks():        false,
-		directories.Droplet():           true,
-		directories.Cache():             false,
-		directories.Result():            true,
-		directories.Home() + "/staging": true,
+		directories.Buildpacks(): false,
+		directories.Droplet():    true,
+		directories.Cache():      false,
+		directories.Result():     true,
+		directories.Staging():    true,
 	}
 
 	for dir, clean := range dirs {
