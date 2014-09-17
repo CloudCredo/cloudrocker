@@ -24,7 +24,7 @@ type RunConfig struct {
 func NewStageRunConfig(cloudfoundryAppDir string, directories *Directories) (runConfig *RunConfig) {
 	runConfig = &RunConfig{
 		ContainerName: "cloudfocker-staging",
-		Mounts: map[string]string{
+		Mounts: map[string]string{ // host dir: container dir
 			cloudfoundryAppDir:                  "/app",
 			directories.Droplet():               "/tmp/droplet",
 			utils.CloudfockerHome() + "/result": "/tmp/result",
