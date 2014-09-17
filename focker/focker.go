@@ -92,7 +92,7 @@ func (Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 }
 
 func (focker *Focker) RunRuntime(writer io.Writer) {
-	prepareRuntimeFilesystem(focker.directories)
+	prepareRuntimeFilesystem(focker.directories.Droplet())
 	runConfig := config.NewRuntimeRunConfig(focker.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	if docker.GetContainerId(cli, Stdout, stdoutpipe, runConfig.ContainerName) != "" {
@@ -141,8 +141,8 @@ func copyDir(src string, dest string) {
 	}
 }
 
-func prepareRuntimeFilesystem(directories *config.Directories) {
-	if err := utils.AddSoldierRunScript(directories.Droplet() + "/app"); err != nil {
+func prepareRuntimeFilesystem(dropletDir string) {
+	if err := utils.AddSoldierRunScript(dropletDir + "/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }
