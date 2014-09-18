@@ -7,7 +7,6 @@ import (
 
 	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/docker"
-	"github.com/cloudcredo/cloudfocker/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -29,7 +28,7 @@ var _ = Describe("Parser", func() {
 					"--volume=/home/testuser/.cloudfocker/droplet:/tmp/droplet " +
 					"--volume=/home/testuser/.cloudfocker/focker:/focker " +
 					"--volume=/home/testuser/.cloudfocker/result:/tmp/result " +
-					"--volume=" + utils.Pwd() + ":/app " +
+					"--volume=/home/testuser/.cloudfocker/staging:/app " +
 					"cloudfocker-base:latest " +
 					"/focker/fock stage internal"))
 			})

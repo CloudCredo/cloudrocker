@@ -2,7 +2,6 @@ package config_test
 
 import (
 	"github.com/cloudcredo/cloudfocker/config"
-	"github.com/cloudcredo/cloudfocker/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,7 +12,7 @@ var _ = Describe("ContainerConfig", func() {
 		It("should return a valid ContainerConfig with the correct staging information", func() {
 			stageConfig := config.NewStageContainerConfig(config.NewDirectories("TEST_CLOUDFOCKERHOME"))
 			Expect(stageConfig.ContainerName).To(Equal("cloudfocker-staging"))
-			Expect(stageConfig.Mounts[utils.Pwd()]).To(Equal("/app"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/staging"]).To(Equal("/app"))
 			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/droplet"]).To(Equal("/tmp/droplet"))
 			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/result"]).To(Equal("/tmp/result"))
 			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/buildpacks"]).To(Equal("/tmp/cloudfockerbuildpacks"))

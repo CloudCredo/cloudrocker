@@ -22,8 +22,8 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 			"result":     Directory{cloudFockerHomeDir + "/result", "/tmp/result"},
 			"cache":      Directory{cloudFockerHomeDir + "/cache", "/tmp/cache"},
 			"focker":     Directory{cloudFockerHomeDir + "/focker", "/focker"},
-			"staging":    Directory{cloudFockerHomeDir + "/staging", ""},
-			"app":        Directory{utils.Pwd(), "/app"},
+			"staging":    Directory{cloudFockerHomeDir + "/staging", "/app"},
+			"app":        Directory{utils.Pwd(), ""},
 		},
 	}
 	return directories
