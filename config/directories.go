@@ -1,5 +1,9 @@
 package config
 
+import (
+	"github.com/cloudcredo/cloudfocker/utils"
+)
+
 type Directories struct {
 	mounts map[string]Directory
 }
@@ -19,6 +23,7 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 			"cache":      Directory{cloudFockerHomeDir + "/cache", "/tmp/cache"},
 			"focker":     Directory{cloudFockerHomeDir + "/focker", "/focker"},
 			"staging":    Directory{cloudFockerHomeDir + "/staging", ""},
+			"app":        Directory{utils.Pwd(), ""},
 		},
 	}
 	return directories
@@ -50,6 +55,10 @@ func (directories *Directories) Focker() string {
 
 func (directories *Directories) Staging() string {
 	return directories.mounts["staging"].HostDirectory
+}
+
+func (directories *Directories) App() string {
+	return directories.mounts["app"].HostDirectory
 }
 
 func (directories *Directories) Mounts() map[string]string {

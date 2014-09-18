@@ -1,6 +1,8 @@
 package config_test
 
 import (
+	"os"
+
 	"github.com/cloudcredo/cloudfocker/config"
 
 	. "github.com/onsi/ginkgo"
@@ -44,6 +46,11 @@ var _ = Describe("Directories", func() {
 
 		It("should return the staging directory", func() {
 			Expect(testDirectories.Staging()).To(Equal(cloudFockerHomeDir + "/staging"))
+		})
+
+		It("should return the application directory", func() {
+			pwd, _ := os.Getwd()
+			Expect(testDirectories.App()).To(Equal(pwd))
 		})
 	})
 

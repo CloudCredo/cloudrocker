@@ -71,9 +71,9 @@ func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string
 	buildpack.List(writer, abs(buildpackDir))
 }
 
-func (f *Focker) RunStager(writer io.Writer, appDir string) error {
+func (f *Focker) RunStager(writer io.Writer) error {
 	prepareStagingFilesystem(f.directories)
-	stagingAppDir := prepareStagingApp(appDir, f.directories.Staging())
+	stagingAppDir := prepareStagingApp(f.directories.App(), f.directories.Staging())
 	containerConfig := config.NewStageContainerConfig(stagingAppDir, f.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -79,6 +80,14 @@ func CopyFockerBinaryToDir(destinationDir string) error {
 
 func AddSoldierRunScript(appDir string) error {
 	return ioutil.WriteFile(appDir+"/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(soldier), 0644)
+}
+
+func Pwd() string {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf(" %s", err)
+	}
+	return pwd
 }
 
 //C&P(ha!) from https://gist.github.com/elazarl/5507969
