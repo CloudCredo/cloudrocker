@@ -80,7 +80,7 @@ var _ = Describe("Stager", func() {
 			Context("because we have no staging_info.yml", func() {
 				It("should return an error about missing staging info", func() {
 					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
-					os.MkdirAll(cfhome+"/droplet/app", 0755)
+					os.MkdirAll(cfhome+"/tmp/droplet/app", 0755)
 					err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
 					Expect(err).Should(MatchError("Staging failed - no staging info was produced by the matching buildpack!"))
 					os.RemoveAll(cfhome)

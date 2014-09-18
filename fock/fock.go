@@ -87,12 +87,13 @@ func main() {
 			Name:  "stage",
 			Usage: "only execute the staging phase for the application",
 			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
 				if internal := c.Args().First(); internal == "internal" {
 					//this is focker being called inside the staging container
 					focker.StageApp(os.Stdout)
 				} else {
 					//this is focker being called by the user, outside of the staging container
-					if err := focker.NewFocker().RunStager(os.Stdout); err != nil {
+					if err := focker.RunStager(os.Stdout); err != nil {
 						log.Fatalf(" %s", err)
 					}
 				}

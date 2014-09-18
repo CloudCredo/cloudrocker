@@ -6,6 +6,7 @@ import (
 
 type Directories struct {
 	mounts map[string]Directory
+	app    string
 }
 
 type Directory struct {
@@ -17,14 +18,15 @@ func NewDirectories(cloudFockerHomeDir string) *Directories {
 	directories := &Directories{
 		mounts: map[string]Directory{
 			"home":       Directory{cloudFockerHomeDir, ""},
-			"buildpacks": Directory{cloudFockerHomeDir + "/buildpacks", "/tmp/cloudfockerbuildpacks"},
-			"droplet":    Directory{cloudFockerHomeDir + "/droplet", "/tmp/droplet"},
-			"result":     Directory{cloudFockerHomeDir + "/result", "/tmp/result"},
-			"cache":      Directory{cloudFockerHomeDir + "/cache", "/tmp/cache"},
+			"buildpacks": Directory{cloudFockerHomeDir + "/buildpacks", "/cloudfockerbuildpacks"},
+			"droplet":    Directory{cloudFockerHomeDir + "/tmp/droplet", ""},
+			"result":     Directory{cloudFockerHomeDir + "/tmp/result", ""},
+			"cache":      Directory{cloudFockerHomeDir + "/tmp/cache", ""},
 			"focker":     Directory{cloudFockerHomeDir + "/focker", "/focker"},
 			"staging":    Directory{cloudFockerHomeDir + "/staging", "/app"},
-			"app":        Directory{utils.Pwd(), ""},
+			"tmp":        Directory{cloudFockerHomeDir + "/tmp", "/tmp"},
 		},
+		app: utils.Pwd(),
 	}
 	return directories
 }
@@ -35,6 +37,10 @@ func (directories *Directories) Home() string {
 
 func (directories *Directories) Buildpacks() string {
 	return directories.mounts["buildpacks"].HostDirectory
+}
+
+func (directories *Directories) ContainerBuildpacks() string {
+	return directories.mounts["buildpacks"].ContainerDirectory
 }
 
 func (directories *Directories) Droplet() string {
@@ -58,7 +64,11 @@ func (directories *Directories) Staging() string {
 }
 
 func (directories *Directories) App() string {
-	return directories.mounts["app"].HostDirectory
+	return directories.app
+}
+
+func (directories *Directories) Tmp() string {
+	return directories.mounts["tmp"].HostDirectory
 }
 
 func (directories *Directories) Mounts() map[string]string {
@@ -71,6 +81,26 @@ func (directories *Directories) Mounts() map[string]string {
 	}
 
 	return mappedDirectories
+}
+
+func (directories *Directories) HostDirectories() []string {
+	dirs := []string{}
+
+	for _, directory := range directories.mounts {
+		dirs = append(dirs, directory.HostDirectory)
+	}
+
+	return dirs
+}
+
+func (directories *Directories) HostDirectoriesToClean() []string {
+	dirs := []string{
+		directories.Droplet(),
+		directories.Result(),
+		directories.Staging(),
+	}
+
+	return dirs
 }
 
 func (d *Directory) isMapped() bool {

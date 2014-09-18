@@ -80,8 +80,8 @@ func (f *Focker) RunStager(writer io.Writer) error {
 	return stager.ValidateStagedApp(f.directories)
 }
 
-func StageApp(writer io.Writer, buildpackDirOptional ...string) error {
-	buildpackDir := "/tmp/cloudfockerbuildpacks"
+func (f *Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
+	buildpackDir := f.directories.ContainerBuildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
 	}
@@ -156,22 +156,37 @@ func abs(relative string) string {
 }
 
 func CreateAndCleanAppDirs(directories *config.Directories) error {
-	dirs := map[string]bool{
-		directories.Buildpacks(): false,
-		directories.Droplet():    true,
-		directories.Cache():      false,
-		directories.Result():     true,
-		directories.Staging():    true,
+	purgeHostDirectories(directories)
+
+	if err := createHostDirectories(directories); err != nil {
+		return err
 	}
 
-	for dir, clean := range dirs {
-		if clean {
-			if err := os.RemoveAll(dir); err != nil {
-				return err
-			}
+	return nil
+}
+
+func purgeHostDirectories(directories *config.Directories) {
+	for _, dir := range directories.HostDirectoriesToClean() {
+		os.RemoveAll(dir)
+	}
+
+	cleanTmpDirExceptCache(directories.Tmp())
+}
+
+func cleanTmpDirExceptCache(tmpDirName string) error {
+	tmpDir, err := os.Open(tmpDirName)
+
+	tmpDirContents, err := tmpDir.Readdirnames(0)
+	for _, file := range tmpDirContents {
+		if file != "cache" {
+			os.RemoveAll(tmpDirName + "/" + file)
 		}
 	}
-	for dir, _ := range dirs {
+	return err
+}
+
+func createHostDirectories(directories *config.Directories) error {
+	for _, dir := range directories.HostDirectories() {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return err
 		}

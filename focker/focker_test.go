@@ -78,7 +78,7 @@ var _ = Describe("Focker", func() {
 	Describe("Building an application droplet", func() {
 		It("should run the buildpack runner from linux-circus", func() {
 			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-runner-test")
-			err := focker.StageApp(buffer, buildpackDir)
+			err := testfocker.StageApp(buffer, buildpackDir)
 			Expect(err).Should(MatchError("no valid buildpacks detected"))
 			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
 			os.RemoveAll(buildpackDir)
@@ -197,17 +197,20 @@ var _ = Describe("Focker", func() {
 				cloudfockerHomeFile, err := os.Open(cloudfockerHome)
 				cloudfockerHomeContents, err := cloudfockerHomeFile.Readdirnames(0)
 				Expect(cloudfockerHomeContents, err).Should(ContainElement("buildpacks"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("droplet"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("cache"))
-				Expect(cloudfockerHomeContents, err).Should(ContainElement("result"))
+				Expect(cloudfockerHomeContents, err).Should(ContainElement("tmp"))
 				Expect(cloudfockerHomeContents, err).Should(ContainElement("staging"))
+				cloudfockerHomeTmpFile, err := os.Open(cloudfockerHome + "/tmp")
+				cloudfockerHomeTmpContents, err := cloudfockerHomeTmpFile.Readdirnames(0)
+				Expect(cloudfockerHomeTmpContents, err).Should(ContainElement("droplet"))
+				Expect(cloudfockerHomeTmpContents, err).Should(ContainElement("result"))
+				Expect(cloudfockerHomeTmpContents, err).Should(ContainElement("cache"))
 				os.RemoveAll(cloudfockerHome)
 			})
 		})
 		Context("with a previously staged application", func() {
 			It("should clean the directory structure appropriately", func() {
 				cloudfockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-				dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/cache": false, "/result": true, "/staging": true}
+				dirs := map[string]bool{"/buildpacks": false, "/tmp/droplet": true, "/tmp/cache": false, "/tmp/result": true, "/staging": true}
 				for dir, _ := range dirs {
 					os.MkdirAll(cloudfockerHome+dir, 0755)
 					ioutil.WriteFile(cloudfockerHome+dir+"/testfile", []byte("test"), 0644)
