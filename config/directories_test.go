@@ -8,17 +8,17 @@ import (
 )
 
 var _ = Describe("Directories", func() {
+	var (
+		cloudFockerHomeDir string
+		testDirectories    *config.Directories
+	)
+
+	BeforeEach(func() {
+		cloudFockerHomeDir = "/path/to"
+		testDirectories = config.NewDirectories(cloudFockerHomeDir)
+	})
+
 	Describe("Provide a structure for directories", func() {
-		var (
-			cloudFockerHomeDir string
-			testDirectories    *config.Directories
-		)
-
-		BeforeEach(func() {
-			cloudFockerHomeDir = "/path/to/buildpacks"
-			testDirectories = config.NewDirectories(cloudFockerHomeDir)
-		})
-
 		It("should return the cloudfocker home directory", func() {
 			Expect(testDirectories.Home()).To(Equal(cloudFockerHomeDir))
 		})
@@ -44,6 +44,18 @@ var _ = Describe("Directories", func() {
 
 		It("should return the staging directory", func() {
 			Expect(testDirectories.Staging()).To(Equal(cloudFockerHomeDir + "/staging"))
+		})
+	})
+
+	Describe("Providing the directories to be mounted in the container", func() {
+		It("should return a mapping of host to container directories", func() {
+			Expect(testDirectories.Mounts()).To(Equal(map[string]string{ // host dir: container dir
+				"/path/to/droplet":    "/tmp/droplet",
+				"/path/to/result":     "/tmp/result",
+				"/path/to/buildpacks": "/tmp/cloudfockerbuildpacks",
+				"/path/to/cache":      "/tmp/cache",
+				"/path/to/focker":     "/focker",
+			}))
 		})
 	})
 })
