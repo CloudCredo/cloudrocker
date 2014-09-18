@@ -20,19 +20,12 @@ type ContainerConfig struct {
 	Command        []string
 }
 
-func NewStageContainerConfig(cloudfoundryAppDir string, directories *Directories) (containerConfig *ContainerConfig) {
+func NewStageContainerConfig(directories *Directories) (containerConfig *ContainerConfig) {
 	containerConfig = &ContainerConfig{
 		ContainerName: "cloudfocker-staging",
-		Mounts: map[string]string{ // host dir: container dir
-			cloudfoundryAppDir:       "/app",
-			directories.Droplet():    "/tmp/droplet",
-			directories.Result():     "/tmp/result",
-			directories.Buildpacks(): "/tmp/cloudfockerbuildpacks",
-			directories.Cache():      "/tmp/cache",
-			directories.Focker():     "/focker",
-		},
-		ImageTag: "cloudfocker-base:latest",
-		Command:  []string{"/focker/fock", "stage", "internal"},
+		Mounts:        directories.Mounts(),
+		ImageTag:      "cloudfocker-base:latest",
+		Command:       []string{"/focker/fock", "stage", "internal"},
 	}
 	return
 }

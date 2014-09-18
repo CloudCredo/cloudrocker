@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/cloudcredo/cloudfocker/config"
+	"github.com/cloudcredo/cloudfocker/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -57,6 +58,7 @@ var _ = Describe("Directories", func() {
 	Describe("Providing the directories to be mounted in the container", func() {
 		It("should return a mapping of host to container directories", func() {
 			Expect(testDirectories.Mounts()).To(Equal(map[string]string{ // host dir: container dir
+				utils.Pwd():           "/app",
 				"/path/to/droplet":    "/tmp/droplet",
 				"/path/to/result":     "/tmp/result",
 				"/path/to/buildpacks": "/tmp/cloudfockerbuildpacks",

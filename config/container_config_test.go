@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"github.com/cloudcredo/cloudfocker/config"
+	"github.com/cloudcredo/cloudfocker/utils"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -10,12 +11,14 @@ import (
 var _ = Describe("ContainerConfig", func() {
 	Describe("Generating a ContainerConfig for staging", func() {
 		It("should return a valid ContainerConfig with the correct staging information", func() {
-			stageConfig := config.NewStageContainerConfig("/home/testuser/testapp", config.NewDirectories("TEST_CLOUDFOCKERHOME"))
+			stageConfig := config.NewStageContainerConfig(config.NewDirectories("TEST_CLOUDFOCKERHOME"))
 			Expect(stageConfig.ContainerName).To(Equal("cloudfocker-staging"))
-			Expect(len(stageConfig.Mounts)).To(Equal(6))
-			Expect(stageConfig.Mounts["/home/testuser/testapp"]).To(Equal("/app"))
-			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/buildpacks"]).To(Equal("/tmp/cloudfockerbuildpacks"))
+			Expect(stageConfig.Mounts[utils.Pwd()]).To(Equal("/app"))
 			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/droplet"]).To(Equal("/tmp/droplet"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/result"]).To(Equal("/tmp/result"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/buildpacks"]).To(Equal("/tmp/cloudfockerbuildpacks"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/cache"]).To(Equal("/tmp/cache"))
+			Expect(stageConfig.Mounts["TEST_CLOUDFOCKERHOME/focker"]).To(Equal("/focker"))
 			Expect(stageConfig.ImageTag).To(Equal("cloudfocker-base:latest"))
 			Expect(stageConfig.Command).To(Equal([]string{"/focker/fock", "stage", "internal"}))
 		})

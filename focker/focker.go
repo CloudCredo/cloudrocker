@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 
 	"github.com/cloudcredo/cloudfocker/buildpack"
@@ -73,8 +72,8 @@ func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string
 
 func (f *Focker) RunStager(writer io.Writer) error {
 	prepareStagingFilesystem(f.directories)
-	stagingAppDir := prepareStagingApp(f.directories.App(), f.directories.Staging())
-	containerConfig := config.NewStageContainerConfig(stagingAppDir, f.directories)
+	prepareStagingApp(f.directories.App(), f.directories.Staging())
+	containerConfig := config.NewStageContainerConfig(f.directories)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)
 	DeleteContainer(writer, containerConfig.ContainerName)
@@ -130,9 +129,8 @@ func prepareStagingFilesystem(directories *config.Directories) {
 	}
 }
 
-func prepareStagingApp(appDir string, stagingDir string) string {
+func prepareStagingApp(appDir string, stagingDir string) {
 	copyDir(appDir, stagingDir)
-	return abs(stagingDir) + "/" + path.Base(appDir)
 }
 
 func copyDir(src string, dest string) {
