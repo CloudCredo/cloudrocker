@@ -13,7 +13,7 @@ import (
 )
 
 var _ = Describe("Parser", func() {
-	Describe("Parsing a ContainerConfig", func() {
+	Describe("Parsing a ContainerConfig for a Docker run command", func() {
 		Context("with a staging config ", func() {
 			It("should return a slice with all required arguments", func() {
 				os.Setenv("CLOUDFOCKER_HOME", "/home/testuser/.cloudfocker")
