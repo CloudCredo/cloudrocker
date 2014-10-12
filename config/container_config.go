@@ -18,6 +18,7 @@ type ContainerConfig struct {
 	EnvVars        map[string]string
 	ImageTag       string
 	Command        []string
+	DropletDir     string
 }
 
 func NewStageContainerConfig(directories *Directories) (containerConfig *ContainerConfig) {
@@ -48,6 +49,7 @@ func NewRuntimeContainerConfig(cloudfoundryDropletDir string) (containerConfig *
 		ImageTag: "cloudfocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
 			parseStartCommand(cloudfoundryDropletDir)...),
+		DropletDir: cloudfoundryDropletDir,
 	}
 	return
 }

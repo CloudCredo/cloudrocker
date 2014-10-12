@@ -41,6 +41,7 @@ var _ = Describe("ContainerConfig", func() {
 					"/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
 					"/app",
 					"bundle", "exec", "rackup", "config.ru", "-p", "$PORT"}))
+				Expect(runtimeConfig.DropletDir).To(Equal("fixtures/testdroplet"))
 			})
 		})
 		Context("with no staging_info.yml, but a valid Procfile", func() {
