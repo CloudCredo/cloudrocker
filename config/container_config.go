@@ -31,31 +31,31 @@ func NewStageContainerConfig(directories *Directories) (containerConfig *Contain
 	return
 }
 
-func NewRuntimeContainerConfig(cloudfoundryDropletDir string) (containerConfig *ContainerConfig) {
+func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerConfig) {
 	containerConfig = &ContainerConfig{
 		ContainerName: "cloudfocker-runtime",
 		Daemon:        true,
 		Mounts: map[string]string{
-			cloudfoundryDropletDir + "/app": "/app",
+			dropletDir + "/app": "/app",
 		},
 		PublishedPorts: map[int]int{8080: 8080},
 		EnvVars: map[string]string{
 			"HOME":          "/app",
 			"TMPDIR":        "/app/tmp",
 			"PORT":          "8080",
-			"VCAP_SERVICES": vcapServices(cloudfoundryDropletDir),
-			"DATABASE_URL":  databaseURL(cloudfoundryDropletDir),
+			"VCAP_SERVICES": vcapServices(dropletDir),
+			"DATABASE_URL":  databaseURL(dropletDir),
 		},
 		ImageTag: "cloudfocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
-			parseStartCommand(cloudfoundryDropletDir)...),
-		DropletDir: cloudfoundryDropletDir,
+			parseStartCommand(dropletDir)...),
+		DropletDir: dropletDir,
 	}
 	return
 }
 
-func vcapServices(cloudfoundryDropletDir string) (services string) {
-	servicesBytes, err := ioutil.ReadFile(cloudfoundryDropletDir + "/app/vcap_services.json")
+func vcapServices(dropletDir string) (services string) {
+	servicesBytes, err := ioutil.ReadFile(dropletDir + "/app/vcap_services.json")
 	if err != nil {
 		return
 	}
@@ -69,8 +69,8 @@ type database struct {
 	}
 }
 
-func databaseURL(cloudfoundryDropletDir string) (databaseURL string) {
-	servicesBytes, err := ioutil.ReadFile(cloudfoundryDropletDir + "/app/vcap_services.json")
+func databaseURL(dropletDir string) (databaseURL string) {
+	servicesBytes, err := ioutil.ReadFile(dropletDir + "/app/vcap_services.json")
 	if err != nil {
 		return
 	}
@@ -97,8 +97,8 @@ type ProcfileYml struct {
 	Web string `yaml:"web"`
 }
 
-func parseStartCommand(cloudfoundryDropletDir string) (startCommand []string) {
-	stagingInfoFile, err := os.Open(cloudfoundryDropletDir + "/staging_info.yml")
+func parseStartCommand(dropletDir string) (startCommand []string) {
+	stagingInfoFile, err := os.Open(dropletDir + "/staging_info.yml")
 	if err == nil {
 		stagingInfo := new(StagingInfoYml)
 		decoder := candiedyaml.NewDecoder(stagingInfoFile)
@@ -110,7 +110,7 @@ func parseStartCommand(cloudfoundryDropletDir string) (startCommand []string) {
 		if startCommand[0] != "" {
 			return
 		}
-		procfileFile, err := os.Open(cloudfoundryDropletDir + "/app/Procfile")
+		procfileFile, err := os.Open(dropletDir + "/app/Procfile")
 		if err == nil {
 			procfileInfo := new(ProcfileYml)
 			decoder := candiedyaml.NewDecoder(procfileFile)
