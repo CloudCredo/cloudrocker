@@ -187,6 +187,13 @@ var _ = Describe("Focker", func() {
 				Eventually(statusCodeChecker).Should(Equal(0))
 			})
 		})
+		Describe("when outputting a runnable application as a docker image", func() {
+			It("should output the built image ID", func() {
+				testfocker.RunStager(buffer)
+				testfocker.BuildRuntimeImage(buffer)
+				Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+			})
+		})
 	})
 	Describe("Creating and cleaning application directories", func() {
 		Context("without a previously staged application", func() {

@@ -108,6 +108,13 @@ func (f *Focker) StopRuntime(writer io.Writer) {
 	DeleteContainer(writer, "cloudfocker-runtime")
 }
 
+func (f *Focker) BuildRuntimeImage(writer io.Writer) {
+	prepareRuntimeFilesystem(f.directories.Droplet())
+	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.BuildRuntimeImage(cli, Stdout, stdoutpipe, writer, containerConfig)
+}
+
 func cloudFockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {
