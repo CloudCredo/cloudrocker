@@ -76,8 +76,10 @@ func parsePublishedPorts(publishedPorts map[int]int) (parsedPublishedPorts []str
 
 func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
 	for key, val := range envVars {
-		parsedEnvVars = append(parsedEnvVars,
-			"--env=\""+key+"="+val+"\"")
+		if val != "" {
+			parsedEnvVars = append(parsedEnvVars,
+				"--env=\""+key+"="+val+"\"")
+		}
 	}
 	sort.Strings(parsedEnvVars)
 	return
@@ -106,8 +108,10 @@ WORKDIR /app
 
 func envVarDockerfileString(envVars map[string]string) string {
 	var envVarStrings []string
-	for envVarKey, EnvVarVal := range envVars {
-		envVarStrings = append(envVarStrings, "ENV "+envVarKey+" "+EnvVarVal+"\n")
+	for envVarKey, envVarVal := range envVars {
+		if envVarVal != "" {
+			envVarStrings = append(envVarStrings, "ENV "+envVarKey+" "+envVarVal+"\n")
+		}
 	}
 	sort.Strings(envVarStrings)
 	return strings.Join(envVarStrings, "")

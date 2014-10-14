@@ -85,9 +85,10 @@ func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 			[]string{"test", "test", "test"}...),
 		Daemon: true,
 		EnvVars: map[string]string{
-			"HOME":   "/app",
-			"TMPDIR": "/app/tmp",
-			"PORT":   "8080",
+			"HOME":          "/app",
+			"TMPDIR":        "/app/tmp",
+			"PORT":          "8080",
+			"VCAP_SERVICES": "",
 		},
 	}
 	return
