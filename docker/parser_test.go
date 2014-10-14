@@ -47,7 +47,7 @@ var _ = Describe("Parser", func() {
 					"--env=\"PORT=8080\" " +
 					"--env=\"TMPDIR=/app/tmp\" " +
 					"cloudfocker-base:latest " +
-					"/bin/bash /app/cloudfocker-start.sh /app test test test"))
+					"/bin/bash /app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command"))
 			})
 		})
 	})
@@ -81,8 +81,8 @@ func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 		Mounts: map[string]string{
 			"/home/testuser/testapp" + "/app": "/app",
 		},
-		Command: append([]string{"/bin/bash", "/app/cloudfocker-start.sh", "/app"},
-			[]string{"test", "test", "test"}...),
+		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
+			[]string{"the", "start", "command"}...),
 		Daemon: true,
 		EnvVars: map[string]string{
 			"HOME":          "/app",
