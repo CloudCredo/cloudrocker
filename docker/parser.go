@@ -1,10 +1,12 @@
 package docker
 
 import (
+	"io/ioutil"
 	"log"
 	"os/user"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/cloudcredo/cloudfocker/config"
 )
@@ -19,6 +21,16 @@ func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {
 	runCmd = append(runCmd, parseImageTag(config.ImageTag)...)
 	runCmd = append(runCmd, parseCommand(config.Command)...)
 	return
+}
+
+func WriteRuntimeDockerfile(config *config.ContainerConfig) {
+	var dockerfile string
+
+	dockerfile = bootstrapDockerfileString()
+	dockerfile = dockerfile + envVarDockerfileString(config.EnvVars)
+	dockerfile = dockerfile + commandDockerfileString(config.Command)
+
+	ioutil.WriteFile(config.DropletDir+"/Dockerfile", []byte(dockerfile), 0644)
 }
 
 func userString() string {
@@ -79,4 +91,31 @@ func parseImageTag(imageTag string) (parsedImageTag []string) {
 func parseCommand(command []string) (parsedCommand []string) {
 	parsedCommand = append(parsedCommand, command...)
 	return
+}
+
+func bootstrapDockerfileString() string {
+	return `FROM cloudfocker-base:latest
+RUN /usr/sbin/useradd -mU -u 10000 -s /bin/bash vcap
+COPY droplet.tgz /app/
+RUN chown vcap:vcap /app && cd /app && su vcap -c "tar zxf droplet.tgz" && rm droplet.tgz
+EXPOSE 8080
+USER vcap
+WORKDIR /app
+`
+}
+
+func envVarDockerfileString(envVars map[string]string) string {
+	var envVarStrings []string
+	for envVarKey, EnvVarVal := range envVars {
+		envVarStrings = append(envVarStrings, "ENV "+envVarKey+" "+EnvVarVal+"\n")
+	}
+	sort.Strings(envVarStrings)
+	return strings.Join(envVarStrings, "")
+}
+
+func commandDockerfileString(command []string) string {
+	commandString := `CMD ["`
+	commandString = commandString + strings.Join(command, `", "`)
+	commandString = commandString + "\"]\n"
+	return commandString
 }

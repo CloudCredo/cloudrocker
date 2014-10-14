@@ -1,6 +1,7 @@
 package docker_test
 
 import (
+	"io/ioutil"
 	"os"
 	"os/user"
 	"strings"
@@ -47,6 +48,26 @@ var _ = Describe("Parser", func() {
 					"--env=\"TMPDIR=/app/tmp\" " +
 					"cloudfocker-base:latest " +
 					"/bin/bash /app/cloudfocker-start.sh /app test test test"))
+			})
+		})
+	})
+	Describe("Parsing a ContainerConfig for a Docker run command", func() {
+		Context("with a runtime config ", func() {
+			It("should write a valid Dockerfile", func() {
+				tmpDropletDir, err := ioutil.TempDir(os.TempDir(), "parser-test-tmp-droplet")
+				Expect(err).ShouldNot(HaveOccurred())
+				testRuntimeContainerConfig := testRuntimeContainerConfig()
+				testRuntimeContainerConfig.DropletDir = tmpDropletDir
+
+				docker.WriteRuntimeDockerfile(testRuntimeContainerConfig)
+
+				expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				result, err := ioutil.ReadFile(tmpDropletDir + "/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(result).To(Equal(expected))
+
+				os.RemoveAll(tmpDropletDir)
 			})
 		})
 	})
