@@ -3,6 +3,9 @@ package docker_test
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
+	"os"
+	"os/exec"
 
 	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/docker"
@@ -10,6 +13,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
 )
 
 type FakeDockerClient struct {
@@ -19,6 +23,7 @@ type FakeDockerClient struct {
 	cmdStopArgs      []string
 	cmdRmArgs        []string
 	cmdKillArgs      []string
+	cmdBuildArgs     []string
 	cmdPsCalled      bool
 }
 
@@ -49,6 +54,11 @@ func (f *FakeDockerClient) CmdRm(args ...string) error {
 
 func (f *FakeDockerClient) CmdKill(args ...string) error {
 	f.cmdKillArgs = args
+	return nil
+}
+
+func (f *FakeDockerClient) CmdBuild(args ...string) error {
+	f.cmdBuildArgs = args
 	return nil
 }
 
@@ -128,6 +138,43 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
+	Describe("Building a runtime image", func() {
+		var (
+			dropletDir       string
+			fakeDockerClient *FakeDockerClient
+		)
+
+		BeforeEach(func() {
+			fakeDockerClient = new(FakeDockerClient)
+			stdout, stdoutPipe := io.Pipe()
+			tmpDir, _ := ioutil.TempDir(os.TempDir(), "docker-runtime-image-test")
+			cp("fixtures/build/droplet", tmpDir)
+			dropletDir = tmpDir + "/droplet"
+			docker.BuildRuntimeImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewRuntimeContainerConfig(dropletDir))
+		})
+
+		It("should create a tarred version of the droplet mount, for extraction in the container, so as to not have AUFS permissions issues in https://github.com/docker/docker/issues/783", func() {
+			dropletDirFile, err := os.Open(dropletDir)
+			Expect(err).ShouldNot(HaveOccurred())
+			dropletDirContents, err := dropletDirFile.Readdirnames(0)
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(dropletDirContents, err).Should(ContainElement("droplet.tgz"))
+		})
+
+		It("should write a valid Dockerfile to the filesystem", func() {
+			result, err := ioutil.ReadFile(dropletDir + "/Dockerfile")
+			Expect(err).ShouldNot(HaveOccurred())
+			expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
+			Expect(err).ShouldNot(HaveOccurred())
+			Expect(result).To(Equal(expected))
+		})
+
+		It("should tell Docker to build the container from the Dockerfile", func() {
+			Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(1))
+			Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(dropletDir))
+		})
+	})
+
 	Describe("Getting a cloudfocker runtime container ID", func() {
 		Context("with no cloudfocker runtime container running", func() {
 			It("should return empty string", func() {
@@ -180,3 +227,13 @@ var _ = Describe("Docker", func() {
 		})
 	})
 })
+
+func cp(src string, dst string) {
+	session, err := gexec.Start(
+		exec.Command("cp", "-a", src, dst),
+		GinkgoWriter,
+		GinkgoWriter,
+	)
+	Ω(err).ShouldNot(HaveOccurred())
+	Eventually(session).Should(gexec.Exit(0))
+}

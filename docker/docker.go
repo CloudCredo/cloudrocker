@@ -11,6 +11,8 @@ import (
 	"github.com/cloudcredo/cloudfocker/config"
 
 	"github.com/dotcloud/docker/api/client"
+
+	"github.com/pivotal-golang/archiver/compressor"
 )
 
 type DockerClient interface {
@@ -21,6 +23,7 @@ type DockerClient interface {
 	CmdRm(...string) error
 	CmdKill(...string) error
 	CmdPs(...string) error
+	CmdBuild(...string) error
 }
 
 func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer) error {
@@ -114,6 +117,26 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 	}()
 	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Deleted container.")
+	return nil
+}
+
+func BuildRuntimeImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	fmt.Fprintln(writer, "Creating image configuration...")
+	compressor := compressor.NewTgz()
+	compressor.Compress(containerConfig.DropletDir+"/app/", containerConfig.DropletDir+"/droplet.tgz")
+	WriteRuntimeDockerfile(containerConfig)
+	fmt.Fprintln(writer, "Creating image...")
+	go func() {
+		err := cli.CmdBuild(containerConfig.DropletDir)
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	CopyFromPipeToPipe(writer, stdout)
+	fmt.Fprintln(writer, "Created image.")
 	return nil
 }
 
