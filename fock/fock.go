@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/cloudcredo/cloudfocker/focker"
-	"github.com/codegangsta/cli"
 	"log"
 	"os"
+
+	"github.com/cloudcredo/cloudfocker/focker"
+	"github.com/codegangsta/cli"
 )
 
 func main() {
@@ -41,6 +42,14 @@ func main() {
 					log.Fatalf(" %s", err)
 				}
 				focker.RunRuntime(os.Stdout)
+			},
+		},
+		{
+			Name:  "build",
+			Usage: "build a runnable image of the application",
+			Action: func(c *cli.Context) {
+				focker := focker.NewFocker()
+				focker.BuildRuntimeImage(os.Stdout)
 			},
 		},
 		{
