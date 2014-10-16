@@ -49,6 +49,9 @@ func main() {
 			Usage: "build a runnable image of the application",
 			Action: func(c *cli.Context) {
 				focker := focker.NewFocker()
+				if err := focker.RunStager(os.Stdout); err != nil {
+					log.Fatalf(" %s", err)
+				}
 				focker.BuildRuntimeImage(os.Stdout)
 			},
 		},
