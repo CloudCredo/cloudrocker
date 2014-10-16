@@ -5,8 +5,8 @@ import (
 
 	"github.com/cloudcredo/cloudfocker/config"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
 )
 
 var _ = Describe("Directories", func() {

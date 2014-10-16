@@ -10,8 +10,8 @@ import (
 	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/utils"
 
-	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
-	"github.com/cloudfoundry-incubator/runtime-schema/models"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
 )
 
 type BuildpackRunner interface {

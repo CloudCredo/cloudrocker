@@ -1,0 +1,144 @@
+{
+	"ImportPath": "github.com/cloudcredo/cloudfocker",
+	"GoVersion": "go1.3",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/candiedyaml",
+			"Rev": "50e233a7fb31a32b174c1263c7b786eba1fa79d4"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/linux-circus/buildpackrunner",
+			"Rev": "30662e077afd54af3cd72931e9a95d4e41cf93ac"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/linux-circus/protocol",
+			"Rev": "30662e077afd54af3cd72931e9a95d4e41cf93ac"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry-incubator/runtime-schema/models",
+			"Rev": "c6ff4c005927c4fb75d3248f888a60651cb83a0b"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.0.0-72-gbb91895",
+			"Rev": "bb9189510af1f49580c073c9e59e8bf288f0df27"
+		},
+		{
+			"ImportPath": "github.com/docker/libcontainer/cgroups",
+			"Comment": "v1.1.0-7-g39ebd07",
+			"Rev": "39ebd07a8267c823e6542b7a8cbb3adcf43fbe65"
+		},
+		{
+			"ImportPath": "github.com/docker/libcontainer/devices",
+			"Comment": "v1.1.0-7-g39ebd07",
+			"Rev": "39ebd07a8267c823e6542b7a8cbb3adcf43fbe65"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/api",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/archive",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/dockerversion",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/engine",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/nat",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/opts",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/mflag",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/mount",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/signal",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/sysinfo",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/system",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/term",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/units",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/pkg/version",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/registry",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/runconfig",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/utils",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/dotcloud/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar",
+			"Comment": "v1.1.0-14-g02ef943",
+			"Rev": "02ef9437d3b55301ded005806b1649238afdbdad"
+		},
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.1.0-12-g90d6a47",
+			"Rev": "90d6a472e25d8096739d5405286ec051c87fade7"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Comment": "v1.0-17-ga0ee4df",
+			"Rev": "a0ee4df1f2d58a75dd9d74e755615706d68e9ce9"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/archiver/compressor",
+			"Rev": "8901decda10e349dadd6ee72ee28609308e3f78c"
+		}
+	]
+}

@@ -8,11 +8,11 @@ import (
 
 	"github.com/cloudcredo/cloudfocker/config"
 	"github.com/cloudcredo/cloudfocker/stager"
-	"github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gbytes"
+	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
 )
 
 type TestRunner struct {

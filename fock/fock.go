@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/cloudcredo/cloudfocker/focker"
-	"github.com/codegangsta/cli"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/codegangsta/cli"
 )
 
 func main() {

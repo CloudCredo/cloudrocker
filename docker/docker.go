@@ -10,9 +10,9 @@ import (
 
 	"github.com/cloudcredo/cloudfocker/config"
 
-	"github.com/dotcloud/docker/api/client"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/dotcloud/docker/api/client"
 
-	"github.com/pivotal-golang/archiver/compressor"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
 
 type DockerClient interface {

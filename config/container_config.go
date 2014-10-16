@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cloudfoundry-incubator/candiedyaml"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/candiedyaml"
 )
 
 type ContainerConfig struct {
