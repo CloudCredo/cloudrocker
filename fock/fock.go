@@ -5,14 +5,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudcredo/cloudfocker/focker"
 	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/cloudcredo/cloudfocker/focker"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "fock"
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 	app.Usage = "Cloud Focker - fock the Cloud, run apps locally!"
 	app.Action = func(c *cli.Context) {
 		cli.ShowAppHelp(c)
