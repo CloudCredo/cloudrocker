@@ -9,7 +9,7 @@ import (
 
 	"github.com/cloudcredo/cloudfocker/config"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/dotcloud/docker/api/client"
+	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/api/client"
 
 	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
@@ -168,7 +168,7 @@ func GetNewClient() (
 	cli *client.DockerCli, stdout *io.PipeReader, stdoutPipe *io.PipeWriter) {
 	stdout, stdoutPipe = io.Pipe()
 	cli = client.NewDockerCli(
-		nil, stdoutPipe, nil, "unix", "/var/run/docker.sock", nil)
+		nil, stdoutPipe, nil, nil, "unix", "/var/run/docker.sock", nil)
 	return
 }
 

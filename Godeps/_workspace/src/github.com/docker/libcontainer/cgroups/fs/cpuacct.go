@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/libcontainer/cgroups"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/dotcloud/docker/pkg/system"
+	"github.com/dotcloud/docker/pkg/system"
 )
 
 var (
