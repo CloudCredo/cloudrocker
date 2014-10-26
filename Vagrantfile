@@ -5,8 +5,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 
 #comment out the two lines below, and uncomment the following block, to change the VM
-  config.vm.box = "cloudfocker-0.0.1-amd64"
-  config.vm.box_url = "https://s3.amazonaws.com/cloudfocker/vagrantboxes/cloudfocker-0.0.1-vbox.box"
+  config.vm.box = "cloudfocker-0.0.2-amd64"
+  config.vm.box_url = "https://s3.amazonaws.com/cloudfocker/vagrantboxes/cloudfocker-0.0.2-vbox.box"
 
 =begin
   config.vm.box = "phusion-open-ubuntu-14.04-amd64"
