@@ -29,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install Docker
     pkg_cmd = "wget -q -O - https://get.docker.io/gpg | apt-key add -;" \
       "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list;" \
-      "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker; "
+      "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker-1.3.0; "
     # Add vagrant user to the docker group
     pkg_cmd << "usermod -a -G docker vagrant; "
 
