@@ -116,6 +116,56 @@ Remove a buildpack
 
 Sample applications to use with the buildpacks are in [sample-apps](https://github.com/CloudCredo/cloudfocker/tree/master/sample-apps).
 
+##Docker Images
+
+###Building a Docker image from your application code
+
+Ensure you have a corresponding buildpack installed for your application type.
+
+```$ fock buildpacks```
+
+Ensure your PWD is your application directory.
+
+```$ cd <app_dir>```
+
+Build a Docker image.
+
+```$ fock build```
+
+```
+<output truncated>
+Step 10 : CMD ["/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app", "bundle", "exec", "rackup", "config.
+ru", "-p", "$PORT"]
+ ---> Running in fd810cea3db4
+ ---> 4a88ad7d67ae
+Removing intermediate container fd810cea3db4
+Successfully built 4a88ad7d67ae
+Created image.
+```
+
+In the example above the created image ID is 4a88ad7d67ae.
+
+```$ docker images```
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+<none>              <none>              4a88ad7d67ae        13 minutes ago      609 MB
+```
+
+This image can be run like any other Docker image.
+
+```
+$ docker run -P -d 4a88ad7d67ae
+0e4825d049ba5390699625be145a8d029a5e2899e52c8c5f967d35e08412f3ba
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                     NAMES
+0e4825d049ba        4a88ad7d67ae        /bin/bash /app/cloud   4 minutes ago       Up 4 minutes        0.0.0.0:49154->8080/tcp   sick_lumiere        
+$ curl localhost:49154
+Hello world!
+```
+
+The image can be uploaded to a Docker registry, or deployed and run in a system such as [Kubernetes](https://github.com/GoogleCloudPlatform/kubernetes), [Decker](https://github.com/hatofmonkeys/decker-release), or [Diego](http://thenewstack.io/docker-on-diego-cloud-foundrys-new-elastic-runtime/).
+
 ##External Services
   
 Services can be connected to your application by adding a *vcap_services.json* file to the root directory of your application. This is demonstrated in the [ruby-with-services sample application](https://github.com/CloudCredo/cloudfocker/tree/master/sample-apps/ruby-with-services).
