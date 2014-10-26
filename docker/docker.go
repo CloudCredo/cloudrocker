@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"strings"
 
@@ -174,9 +173,10 @@ func GetNewClient() (
 }
 
 func CopyFromPipeToPipe(outputPipe io.Writer, inputPipe *io.PipeReader) {
-	rawBytes, _ := ioutil.ReadAll(inputPipe)
-	input := string(rawBytes[:])
-	fmt.Fprint(outputPipe, input)
+	scanner := bufio.NewScanner(inputPipe)
+	for scanner.Scan() {
+		fmt.Fprintln(outputPipe, scanner.Text())
+	}
 }
 
 func closeWrap(args ...io.Closer) error {

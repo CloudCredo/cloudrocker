@@ -213,7 +213,7 @@ var _ = Describe("Docker", func() {
 	})
 
 	Describe("Container I/O plumbing", func() {
-		It("Copies from a pipe to a writer", func() {
+		It("Copies from a pipe to a writer without waiting for the pipe to close", func() {
 			stdout, stdoutPipe := io.Pipe()
 
 			go func() {
@@ -221,9 +221,11 @@ var _ = Describe("Docker", func() {
 			}()
 
 			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS A TEST STRING\n"))
-			stdoutPipe.Close()
-
 			Eventually(buffer).Should(gbytes.Say(`THIS IS A TEST STRING`))
+
+			io.Copy(stdoutPipe, bytes.NewBufferString("THIS IS ANOTHER TEST STRING\n"))
+			stdoutPipe.Close()
+			Eventually(buffer).Should(gbytes.Say(`THIS IS ANOTHER TEST STRING`))
 		})
 	})
 })
