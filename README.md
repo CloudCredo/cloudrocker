@@ -31,13 +31,13 @@ The user for 'fock' commands must have permissions to access the Docker daemon.
 
 You should see output similar to this:
 ```
-Checking Docker version
-Client API version: 1.13
+Client API version: 1.15
 Go version (client): go1.3
-Server version: 1.1.2
-Server API version: 1.13
-Go version (server): go1.2.1
-Git commit (server): d84a070
+OS/Arch (client): linux/amd64
+Server version: 1.3.0
+Server API version: 1.15
+Go version (server): go1.3.3
+Git commit (server): c78088f
 ```
 
 ###Fock your local machine
