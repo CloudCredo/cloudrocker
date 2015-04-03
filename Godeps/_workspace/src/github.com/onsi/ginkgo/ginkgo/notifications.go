@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
 )
 
 type Notifier struct {

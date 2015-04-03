@@ -1,7 +1,7 @@
 package registry
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/engine"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/engine"
 )
 
 // Service exposes registry capabilities in the standard Engine

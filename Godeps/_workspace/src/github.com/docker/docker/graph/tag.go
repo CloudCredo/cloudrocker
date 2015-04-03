@@ -1,8 +1,8 @@
 package graph
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/engine"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/parsers"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/engine"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/parsers"
 )
 
 // CmdTag assigns a new name and tag to an existing image. If the tag already exists,

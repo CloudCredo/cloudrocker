@@ -16,13 +16,13 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/fileutils"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/pools"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/promise"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/system"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/fileutils"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/pools"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/promise"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/system"
 )
 
 type (

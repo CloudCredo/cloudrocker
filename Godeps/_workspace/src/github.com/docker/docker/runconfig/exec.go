@@ -1,8 +1,8 @@
 package runconfig
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/engine"
-	flag "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/engine"
+	flag "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
 )
 
 type ExecConfig struct {

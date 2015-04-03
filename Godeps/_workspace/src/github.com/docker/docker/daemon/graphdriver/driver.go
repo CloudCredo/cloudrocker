@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/archive"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mount"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/archive"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mount"
 )
 
 type FsMagic uint64

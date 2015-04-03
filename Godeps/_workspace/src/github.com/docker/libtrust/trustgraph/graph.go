@@ -1,6 +1,6 @@
 package trustgraph
 
-import "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/libtrust"
+import "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/libtrust"
 
 // TrustGraph represents a graph of authorization mapping
 // public keys to nodes and grants between nodes.

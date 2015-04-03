@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	flag "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/parsers"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/sysinfo"
+	flag "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/parsers"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/sysinfo"
 )
 
 func parseRun(args []string, sysInfo *sysinfo.SysInfo) (*Config, *HostConfig, *flag.FlagSet, error) {

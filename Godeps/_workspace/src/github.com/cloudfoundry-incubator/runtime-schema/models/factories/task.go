@@ -1,7 +1,7 @@
 package factories
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
 	"github.com/nu7hatch/gouuid"
 )
 

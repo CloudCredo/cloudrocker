@@ -1,8 +1,8 @@
 package leafnodes
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
 	"reflect"
 )
 

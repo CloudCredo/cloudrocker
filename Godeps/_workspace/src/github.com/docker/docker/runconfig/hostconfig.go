@@ -3,9 +3,9 @@ package runconfig
 import (
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/engine"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/nat"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/utils"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/engine"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/nat"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/utils"
 )
 
 type NetworkMode string

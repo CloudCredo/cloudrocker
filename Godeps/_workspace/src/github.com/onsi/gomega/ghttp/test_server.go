@@ -113,7 +113,7 @@ import (
 	"regexp"
 	"sync"
 
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 )
 
 func new() *Server {

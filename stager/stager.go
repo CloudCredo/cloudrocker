@@ -7,11 +7,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudcredo/cloudfocker/config"
-	"github.com/cloudcredo/cloudfocker/utils"
+	"github.com/cloudcredo/cloudrocker/config"
+	"github.com/cloudcredo/cloudrocker/utils"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
 )
 
 type BuildpackRunner interface {

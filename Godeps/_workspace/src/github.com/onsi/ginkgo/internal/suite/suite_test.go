@@ -1,18 +1,18 @@
 package suite_test
 
 import (
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/suite"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/suite"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 
 	"math/rand"
 	"time"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/codelocation"
-	Failer "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
-	Writer "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/writer"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/codelocation"
+	Failer "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
+	Writer "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/writer"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
 )
 
 var _ = Describe("Suite", func() {

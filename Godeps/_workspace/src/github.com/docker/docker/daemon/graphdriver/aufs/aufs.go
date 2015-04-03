@@ -30,11 +30,11 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/daemon/graphdriver"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/archive"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
-	mountpk "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mount"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/utils"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/daemon/graphdriver"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/archive"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
+	mountpk "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mount"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/utils"
 	"github.com/docker/libcontainer/label"
 )
 

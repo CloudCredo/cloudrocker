@@ -116,8 +116,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
 )
 
 const greenColor = "\x1b[32m"

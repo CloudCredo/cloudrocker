@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/cloudcredo/cloudfocker/utils"
+	"github.com/cloudcredo/cloudrocker/utils"
 )
 
 type Directories struct {

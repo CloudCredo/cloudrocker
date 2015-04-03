@@ -1,6 +1,6 @@
 package matchers
 
-import "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/format"
+import "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/format"
 
 type BeNilMatcher struct {
 }

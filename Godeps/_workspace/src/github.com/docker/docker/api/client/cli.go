@@ -10,10 +10,10 @@ import (
 	"strings"
 	"text/template"
 
-	flag "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/term"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/registry"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/libtrust"
+	flag "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/mflag"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/term"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/registry"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/libtrust"
 )
 
 type DockerCli struct {

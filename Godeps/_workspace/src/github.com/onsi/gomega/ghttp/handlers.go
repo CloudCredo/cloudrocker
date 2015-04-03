@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/types"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/types"
 )
 
 //CombineHandler takes variadic list of handlers and produces one handler

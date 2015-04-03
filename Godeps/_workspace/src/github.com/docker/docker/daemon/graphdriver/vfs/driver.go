@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/daemon/graphdriver"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/daemon/graphdriver"
 	"github.com/docker/libcontainer/label"
 )
 

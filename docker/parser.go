@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/config"
+	"github.com/cloudcredo/cloudrocker/config"
 )
 
 func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {

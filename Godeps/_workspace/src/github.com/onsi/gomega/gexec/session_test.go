@@ -4,11 +4,11 @@ import (
 	"os/exec"
 	"syscall"
 	"time"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
 
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 )
 
 var _ = Describe("Session", func() {

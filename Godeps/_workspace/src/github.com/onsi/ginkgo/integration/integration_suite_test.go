@@ -7,9 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
 
 	"testing"
 	"time"

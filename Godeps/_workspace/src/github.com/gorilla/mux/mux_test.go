@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/gorilla/context"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/gorilla/context"
 )
 
 type routeTest struct {

@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/codegangsta/cli"
-	"github.com/cloudcredo/cloudfocker/focker"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/cloudcredo/cloudrocker/focker"
 )
 
 func main() {

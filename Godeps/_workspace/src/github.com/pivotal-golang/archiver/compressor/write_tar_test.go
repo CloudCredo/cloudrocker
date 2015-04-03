@@ -7,10 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 
-	. "github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
+	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
 
 var _ = Describe("WriteTar", func() {

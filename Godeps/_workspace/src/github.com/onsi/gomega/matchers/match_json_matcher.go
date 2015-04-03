@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/onsi/gomega/format"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/format"
 	"reflect"
 )
 

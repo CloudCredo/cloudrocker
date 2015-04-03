@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/dotcloud/docker/pkg/mount"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/dotcloud/docker/pkg/mount"
 )
 
 // https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt

@@ -1,7 +1,7 @@
 package fileutils
 
 import (
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/pkg/log"
 	"path/filepath"
 )
 

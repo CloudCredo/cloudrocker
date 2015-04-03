@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/cloudcredo/cloudfocker",
+	"ImportPath": "github.com/cloudcredo/cloudrocker",
 	"GoVersion": "go1.3",
 	"Packages": [
 		"./..."

@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/libtrust"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/libtrust"
 )
 
 func main() {

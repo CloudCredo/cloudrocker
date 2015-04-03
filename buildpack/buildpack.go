@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/cloudcredo/cloudfocker/utils"
+	"github.com/cloudcredo/cloudrocker/utils"
 )
 
 func Add(writer io.Writer, url string, buildpackDir string) {

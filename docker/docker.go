@@ -7,11 +7,11 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloudcredo/cloudfocker/config"
+	"github.com/cloudcredo/cloudrocker/config"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/docker/docker/api/client"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/api/client"
 
-	"github.com/cloudcredo/cloudfocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
 
 type DockerClient interface {
