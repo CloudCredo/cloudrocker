@@ -1,4 +1,4 @@
-package focker
+package rocker
 
 import (
 	"fmt"
@@ -15,14 +15,14 @@ import (
 	"github.com/cloudcredo/cloudrocker/utils"
 )
 
-type Focker struct {
+type Rocker struct {
 	Stdout      *io.PipeReader
 	directories *config.Directories
 }
 
-func NewFocker() *Focker {
-	return &Focker{
-		directories: config.NewDirectories(utils.CloudfockerHome()),
+func NewRocker() *Rocker {
+	return &Rocker{
+		directories: config.NewDirectories(utils.CloudrockerHome()),
 	}
 }
 
@@ -46,7 +46,7 @@ func DeleteContainer(writer io.Writer, name string) {
 	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer, name)
 }
 
-func (f *Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
+func (f *Rocker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
 	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
@@ -54,7 +54,7 @@ func (f *Focker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional
 	buildpack.Add(writer, url, abs(buildpackDir))
 }
 
-func (f *Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
+func (f *Rocker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOptional ...string) {
 	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
@@ -62,7 +62,7 @@ func (f *Focker) DeleteBuildpack(writer io.Writer, bpack string, buildpackDirOpt
 	buildpack.Delete(writer, bpack, abs(buildpackDir))
 }
 
-func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
+func (f *Rocker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string) {
 	buildpackDir := f.directories.Buildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
@@ -70,7 +70,7 @@ func (f *Focker) ListBuildpacks(writer io.Writer, buildpackDirOptional ...string
 	buildpack.List(writer, abs(buildpackDir))
 }
 
-func (f *Focker) RunStager(writer io.Writer) error {
+func (f *Rocker) RunStager(writer io.Writer) error {
 	prepareStagingFilesystem(f.directories)
 	prepareStagingApp(f.directories.App(), f.directories.Staging())
 	containerConfig := config.NewStageContainerConfig(f.directories)
@@ -80,7 +80,7 @@ func (f *Focker) RunStager(writer io.Writer) error {
 	return stager.ValidateStagedApp(f.directories)
 }
 
-func (f *Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
+func (f *Rocker) StageApp(writer io.Writer, buildpackDirOptional ...string) error {
 	buildpackDir := f.directories.ContainerBuildpacks()
 	if len(buildpackDirOptional) > 0 {
 		buildpackDir = buildpackDirOptional[0]
@@ -90,7 +90,7 @@ func (f *Focker) StageApp(writer io.Writer, buildpackDirOptional ...string) erro
 	return err
 }
 
-func (f *Focker) RunRuntime(writer io.Writer) {
+func (f *Rocker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(f.directories.Droplet())
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
@@ -103,24 +103,24 @@ func (f *Focker) RunRuntime(writer io.Writer) {
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 
-func (f *Focker) StopRuntime(writer io.Writer) {
-	StopContainer(writer, "cloudfocker-runtime")
-	DeleteContainer(writer, "cloudfocker-runtime")
+func (f *Rocker) StopRuntime(writer io.Writer) {
+	StopContainer(writer, "cloudrocker-runtime")
+	DeleteContainer(writer, "cloudrocker-runtime")
 }
 
-func (f *Focker) BuildRuntimeImage(writer io.Writer) {
+func (f *Rocker) BuildRuntimeImage(writer io.Writer) {
 	prepareRuntimeFilesystem(f.directories.Droplet())
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.BuildRuntimeImage(cli, Stdout, stdoutpipe, writer, containerConfig)
 }
 
-func cloudFockerfileLocation() (location string) {
+func cloudRockerfileLocation() (location string) {
 	pwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf(" %s", err)
 	}
-	location = pwd + "/CloudFockerfile"
+	location = pwd + "/CloudRockerfile"
 	return
 }
 
@@ -131,7 +131,7 @@ func prepareStagingFilesystem(directories *config.Directories) {
 	if err := buildpack.AtLeastOneBuildpackIn(directories.Buildpacks()); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	if err := utils.CopyFockerBinaryToDir(directories.Focker()); err != nil {
+	if err := utils.CopyRockerBinaryToDir(directories.Rocker()); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

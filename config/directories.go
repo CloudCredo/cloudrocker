@@ -14,17 +14,17 @@ type Directory struct {
 	ContainerDirectory string
 }
 
-func NewDirectories(cloudFockerHomeDir string) *Directories {
+func NewDirectories(cloudRockerHomeDir string) *Directories {
 	directories := &Directories{
 		mounts: map[string]Directory{
-			"home":       Directory{cloudFockerHomeDir, ""},
-			"buildpacks": Directory{cloudFockerHomeDir + "/buildpacks", "/cloudfockerbuildpacks"},
-			"droplet":    Directory{cloudFockerHomeDir + "/tmp/droplet", ""},
-			"result":     Directory{cloudFockerHomeDir + "/tmp/result", ""},
-			"cache":      Directory{cloudFockerHomeDir + "/tmp/cache", ""},
-			"focker":     Directory{cloudFockerHomeDir + "/focker", "/focker"},
-			"staging":    Directory{cloudFockerHomeDir + "/staging", "/app"},
-			"tmp":        Directory{cloudFockerHomeDir + "/tmp", "/tmp"},
+			"home":       Directory{cloudRockerHomeDir, ""},
+			"buildpacks": Directory{cloudRockerHomeDir + "/buildpacks", "/cloudrockerbuildpacks"},
+			"droplet":    Directory{cloudRockerHomeDir + "/tmp/droplet", ""},
+			"result":     Directory{cloudRockerHomeDir + "/tmp/result", ""},
+			"cache":      Directory{cloudRockerHomeDir + "/tmp/cache", ""},
+			"rocker":     Directory{cloudRockerHomeDir + "/rocker", "/rocker"},
+			"staging":    Directory{cloudRockerHomeDir + "/staging", "/app"},
+			"tmp":        Directory{cloudRockerHomeDir + "/tmp", "/tmp"},
 		},
 		app: utils.Pwd(),
 	}
@@ -55,8 +55,8 @@ func (directories *Directories) Cache() string {
 	return directories.mounts["cache"].HostDirectory
 }
 
-func (directories *Directories) Focker() string {
-	return directories.mounts["focker"].HostDirectory
+func (directories *Directories) Rocker() string {
+	return directories.mounts["rocker"].HostDirectory
 }
 
 func (directories *Directories) Staging() string {

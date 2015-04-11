@@ -94,7 +94,7 @@ var _ = Describe("Docker", func() {
 			docker.ImportRootfsImage(fakeDockerClient, stdout, stdoutPipe, buffer, url)
 			Expect(len(fakeDockerClient.cmdImportArgs)).To(Equal(2))
 			Expect(fakeDockerClient.cmdImportArgs[0]).To(Equal("http://test.com/test-img"))
-			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudfocker-base"))
+			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudrocker-base"))
 		})
 	})
 
@@ -112,9 +112,9 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to stop the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
+			docker.StopContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudrocker-container")
 			Expect(len(fakeDockerClient.cmdStopArgs)).To(Equal(1))
-			Expect(fakeDockerClient.cmdStopArgs[0]).To(Equal("cloudfocker-container"))
+			Expect(fakeDockerClient.cmdStopArgs[0]).To(Equal("cloudrocker-container"))
 		})
 	})
 
@@ -122,9 +122,9 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to kill the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.KillContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
+			docker.KillContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudrocker-container")
 			Expect(len(fakeDockerClient.cmdKillArgs)).To(Equal(1))
-			Expect(fakeDockerClient.cmdKillArgs[0]).To(Equal("cloudfocker-container"))
+			Expect(fakeDockerClient.cmdKillArgs[0]).To(Equal("cloudrocker-container"))
 		})
 	})
 
@@ -132,9 +132,9 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to delete the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
-			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudfocker-container")
+			docker.DeleteContainer(fakeDockerClient, stdout, stdoutPipe, buffer, "cloudrocker-container")
 			Expect(len(fakeDockerClient.cmdRmArgs)).To(Equal(1))
-			Expect(fakeDockerClient.cmdRmArgs[0]).To(Equal("cloudfocker-container"))
+			Expect(fakeDockerClient.cmdRmArgs[0]).To(Equal("cloudrocker-container"))
 		})
 	})
 
@@ -175,29 +175,29 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
-	Describe("Getting a cloudfocker runtime container ID", func() {
-		Context("with no cloudfocker runtime container running", func() {
+	Describe("Getting a cloudrocker runtime container ID", func() {
+		Context("with no cloudrocker runtime container running", func() {
 			It("should return empty string", func() {
 				fakeDockerClient = new(FakeDockerClient)
 				stdout, stdoutPipe := io.Pipe()
 				containerId := make(chan string)
 				go func() {
-					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudfocker-runtime")
+					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudrocker-runtime")
 				}()
 				io.Copy(stdoutPipe, bytes.NewBufferString("CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                    NAMES\n"))
 				Eventually(fakeDockerClient.cmdPsCalled).Should(Equal(true))
 				Eventually(containerId).Should(Receive(Equal("")))
 			})
 		})
-		Context("with a cloudfocker runtime container running", func() {
+		Context("with a cloudrocker runtime container running", func() {
 			It("should return the container ID", func() {
 				fakeDockerClient = new(FakeDockerClient)
 				stdout, stdoutPipe := io.Pipe()
 				containerId := make(chan string)
 				go func() {
-					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudfocker-runtime")
+					containerId <- docker.GetContainerId(fakeDockerClient, stdout, stdoutPipe, "cloudrocker-runtime")
 				}()
-				io.Copy(stdoutPipe, bytes.NewBufferString("CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                    NAMES\n180e16d9ef28        cloudfocker:latest   /usr/sbin/nginx -c /   13 minutes ago      Up 13 minutes       0.0.0.0:8080->8080/tcp   cloudfocker-runtime\n"))
+				io.Copy(stdoutPipe, bytes.NewBufferString("CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                    NAMES\n180e16d9ef28        cloudrocker:latest   /usr/sbin/nginx -c /   13 minutes ago      Up 13 minutes       0.0.0.0:8080->8080/tcp   cloudrocker-runtime\n"))
 				Eventually(fakeDockerClient.cmdPsCalled).Should(Equal(true))
 				Eventually(containerId).Should(Receive(Equal("180e16d9ef28")))
 			})

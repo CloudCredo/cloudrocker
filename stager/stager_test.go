@@ -38,7 +38,7 @@ var _ = Describe("Stager", func() {
 
 	Describe("Getting a buildpack runner", func() {
 		It("should return the address of a valid buildpack runner, with a correct buildpack list", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpackrunner-test")
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpackrunner-test")
 			os.Mkdir(buildpackDir+"/test-buildpack", 0755)
 			ioutil.WriteFile(buildpackDir+"/test-buildpack"+"/testfile", []byte("test"), 0644)
 			runner := stager.NewBuildpackRunner(buildpackDir)

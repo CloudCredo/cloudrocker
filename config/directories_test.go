@@ -11,50 +11,50 @@ import (
 
 var _ = Describe("Directories", func() {
 	var (
-		cloudFockerHomeDir string
+		cloudRockerHomeDir string
 		testDirectories    *config.Directories
 	)
 
 	BeforeEach(func() {
-		cloudFockerHomeDir = "/path/to"
-		testDirectories = config.NewDirectories(cloudFockerHomeDir)
+		cloudRockerHomeDir = "/path/to"
+		testDirectories = config.NewDirectories(cloudRockerHomeDir)
 	})
 
 	Describe("Provide a structure for directories", func() {
-		It("should return the cloudfocker home directory", func() {
-			Expect(testDirectories.Home()).To(Equal(cloudFockerHomeDir))
+		It("should return the cloudrocker home directory", func() {
+			Expect(testDirectories.Home()).To(Equal(cloudRockerHomeDir))
 		})
 
 		It("should return the buildpacks directory", func() {
-			Expect(testDirectories.Buildpacks()).To(Equal(cloudFockerHomeDir + "/buildpacks"))
+			Expect(testDirectories.Buildpacks()).To(Equal(cloudRockerHomeDir + "/buildpacks"))
 		})
 
 		It("should return the container's buildpacks directory", func() {
-			Expect(testDirectories.ContainerBuildpacks()).To(Equal("/cloudfockerbuildpacks"))
+			Expect(testDirectories.ContainerBuildpacks()).To(Equal("/cloudrockerbuildpacks"))
 		})
 
 		It("should return the droplet directory", func() {
-			Expect(testDirectories.Droplet()).To(Equal(cloudFockerHomeDir + "/tmp/droplet"))
+			Expect(testDirectories.Droplet()).To(Equal(cloudRockerHomeDir + "/tmp/droplet"))
 		})
 
 		It("should return the result directory", func() {
-			Expect(testDirectories.Result()).To(Equal(cloudFockerHomeDir + "/tmp/result"))
+			Expect(testDirectories.Result()).To(Equal(cloudRockerHomeDir + "/tmp/result"))
 		})
 
 		It("should return the cache directory", func() {
-			Expect(testDirectories.Cache()).To(Equal(cloudFockerHomeDir + "/tmp/cache"))
+			Expect(testDirectories.Cache()).To(Equal(cloudRockerHomeDir + "/tmp/cache"))
 		})
 
-		It("should return the focker directory", func() {
-			Expect(testDirectories.Focker()).To(Equal(cloudFockerHomeDir + "/focker"))
+		It("should return the rocker directory", func() {
+			Expect(testDirectories.Rocker()).To(Equal(cloudRockerHomeDir + "/rocker"))
 		})
 
 		It("should return the staging directory", func() {
-			Expect(testDirectories.Staging()).To(Equal(cloudFockerHomeDir + "/staging"))
+			Expect(testDirectories.Staging()).To(Equal(cloudRockerHomeDir + "/staging"))
 		})
 
-		It("should return the host cloudfocker tmp directory", func() {
-			Expect(testDirectories.Tmp()).To(Equal(cloudFockerHomeDir + "/tmp"))
+		It("should return the host cloudrocker tmp directory", func() {
+			Expect(testDirectories.Tmp()).To(Equal(cloudRockerHomeDir + "/tmp"))
 		})
 
 		It("should return the application directory", func() {
@@ -67,8 +67,8 @@ var _ = Describe("Directories", func() {
 		It("should return a mapping of host to container directories", func() {
 			Expect(testDirectories.Mounts()).To(Equal(map[string]string{ // host dir: container dir
 				"/path/to/tmp":        "/tmp",
-				"/path/to/focker":     "/focker",
-				"/path/to/buildpacks": "/cloudfockerbuildpacks",
+				"/path/to/rocker":     "/rocker",
+				"/path/to/buildpacks": "/cloudrockerbuildpacks",
 				"/path/to/staging":    "/app",
 			}))
 		})
@@ -82,7 +82,7 @@ var _ = Describe("Directories", func() {
 				"/path/to/tmp/droplet",
 				"/path/to/tmp/result",
 				"/path/to/tmp/cache",
-				"/path/to/focker",
+				"/path/to/rocker",
 				"/path/to/staging",
 				"/path/to/tmp",
 			))

@@ -29,17 +29,17 @@ eval "$@"
 `
 
 func GetRootfsUrl() string {
-	url := os.Getenv("FOCKER_ROOTFS_URL")
+	url := os.Getenv("ROCKER_ROOTFS_URL")
 	if url == "" {
 		url = "https://s3.amazonaws.com/blob.cfblob.com/fee97b71-17d7-4fab-a5b0-69d4112521e6"
 	}
 	return url
 }
 
-func CloudfockerHome() string {
-	cfhome := os.Getenv("CLOUDFOCKER_HOME")
+func CloudrockerHome() string {
+	cfhome := os.Getenv("CLOUDROCKER_HOME")
 	if cfhome == "" {
-		cfhome = os.Getenv("HOME") + "/.cloudfocker"
+		cfhome = os.Getenv("HOME") + "/.cloudrocker"
 	}
 	return cfhome
 }
@@ -59,27 +59,27 @@ func SubDirs(dir string) ([]string, error) {
 	return dirs, nil
 }
 
-func CopyFockerBinaryToDir(destinationDir string) error {
+func CopyRockerBinaryToDir(destinationDir string) error {
 	if err := os.MkdirAll(destinationDir, 0755); err != nil {
 		return err
 	}
-	var fockPath string
+	var rockPath string
 	var err error
-	if fockPath, err = exec.LookPath("fock"); err != nil {
-		return fmt.Errorf("Could not find fock binary, please install it in your path")
+	if rockPath, err = exec.LookPath("rock"); err != nil {
+		return fmt.Errorf("Could not find rock binary, please install it in your path")
 	}
-	newFockPath := destinationDir + "/fock"
-	if err := Cp(fockPath, newFockPath); err != nil {
+	newRockPath := destinationDir + "/rock"
+	if err := Cp(rockPath, newRockPath); err != nil {
 		return err
 	}
-	if err := os.Chmod(newFockPath, 0755); err != nil {
+	if err := os.Chmod(newRockPath, 0755); err != nil {
 		return err
 	}
 	return nil
 }
 
 func AddSoldierRunScript(appDir string) error {
-	return ioutil.WriteFile(appDir+"/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(soldier), 0644)
+	return ioutil.WriteFile(appDir+"/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(soldier), 0644)
 }
 
 func Pwd() string {

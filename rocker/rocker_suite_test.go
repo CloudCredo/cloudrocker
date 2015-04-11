@@ -1,4 +1,4 @@
-package focker_test
+package rocker_test
 
 import (
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestFocker(t *testing.T) {
+func TestRocker(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Focker Suite")
+	RunSpecs(t, "Rocker Suite")
 }

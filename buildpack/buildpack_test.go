@@ -20,7 +20,7 @@ var _ = Describe("Buildpack", func() {
 	})
 	Describe("Adding a Buildpack", func() {
 		It("should download the buildpack from the specified URL", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test")
+			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test")
 			buildpack.Add(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
 			Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
 			Eventually(buffer).Should(gbytes.Say(`Downloaded buildpack.`))
@@ -32,7 +32,7 @@ var _ = Describe("Buildpack", func() {
 	Describe("Removing a Buildpack", func() {
 		Context("with the buildpack", func() {
 			It("should remove the buildpack from the buildpack directory", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-remove-test")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-remove-test")
 				os.Mkdir(buildpackDir+"/testbuildpack", 0755)
 				ioutil.WriteFile(buildpackDir+"/testbuildpack/testfile", []byte("test"), 0644)
 				err := buildpack.Delete(buffer, "testbuildpack", buildpackDir)
@@ -45,7 +45,7 @@ var _ = Describe("Buildpack", func() {
 		})
 		Context("without the buildpack", func() {
 			It("should not return an error", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-remove-test")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-remove-test")
 				err := buildpack.Delete(buffer, "testbuildpack", buildpackDir)
 				Expect(err).ShouldNot(HaveOccurred())
 				os.RemoveAll(buildpackDir)
@@ -55,7 +55,7 @@ var _ = Describe("Buildpack", func() {
 	Describe("Listing buildpacks", func() {
 		Context("with buildpacks", func() {
 			It("should list the buildpacks in the buildpack directory", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-list-test")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-list-test")
 				os.Mkdir(buildpackDir+"/testbuildpack", 0755)
 				ioutil.WriteFile(buildpackDir+"/testbuildpack/testfile", []byte("test"), 0644)
 				os.Mkdir(buildpackDir+"/testbuildpack2", 0755)
@@ -69,7 +69,7 @@ var _ = Describe("Buildpack", func() {
 		})
 		Context("without buildpacks", func() {
 			It("should say there are no buildpacks installed", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-list-test")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-list-test")
 				err := buildpack.List(buffer, buildpackDir)
 				Expect(err).ShouldNot(HaveOccurred())
 				Eventually(buffer).Should(gbytes.Say(`No buildpacks installed`))
@@ -80,7 +80,7 @@ var _ = Describe("Buildpack", func() {
 	Describe("Checking for the presence of at least one buildpack", func() {
 		Context("with one buildpack", func() {
 			It("should return without error", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test-buildpack")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test-buildpack")
 				os.Mkdir(buildpackDir+"/testbuildpack", 0755)
 				err := buildpack.AtLeastOneBuildpackIn(buildpackDir)
 				Expect(err).ShouldNot(HaveOccurred())
@@ -89,7 +89,7 @@ var _ = Describe("Buildpack", func() {
 		})
 		Context("with no buildpacks", func() {
 			It("should return an error", func() {
-				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "cfocker-buildpack-test-buildpack")
+				buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test-buildpack")
 				err := buildpack.AtLeastOneBuildpackIn(buildpackDir)
 				Expect(err).Should(HaveOccurred())
 				os.RemoveAll(buildpackDir)

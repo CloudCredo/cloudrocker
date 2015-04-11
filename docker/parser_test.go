@@ -17,37 +17,37 @@ var _ = Describe("Parser", func() {
 	Describe("Parsing a ContainerConfig for a Docker run command", func() {
 		Context("with a staging config ", func() {
 			It("should return a slice with all required arguments", func() {
-				os.Setenv("CLOUDFOCKER_HOME", "/home/testuser/.cloudfocker")
+				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
 				thisUser, _ := user.Current()
 				userId := thisUser.Uid
-				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudfocker"))
+				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudrocker"))
 				parsedRunCommand := docker.ParseRunCommand(stageConfig)
 				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId +
-					" --name=cloudfocker-staging " +
-					"--volume=/home/testuser/.cloudfocker/buildpacks:/cloudfockerbuildpacks " +
-					"--volume=/home/testuser/.cloudfocker/focker:/focker " +
-					"--volume=/home/testuser/.cloudfocker/staging:/app " +
-					"--volume=/home/testuser/.cloudfocker/tmp:/tmp " +
-					"cloudfocker-base:latest " +
-					"/focker/fock stage internal"))
+					" --name=cloudrocker-staging " +
+					"--volume=/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks " +
+					"--volume=/home/testuser/.cloudrocker/rocker:/rocker " +
+					"--volume=/home/testuser/.cloudrocker/staging:/app " +
+					"--volume=/home/testuser/.cloudrocker/tmp:/tmp " +
+					"cloudrocker-base:latest " +
+					"/rocker/rock stage internal"))
 			})
 		})
 		Context("with a runtime config ", func() {
 			It("should return a slice with all required arguments", func() {
-				os.Setenv("CLOUDFOCKER_HOME", "/home/testuser/.cloudfocker")
+				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
 				thisUser, _ := user.Current()
 				userId := thisUser.Uid
 				testRuntimeContainerConfig := testRuntimeContainerConfig()
 				parsedRunCommand := docker.ParseRunCommand(testRuntimeContainerConfig)
 				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userId +
-					" --name=cloudfocker-runtime -d " +
+					" --name=cloudrocker-runtime -d " +
 					"--volume=/home/testuser/testapp/app:/app " +
 					"--publish=8080:8080 " +
 					"--env=\"HOME=/app\" " +
 					"--env=\"PORT=8080\" " +
 					"--env=\"TMPDIR=/app/tmp\" " +
-					"cloudfocker-base:latest " +
-					"/bin/bash /app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command"))
+					"cloudrocker-base:latest " +
+					"/bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command"))
 			})
 		})
 	})
@@ -75,13 +75,13 @@ var _ = Describe("Parser", func() {
 
 func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 	containerConfig = &config.ContainerConfig{
-		ContainerName:  "cloudfocker-runtime",
-		ImageTag:       "cloudfocker-base:latest",
+		ContainerName:  "cloudrocker-runtime",
+		ImageTag:       "cloudrocker-base:latest",
 		PublishedPorts: map[int]int{8080: 8080},
 		Mounts: map[string]string{
 			"/home/testuser/testapp" + "/app": "/app",
 		},
-		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
+		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
 			[]string{"the", "start", "command"}...),
 		Daemon: true,
 		EnvVars: map[string]string{

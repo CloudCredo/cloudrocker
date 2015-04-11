@@ -23,17 +23,17 @@ type ContainerConfig struct {
 
 func NewStageContainerConfig(directories *Directories) (containerConfig *ContainerConfig) {
 	containerConfig = &ContainerConfig{
-		ContainerName: "cloudfocker-staging",
+		ContainerName: "cloudrocker-staging",
 		Mounts:        directories.Mounts(),
-		ImageTag:      "cloudfocker-base:latest",
-		Command:       []string{"/focker/fock", "stage", "internal"},
+		ImageTag:      "cloudrocker-base:latest",
+		Command:       []string{"/rocker/rock", "stage", "internal"},
 	}
 	return
 }
 
 func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerConfig) {
 	containerConfig = &ContainerConfig{
-		ContainerName: "cloudfocker-runtime",
+		ContainerName: "cloudrocker-runtime",
 		Daemon:        true,
 		Mounts: map[string]string{
 			dropletDir + "/app": "/app",
@@ -46,8 +46,8 @@ func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerCon
 			"VCAP_SERVICES": vcapServices(dropletDir),
 			"DATABASE_URL":  databaseURL(dropletDir),
 		},
-		ImageTag: "cloudfocker-base:latest",
-		Command: append([]string{"/bin/bash", "/app/cloudfocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
+		ImageTag: "cloudrocker-base:latest",
+		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
 			parseStartCommand(dropletDir)...),
 		DropletDir: dropletDir,
 	}

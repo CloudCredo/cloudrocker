@@ -43,7 +43,7 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, url string) error {
 	fmt.Fprintln(writer, "Bootstrapping Docker setup - this will take a few minutes...")
 	go func() {
-		err := cli.CmdImport(url, "cloudfocker-base")
+		err := cli.CmdImport(url, "cloudrocker-base")
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}
@@ -56,7 +56,7 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 }
 
 func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, containerConfig *config.ContainerConfig) error {
-	fmt.Fprintln(writer, "Starting the CloudFocker container...")
+	fmt.Fprintln(writer, "Starting the CloudRocker container...")
 	go func() {
 		err := cli.CmdRun(ParseRunCommand(containerConfig)...)
 		if err != nil {
@@ -67,12 +67,12 @@ func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe 
 		}
 	}()
 	CopyFromPipeToPipe(writer, stdout)
-	fmt.Fprintln(writer, "Started the CloudFocker container.")
+	fmt.Fprintln(writer, "Started the CloudRocker container.")
 	return nil
 }
 
 func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
-	fmt.Fprintln(writer, "Stopping the CloudFocker container...")
+	fmt.Fprintln(writer, "Stopping the CloudRocker container...")
 	go func() {
 		err := cli.CmdStop(name)
 		if err != nil {
@@ -88,7 +88,7 @@ func StopContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 }
 
 func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
-	fmt.Fprintln(writer, "Killing the CloudFocker container...")
+	fmt.Fprintln(writer, "Killing the CloudRocker container...")
 	go func() {
 		err := cli.CmdKill(name)
 		if err != nil {
@@ -104,7 +104,7 @@ func KillContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeW
 }
 
 func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, name string) error {
-	fmt.Fprintln(writer, "Deleting the CloudFocker container...")
+	fmt.Fprintln(writer, "Deleting the CloudRocker container...")
 	go func() {
 		err := cli.CmdRm(name)
 		if err != nil {
