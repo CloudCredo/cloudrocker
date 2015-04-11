@@ -142,7 +142,7 @@ func prepareStagingApp(appDir string, stagingDir string) {
 
 func copyDir(src string, dest string) {
 	src = src + "/*"
-	command := "cp -ra " + src + " " + dest
+	command := "shopt -s dotglob && cp -ra " + src + " " + dest
 	if err := exec.Command("bash", "-c", command).Run(); err != nil {
 		log.Fatalf("error copying from %s to %s : %s", src, dest, err)
 	}

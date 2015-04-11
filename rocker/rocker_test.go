@@ -102,13 +102,24 @@ var _ = Describe("Rocker", func() {
 		})
 
 		Context("with a detected buildpack", func() {
-			It("should populate the droplet directory", func() {
+			BeforeEach(func() {
+				cloudrockerHome, _ = ioutil.TempDir(os.TempDir(), "rocker-staging-test")
+				os.Setenv("CLOUDROCKER_HOME", cloudrockerHome)
 				cp("fixtures/stage/buildpacks", cloudrockerHome)
 				originalDir = utils.Pwd()
 				os.Chdir("fixtures/stage/apps/bash-app")
 				testrocker = rocker.NewRocker()
 				err := testrocker.RunStager(buffer)
 				Expect(err).ShouldNot(HaveOccurred())
+			})
+
+			It("should transfer dotfiles to the staging directory", func() {
+				stagingDir, err := os.Open(config.NewDirectories(cloudrockerHome).Staging())
+				stagingDirContents, err := stagingDir.Readdirnames(0)
+				Expect(stagingDirContents, err).Should(ContainElement(".testdotfile"))
+			})
+
+			It("should populate the droplet directory", func() {
 				dropletDir, err := os.Open(config.NewDirectories(cloudrockerHome).Droplet())
 				dropletDirContents, err := dropletDir.Readdirnames(0)
 				Expect(dropletDirContents, err).Should(ContainElement("app"))
@@ -116,7 +127,9 @@ var _ = Describe("Rocker", func() {
 				Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
 				Expect(dropletDirContents, err).Should(ContainElement("tmp"))
 			})
+
 		})
+
 		Context("with a buildpack that doesn't detect", func() {
 			It("tell us we don't have a valid buildpack", func() {
 				cp("fixtures/runtime/buildpacks", cloudrockerHome)
