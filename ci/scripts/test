@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ${GOPATH:=/go}/src/github.com/cloudcredo/cloudrocker/rock
+go install
+
+cd $GOPATH/src/github.com/cloudcredo/cloudrocker
+ginkgo -r --skip=REALDOCKER
