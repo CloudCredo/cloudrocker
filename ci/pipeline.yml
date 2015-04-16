@@ -1,0 +1,14 @@
+---
+jobs:
+- name: cloudrocker
+  plan:
+  - get: cloudrocker
+  - task: test
+    file: cloudrocker/ci/test.yml
+
+resources:
+- name: cloudrocker
+  type: git
+  source:
+    uri: https://github.com/cloudcredo/cloudrocker
+    branch: master
