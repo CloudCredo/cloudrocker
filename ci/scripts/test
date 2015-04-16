@@ -1,7 +1,9 @@
 #!/bin/bash
 
-cd cloudrocker/rock
+export GOPATH=$PWD
+
+cd src/github.com/cloudcredo/cloudrocker/rock
 go install
 
-cd ../..
+cd ..
 ginkgo -r --skip=REALDOCKER
