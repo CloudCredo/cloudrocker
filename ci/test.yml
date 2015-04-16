@@ -4,7 +4,7 @@ image: docker:///hatofmonkeys/rocker-ci
 
 inputs:
   - name: cloudrocker
-  	path: src/github.com/cloudcredo/cloudrocker
+    path: src/github.com/cloudcredo/cloudrocker
 
 run:
   path: src/github.com/cloudcredo/cloudrocker/ci/scripts/test
