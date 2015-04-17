@@ -159,7 +159,7 @@ func prepareRuntimeFilesystem(directories *config.Directories) {
 		log.Fatalf(" %s", err)
 	}
 
-	if err := utils.AddSoldierRunScript(directories.Droplet() + "/app"); err != nil {
+	if err := utils.AddLauncherRunScript(directories.Droplet() + "/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

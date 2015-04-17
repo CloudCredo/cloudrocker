@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/candiedyaml"
 )
@@ -106,8 +105,8 @@ func parseStartCommand(dropletDir string) (startCommand []string) {
 		if err != nil {
 			log.Fatalf("Failed to decode document: %s", err)
 		}
-		startCommand = strings.Split(stagingInfo.StartCommand, " ")
-		if startCommand[0] != "" {
+		startCommand = []string{stagingInfo.StartCommand}
+		if startCommand[0] != `` {
 			return
 		}
 		procfileFile, err := os.Open(dropletDir + "/app/Procfile")
@@ -118,7 +117,7 @@ func parseStartCommand(dropletDir string) (startCommand []string) {
 			if err != nil {
 				log.Fatalf("Failed to decode document: %s", err)
 			}
-			startCommand = strings.Split(procfileInfo.Web, " ")
+			startCommand = []string{procfileInfo.Web}
 			return
 		}
 	}

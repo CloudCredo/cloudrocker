@@ -82,7 +82,7 @@ func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 			"/home/testuser/testapp" + "/app": "/app",
 		},
 		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
-			[]string{"the", "start", "command"}...),
+			[]string{"the start command"}...),
 		Daemon: true,
 		EnvVars: map[string]string{
 			"HOME":          "/app",

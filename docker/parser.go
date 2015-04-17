@@ -118,8 +118,8 @@ func envVarDockerfileString(envVars map[string]string) string {
 }
 
 func commandDockerfileString(command []string) string {
-	commandString := `CMD ["`
-	commandString = commandString + strings.Join(command, `", "`)
-	commandString = commandString + "\"]\n"
+	commandString := `CMD `
+	commandString = commandString + strings.Join(command, ` `)
+	commandString = commandString + "\n"
 	return commandString
 }

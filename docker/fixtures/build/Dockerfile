@@ -8,4 +8,4 @@ WORKDIR /app
 ENV HOME /app
 ENV PORT 8080
 ENV TMPDIR /app/tmp
-CMD ["/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app", "the", "start", "command"]
+CMD /bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command

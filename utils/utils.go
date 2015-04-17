@@ -9,12 +9,7 @@ import (
 	"os/exec"
 )
 
-const soldier = `
-if [ -z "$1" ]; then
-  echo "usage: $0 <app dir> <command to run>" >&2
-  exit 1
-fi
-
+const launcher = `
 cd "$1"
 
 if [ -d .profile.d ]; then
@@ -25,7 +20,7 @@ fi
 
 shift
 
-eval "$@"
+exec bash -c "$@"
 `
 
 func GetRootfsUrl() string {
@@ -78,8 +73,8 @@ func CopyRockerBinaryToDir(destinationDir string) error {
 	return nil
 }
 
-func AddSoldierRunScript(appDir string) error {
-	return ioutil.WriteFile(appDir+"/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(soldier), 0644)
+func AddLauncherRunScript(appDir string) error {
+	return ioutil.WriteFile(appDir+"/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", []byte(launcher), 0644)
 }
 
 func Pwd() string {

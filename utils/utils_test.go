@@ -67,10 +67,10 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(cloudrockerHome)
 		})
 	})
-	Describe("Adding the soldier run script to a directory", func() {
+	Describe("Adding the launcher run script to a directory", func() {
 		It("should create a script called cloudrocker-start.sh with expected contents", func() {
-			appDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-soldier")
-			utils.AddSoldierRunScript(appDir)
+			appDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-launcher")
+			utils.AddLauncherRunScript(appDir)
 			written, _ := ioutil.ReadFile(appDir + "/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh")
 			fixture, _ := ioutil.ReadFile("fixtures/cloudrocker-start.sh")
 			Expect(written).To(Equal(fixture))
