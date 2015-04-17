@@ -10,8 +10,8 @@ import (
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/utils"
 
-	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
-	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/runtime-schema/models"
+	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle"
+	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
 )
 
 type BuildpackRunner interface {
@@ -30,16 +30,16 @@ func NewBuildpackRunner(buildpackDir string) *buildpackrunner.Runner {
 	if dirs, err = utils.SubDirs(buildpackDir); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	config := models.NewCircusTailorConfig(dirs)
+	config := buildpack_app_lifecycle.NewLifecycleBuilderConfig(dirs, false, false)
 	return buildpackrunner.New(&config)
 }
 
 func ValidateStagedApp(directories *config.Directories) error {
-	if _, err := os.Stat(directories.Droplet() + "/app"); err != nil {
+	if _, err := os.Stat(directories.Tmp() + "/droplet"); err != nil {
 		return fmt.Errorf("Staging failed - have you added a buildpack for this type of application?")
 	}
-	if _, err := os.Stat(directories.Droplet() + "/staging_info.yml"); err != nil {
-		return fmt.Errorf("Staging failed - no staging info was produced by the matching buildpack!")
+	if _, err := os.Stat(directories.Tmp() + "/result.json"); err != nil {
+		return fmt.Errorf("Staging failed - no result json was produced by the matching buildpack!")
 	}
 	return nil
 }

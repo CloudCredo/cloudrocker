@@ -103,7 +103,7 @@ func main() {
 				if internal := c.Args().First(); internal == "internal" {
 					//this is rocker being called inside the staging container
 					if err := rocker.StageApp(os.Stdout); err != nil {
-						log.Fatalf(" %s", err)
+						fmt.Printf(" %s", err)
 					}
 				} else {
 					//this is rocker being called by the user, outside of the staging container

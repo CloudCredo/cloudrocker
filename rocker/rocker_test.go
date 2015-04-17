@@ -77,16 +77,6 @@ var _ = Describe("Rocker", func() {
 		})
 	})
 
-	Describe("Building an application droplet", func() {
-		It("should run the buildpack runner from linux-circus", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-runner-test")
-			err := testrocker.StageApp(buffer, buildpackDir)
-			Expect(err).Should(MatchError("no valid buildpacks detected"))
-			Eventually(buffer).Should(gbytes.Say(`Running Buildpacks...`))
-			os.RemoveAll(buildpackDir)
-		})
-	})
-
 	Describe("Staging an application", func() {
 		var (
 			cloudrockerHome string
@@ -122,13 +112,10 @@ var _ = Describe("Rocker", func() {
 					Expect(stagingDirContents, err).Should(ContainElement(".testdotfile"))
 				})
 
-				It("should populate the droplet directory", func() {
-					dropletDir, err := os.Open(config.NewDirectories(cloudrockerHome).Droplet())
+				It("should create the droplet", func() {
+					dropletDir, err := os.Open(config.NewDirectories(cloudrockerHome).Tmp())
 					dropletDirContents, err := dropletDir.Readdirnames(0)
-					Expect(dropletDirContents, err).Should(ContainElement("app"))
-					Expect(dropletDirContents, err).Should(ContainElement("logs"))
-					Expect(dropletDirContents, err).Should(ContainElement("staging_info.yml"))
-					Expect(dropletDirContents, err).Should(ContainElement("tmp"))
+					Expect(dropletDirContents, err).Should(ContainElement("droplet"))
 				})
 			})
 		})
@@ -225,18 +212,14 @@ var _ = Describe("Rocker", func() {
 					Expect(cloudrockerHomeContents, err).Should(ContainElement("buildpacks"))
 					Expect(cloudrockerHomeContents, err).Should(ContainElement("tmp"))
 					Expect(cloudrockerHomeContents, err).Should(ContainElement("staging"))
-					cloudrockerHomeTmpFile, err := os.Open(cloudrockerHome + "/tmp")
-					cloudrockerHomeTmpContents, err := cloudrockerHomeTmpFile.Readdirnames(0)
-					Expect(cloudrockerHomeTmpContents, err).Should(ContainElement("droplet"))
-					Expect(cloudrockerHomeTmpContents, err).Should(ContainElement("result"))
-					Expect(cloudrockerHomeTmpContents, err).Should(ContainElement("cache"))
+					Expect(cloudrockerHomeContents, err).Should(ContainElement("droplet"))
 					os.RemoveAll(cloudrockerHome)
 				})
 			})
 			Context("with a previously staged application", func() {
 				It("should clean the directory structure appropriately", func() {
 					cloudrockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-create-clean")
-					dirs := map[string]bool{"/buildpacks": false, "/tmp/droplet": true, "/tmp/cache": false, "/tmp/result": true, "/staging": true}
+					dirs := map[string]bool{"/buildpacks": false, "/droplet": true, "/tmp/cache": false, "/staging": true}
 					for dir, _ := range dirs {
 						os.MkdirAll(cloudrockerHome+dir, 0755)
 						ioutil.WriteFile(cloudrockerHome+dir+"/testfile", []byte("test"), 0644)

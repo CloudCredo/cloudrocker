@@ -12,7 +12,7 @@ var _ = Describe("ContainerConfig", func() {
 		It("should return a valid ContainerConfig with the correct staging information", func() {
 			stageConfig := config.NewStageContainerConfig(config.NewDirectories("TEST_CLOUDROCKERHOME"))
 			Expect(stageConfig.ContainerName).To(Equal("cloudrocker-staging"))
-			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/staging"]).To(Equal("/app"))
+			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/staging"]).To(Equal("/tmp/app"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/tmp"]).To(Equal("/tmp"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/buildpacks"]).To(Equal("/cloudrockerbuildpacks"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/rocker"]).To(Equal("/rocker"))

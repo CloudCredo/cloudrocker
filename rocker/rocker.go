@@ -91,7 +91,7 @@ func (f *Rocker) StageApp(writer io.Writer, buildpackDirOptional ...string) erro
 }
 
 func (f *Rocker) RunRuntime(writer io.Writer) {
-	prepareRuntimeFilesystem(f.directories.Droplet())
+	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	if docker.GetContainerId(cli, Stdout, stdoutpipe, containerConfig.ContainerName) != "" {
@@ -109,7 +109,7 @@ func (f *Rocker) StopRuntime(writer io.Writer) {
 }
 
 func (f *Rocker) BuildRuntimeImage(writer io.Writer) {
-	prepareRuntimeFilesystem(f.directories.Droplet())
+	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.BuildRuntimeImage(cli, Stdout, stdoutpipe, writer, containerConfig)
@@ -148,8 +148,18 @@ func copyDir(src string, dest string) {
 	}
 }
 
-func prepareRuntimeFilesystem(dropletDir string) {
-	if err := utils.AddSoldierRunScript(dropletDir + "/app"); err != nil {
+func prepareRuntimeFilesystem(directories *config.Directories) {
+	tarPath, err := exec.LookPath("tar")
+	if err != nil {
+		log.Fatalf(" %s", err)
+	}
+
+	err = exec.Command(tarPath, "-xzf", directories.Tmp()+"/droplet", "-C", directories.Droplet()).Run()
+	if err != nil {
+		log.Fatalf(" %s", err)
+	}
+
+	if err := utils.AddSoldierRunScript(directories.Droplet() + "/app"); err != nil {
 		log.Fatalf(" %s", err)
 	}
 }

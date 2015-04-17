@@ -19,12 +19,10 @@ func NewDirectories(cloudRockerHomeDir string) *Directories {
 		mounts: map[string]Directory{
 			"home":       Directory{cloudRockerHomeDir, ""},
 			"buildpacks": Directory{cloudRockerHomeDir + "/buildpacks", "/cloudrockerbuildpacks"},
-			"droplet":    Directory{cloudRockerHomeDir + "/tmp/droplet", ""},
-			"result":     Directory{cloudRockerHomeDir + "/tmp/result", ""},
-			"cache":      Directory{cloudRockerHomeDir + "/tmp/cache", ""},
 			"rocker":     Directory{cloudRockerHomeDir + "/rocker", "/rocker"},
-			"staging":    Directory{cloudRockerHomeDir + "/staging", "/app"},
+			"staging":    Directory{cloudRockerHomeDir + "/staging", "/tmp/app"},
 			"tmp":        Directory{cloudRockerHomeDir + "/tmp", "/tmp"},
+			"droplet":    Directory{cloudRockerHomeDir + "/droplet", ""},
 		},
 		app: utils.Pwd(),
 	}
@@ -43,18 +41,6 @@ func (directories *Directories) ContainerBuildpacks() string {
 	return directories.mounts["buildpacks"].ContainerDirectory
 }
 
-func (directories *Directories) Droplet() string {
-	return directories.mounts["droplet"].HostDirectory
-}
-
-func (directories *Directories) Result() string {
-	return directories.mounts["result"].HostDirectory
-}
-
-func (directories *Directories) Cache() string {
-	return directories.mounts["cache"].HostDirectory
-}
-
 func (directories *Directories) Rocker() string {
 	return directories.mounts["rocker"].HostDirectory
 }
@@ -69,6 +55,10 @@ func (directories *Directories) App() string {
 
 func (directories *Directories) Tmp() string {
 	return directories.mounts["tmp"].HostDirectory
+}
+
+func (directories *Directories) Droplet() string {
+	return directories.mounts["droplet"].HostDirectory
 }
 
 func (directories *Directories) Mounts() map[string]string {
@@ -95,9 +85,8 @@ func (directories *Directories) HostDirectories() []string {
 
 func (directories *Directories) HostDirectoriesToClean() []string {
 	dirs := []string{
-		directories.Droplet(),
-		directories.Result(),
 		directories.Staging(),
+		directories.Droplet(),
 	}
 
 	return dirs

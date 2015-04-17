@@ -8,7 +8,7 @@ import (
 
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/stager"
-	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/linux-circus/buildpackrunner"
+	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
 
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
@@ -60,9 +60,10 @@ var _ = Describe("Stager", func() {
 		Context("with something that looks like a staged application", func() {
 			It("should not return an error", func() {
 				cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
-				dropletDir := config.NewDirectories(cfhome).Droplet()
-				os.MkdirAll(dropletDir+"/app", 0755)
-				ioutil.WriteFile(dropletDir+"/staging_info.yml", []byte("test-staging-info"), 0644)
+				dropletDir := config.NewDirectories(cfhome).Tmp()
+				os.MkdirAll(dropletDir+"/tmp", 0755)
+				ioutil.WriteFile(dropletDir+"/result.json", []byte("test-staging-info"), 0644)
+				ioutil.WriteFile(dropletDir+"/droplet", []byte("test-droplet"), 0644)
 				err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
 				Expect(err).ShouldNot(HaveOccurred())
 				os.RemoveAll(cfhome)
@@ -82,7 +83,7 @@ var _ = Describe("Stager", func() {
 					cfhome, _ := ioutil.TempDir(os.TempDir(), "stager-test-staged")
 					os.MkdirAll(cfhome+"/tmp/droplet/app", 0755)
 					err := stager.ValidateStagedApp(config.NewDirectories(cfhome))
-					Expect(err).Should(MatchError("Staging failed - no staging info was produced by the matching buildpack!"))
+					Expect(err).Should(MatchError("Staging failed - no result json was produced by the matching buildpack!"))
 					os.RemoveAll(cfhome)
 				})
 			})

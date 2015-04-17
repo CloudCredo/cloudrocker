@@ -34,15 +34,7 @@ var _ = Describe("Directories", func() {
 		})
 
 		It("should return the droplet directory", func() {
-			Expect(testDirectories.Droplet()).To(Equal(cloudRockerHomeDir + "/tmp/droplet"))
-		})
-
-		It("should return the result directory", func() {
-			Expect(testDirectories.Result()).To(Equal(cloudRockerHomeDir + "/tmp/result"))
-		})
-
-		It("should return the cache directory", func() {
-			Expect(testDirectories.Cache()).To(Equal(cloudRockerHomeDir + "/tmp/cache"))
+			Expect(testDirectories.Droplet()).To(Equal(cloudRockerHomeDir + "/droplet"))
 		})
 
 		It("should return the rocker directory", func() {
@@ -69,7 +61,7 @@ var _ = Describe("Directories", func() {
 				"/path/to/tmp":        "/tmp",
 				"/path/to/rocker":     "/rocker",
 				"/path/to/buildpacks": "/cloudrockerbuildpacks",
-				"/path/to/staging":    "/app",
+				"/path/to/staging":    "/tmp/app",
 			}))
 		})
 	})
@@ -79,9 +71,7 @@ var _ = Describe("Directories", func() {
 			Expect(testDirectories.HostDirectories()).To(ConsistOf(
 				"/path/to",
 				"/path/to/buildpacks",
-				"/path/to/tmp/droplet",
-				"/path/to/tmp/result",
-				"/path/to/tmp/cache",
+				"/path/to/droplet",
 				"/path/to/rocker",
 				"/path/to/staging",
 				"/path/to/tmp",
@@ -92,8 +82,7 @@ var _ = Describe("Directories", func() {
 	Describe("Providing the directories to be cleaned before staging", func() {
 		It("should return a set of directories to be cleaned", func() {
 			Expect(testDirectories.HostDirectoriesToClean()).To(ConsistOf(
-				"/path/to/tmp/droplet",
-				"/path/to/tmp/result",
+				"/path/to/droplet",
 				"/path/to/staging",
 			))
 		})

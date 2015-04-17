@@ -26,7 +26,7 @@ var _ = Describe("Parser", func() {
 					" --name=cloudrocker-staging " +
 					"--volume=/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks " +
 					"--volume=/home/testuser/.cloudrocker/rocker:/rocker " +
-					"--volume=/home/testuser/.cloudrocker/staging:/app " +
+					"--volume=/home/testuser/.cloudrocker/staging:/tmp/app " +
 					"--volume=/home/testuser/.cloudrocker/tmp:/tmp " +
 					"cloudrocker-base:latest " +
 					"/rocker/rock stage internal"))
