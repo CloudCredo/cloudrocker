@@ -212,6 +212,8 @@ If you aren't fortunate enough to work in an organisation with access to a prope
 
 ##Developing Cloud Rocker
 
+Development is against the 'develop' branch, promoted to 'master' by [Concourse](http://concourse.ci/).
+
 There is a public tracker for this project [here](https://www.pivotaltracker.com/projects/1119430).
 
 ##FAQ
