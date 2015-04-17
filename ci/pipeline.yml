@@ -1,14 +1,29 @@
 ---
 jobs:
-- name: cloudrocker
+- name: test
   plan:
   - get: cloudrocker
   - task: test
     file: cloudrocker/ci/test.yml
+
+- name: promote-to-master
+  plan:
+  - get: cloudrocker
+    passed: [test]
+  - put: cloudrocker-master
+    params:
+      repository: cloudrocker
 
 resources:
 - name: cloudrocker
   type: git
   source:
     uri: https://github.com/cloudcredo/cloudrocker
+    branch: develop
+
+- name: cloudrocker-master
+  type: git
+  source:
+    uri: git@github.com:CloudCredo/cloudrocker.git
     branch: master
+    private_key: {{private-repo-key}}
