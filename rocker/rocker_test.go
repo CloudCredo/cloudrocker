@@ -47,33 +47,41 @@ var _ = Describe("Rocker", func() {
 		})
 	})
 
-	Describe("Adding a buildpack", func() {
-		It("should download the buildpack and add it to the buildpack directory", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test")
-			testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
-			Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
-			Eventually(buffer, 10).Should(gbytes.Say(`Downloaded buildpack.`))
+	Describe("Managing buildpacks", func() {
+		var (
+			buildpackDir string
+		)
+
+		BeforeEach(func() {
+			buildpackDir, _ = ioutil.TempDir(os.TempDir(), "crocker-buildpack-test")
+		})
+
+		AfterEach(func() {
 			os.RemoveAll(buildpackDir)
 		})
-	})
 
-	Describe("Deleting a buildpack", func() {
-		It("should delete the buildpack from the buildpack directory", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test")
-			testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
-			testrocker.DeleteBuildpack(buffer, "not-a-buildpack")
-			Eventually(buffer).Should(gbytes.Say(`Deleted buildpack.`))
-			os.RemoveAll(buildpackDir)
+		Describe("Adding a buildpack", func() {
+			It("should download the buildpack and add it to the buildpack directory", func() {
+				testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
+				Eventually(buffer).Should(gbytes.Say(`Downloading buildpack...`))
+				Eventually(buffer, 10).Should(gbytes.Say(`Downloaded buildpack.`))
+			})
 		})
-	})
 
-	Describe("Listing buildpacks", func() {
-		It("should list the buildpacks in the buildpack directory", func() {
-			buildpackDir, _ := ioutil.TempDir(os.TempDir(), "crocker-buildpack-test")
-			testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
-			testrocker.ListBuildpacks(buffer)
-			Eventually(buffer).Should(gbytes.Say(`not-a-buildpack`))
-			os.RemoveAll(buildpackDir)
+		Describe("Deleting a buildpack", func() {
+			It("should delete the buildpack from the buildpack directory", func() {
+				testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
+				testrocker.DeleteBuildpack(buffer, "not-a-buildpack")
+				Eventually(buffer).Should(gbytes.Say(`Deleted buildpack.`))
+			})
+		})
+
+		Describe("Listing buildpacks", func() {
+			It("should list the buildpacks in the buildpack directory", func() {
+				testrocker.AddBuildpack(buffer, "https://github.com/hatofmonkeys/not-a-buildpack", buildpackDir)
+				testrocker.ListBuildpacks(buffer)
+				Eventually(buffer).Should(gbytes.Say(`not-a-buildpack`))
+			})
 		})
 	})
 
@@ -96,8 +104,6 @@ var _ = Describe("Rocker", func() {
 		Context("with a detected buildpack", func() {
 			Context("REALDOCKER", func() {
 				BeforeEach(func() {
-					cloudrockerHome, _ = ioutil.TempDir(os.TempDir(), "rocker-staging-test")
-					os.Setenv("CLOUDROCKER_HOME", cloudrockerHome)
 					cp("fixtures/stage/buildpacks", cloudrockerHome)
 					originalDir = utils.Pwd()
 					os.Chdir("fixtures/stage/apps/bash-app")
@@ -143,7 +149,7 @@ var _ = Describe("Rocker", func() {
 			)
 
 			BeforeEach(func() {
-				cloudrockerHome, _ = ioutil.TempDir(os.TempDir(), "rocker-staging-test")
+				cloudrockerHome, _ = ioutil.TempDir(os.TempDir(), "rocker-runtime-test")
 				os.Setenv("CLOUDROCKER_HOME", cloudrockerHome)
 				cp("fixtures/runtime/buildpacks", cloudrockerHome)
 
