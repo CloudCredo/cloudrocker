@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/cloudcredo/cloudrocker/config"
@@ -57,6 +58,9 @@ func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 
 func RunConfiguredContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Starting the CloudRocker container...")
+	if os.Getenv("DEBUG") == "true" {
+		fmt.Println(ParseRunCommand(containerConfig))
+	}
 	go func() {
 		err := cli.CmdRun(ParseRunCommand(containerConfig)...)
 		if err != nil {
