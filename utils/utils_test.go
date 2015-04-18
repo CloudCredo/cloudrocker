@@ -18,6 +18,7 @@ var _ = Describe("Utils", func() {
 				Expect(utils.GetRootfsUrl()).To(Equal("https://s3.amazonaws.com/blob.cfblob.com/fee97b71-17d7-4fab-a5b0-69d4112521e6"))
 			})
 		})
+
 		Context("with a rootfs env var set", func() {
 			It("should return the specified URL", func() {
 				os.Setenv("ROCKER_ROOTFS_URL", "dave")
@@ -25,6 +26,7 @@ var _ = Describe("Utils", func() {
 			})
 		})
 	})
+
 	Describe("Getting the CLOUDROCKER_HOME", func() {
 		Context("without a CLOUDROCKER_HOME env var set", func() {
 			It("should return the default URL", func() {
@@ -32,6 +34,7 @@ var _ = Describe("Utils", func() {
 				Expect(utils.CloudrockerHome()).To(Equal(os.Getenv("HOME") + "/.cloudrocker"))
 			})
 		})
+
 		Context("with a CLOUDROCKER_HOME env var set", func() {
 			It("should return the specified URL", func() {
 				os.Setenv("CLOUDROCKER_HOME", "/dave")
@@ -39,6 +42,7 @@ var _ = Describe("Utils", func() {
 			})
 		})
 	})
+
 	Describe("Finding the subdirectories in a directory", func() {
 		It("should return a slice of found subdirectories", func() {
 			parentDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-subdirs")
@@ -53,6 +57,7 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(parentDir)
 		})
 	})
+
 	Describe("Copying the rocker binary to its own directory", func() {
 		It("should create a rocker subdirectory with the rock binary inside it", func() {
 			cloudrockerHome, _ := ioutil.TempDir(os.TempDir(), "utils-test-cp-rocker")
@@ -67,8 +72,9 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(cloudrockerHome)
 		})
 	})
+
 	Describe("Adding the launcher run script to a directory", func() {
-		It("should create a script called cloudrocker-start.sh with expected contents", func() {
+		It("should create a script called cloudrocker-start... with expected contents", func() {
 			appDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-launcher")
 			utils.AddLauncherRunScript(appDir)
 			written, _ := ioutil.ReadFile(appDir + "/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh")
@@ -77,6 +83,7 @@ var _ = Describe("Utils", func() {
 			os.RemoveAll(appDir)
 		})
 	})
+
 	Describe("Getting the user's PWD", func() {
 		It("should return the PWD", func() {
 			testDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-pwd")
