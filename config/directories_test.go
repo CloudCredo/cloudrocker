@@ -33,7 +33,7 @@ var _ = Describe("Directories", func() {
 			Expect(testDirectories.ContainerBuildpacks()).To(Equal("/cloudrockerbuildpacks"))
 		})
 
-		It("should return the droplet directory", func() {
+		It("should return the runtime droplet directory", func() {
 			Expect(testDirectories.Droplet()).To(Equal(cloudRockerHomeDir + "/droplet"))
 		})
 
