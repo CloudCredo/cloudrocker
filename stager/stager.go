@@ -10,8 +10,8 @@ import (
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/utils"
 
-	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle"
-	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/buildpack_app_lifecycle"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
 )
 
 type BuildpackRunner interface {

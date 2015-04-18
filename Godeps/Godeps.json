@@ -1,25 +1,17 @@
 {
 	"ImportPath": "github.com/cloudcredo/cloudrocker",
-	"GoVersion": "go1.3",
+	"GoVersion": "go1.4",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/cloudfoundry-incubator/buildpack_app_lifecycle",
+			"Rev": "0d117444820f045da1af76110d797c8f07a71608"
+		},
+		{
 			"ImportPath": "github.com/cloudfoundry-incubator/candiedyaml",
 			"Rev": "50e233a7fb31a32b174c1263c7b786eba1fa79d4"
-		},
-		{
-			"ImportPath": "github.com/cloudfoundry-incubator/linux-circus/buildpackrunner",
-			"Rev": "30662e077afd54af3cd72931e9a95d4e41cf93ac"
-		},
-		{
-			"ImportPath": "github.com/cloudfoundry-incubator/linux-circus/protocol",
-			"Rev": "30662e077afd54af3cd72931e9a95d4e41cf93ac"
-		},
-		{
-			"ImportPath": "github.com/cloudfoundry-incubator/runtime-schema/models",
-			"Rev": "c6ff4c005927c4fb75d3248f888a60651cb83a0b"
 		},
 		{
 			"ImportPath": "github.com/codegangsta/cli",
@@ -226,6 +218,18 @@
 		{
 			"ImportPath": "github.com/pivotal-golang/archiver/compressor",
 			"Rev": "8901decda10e349dadd6ee72ee28609308e3f78c"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/archiver/extractor",
+			"Rev": "8901decda10e349dadd6ee72ee28609308e3f78c"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/bytefmt",
+			"Rev": "eb6a478daea5cd564c230719240761a1a2ccc713"
+		},
+		{
+			"ImportPath": "github.com/pivotal-golang/cacheddownloader",
+			"Rev": "e7a07eb2d23cc3dbf1f2785bf6e293f405b369b7"
 		},
 		{
 			"ImportPath": "github.com/tchap/go-patricia/patricia",

@@ -6,13 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/cloudcredo/cloudrocker/config"
-	"github.com/cloudcredo/cloudrocker/stager"
-	"github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
-
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/cloudfoundry-incubator/buildpack_app_lifecycle/buildpackrunner"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
+	"github.com/cloudcredo/cloudrocker/config"
+	"github.com/cloudcredo/cloudrocker/stager"
 )
 
 type TestRunner struct {
