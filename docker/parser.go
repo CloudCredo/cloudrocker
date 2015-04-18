@@ -26,7 +26,7 @@ func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {
 func WriteRuntimeDockerfile(config *config.ContainerConfig) {
 	var dockerfile string
 
-	dockerfile = bootstrapDockerfileString()
+	dockerfile = runtimeInitialDockerfileString()
 	dockerfile = dockerfile + envVarDockerfileString(config.EnvVars)
 	dockerfile = dockerfile + commandDockerfileString(config.Command)
 
@@ -95,7 +95,7 @@ func parseCommand(command []string) (parsedCommand []string) {
 	return
 }
 
-func bootstrapDockerfileString() string {
+func runtimeInitialDockerfileString() string {
 	return `FROM cloudrocker-base:latest
 RUN /usr/sbin/useradd -mU -u 10000 -s /bin/bash vcap
 COPY droplet.tgz /app/
