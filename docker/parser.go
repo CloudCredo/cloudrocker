@@ -18,7 +18,7 @@ func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {
 	runCmd = append(runCmd, parseMounts(config.Mounts)...)
 	runCmd = append(runCmd, parsePublishedPorts(config.PublishedPorts)...)
 	runCmd = append(runCmd, parseEnvVars(config.EnvVars)...)
-	runCmd = append(runCmd, parseImageTag(config.ImageTag)...)
+	runCmd = append(runCmd, parseSrcImageTag(config.SrcImageTag)...)
 	runCmd = append(runCmd, parseCommand(config.Command)...)
 	return
 }
@@ -33,13 +33,25 @@ func WriteRuntimeDockerfile(config *config.ContainerConfig) {
 	ioutil.WriteFile(config.DropletDir+"/Dockerfile", []byte(dockerfile), 0644)
 }
 
+func WriteBaseImageDockerfile(config *config.ContainerConfig) {
+	var dockerfile string
+
+	dockerfile = baseImageDockerfileString(config.SrcImageTag)
+
+	ioutil.WriteFile(config.BaseConfigDir+"/Dockerfile", []byte(dockerfile), 0644)
+}
+
 func userString() string {
+	return "-u=" + userId()
+}
+
+func userId() string {
 	var thisUser *user.User
 	var err error
 	if thisUser, err = user.Current(); err != nil {
 		log.Fatalf(" %s", err)
 	}
-	return "-u=" + thisUser.Uid
+	return thisUser.Uid
 }
 
 func parseContainerName(containerName string) (parsedContainerName []string) {
@@ -85,8 +97,8 @@ func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
 	return
 }
 
-func parseImageTag(imageTag string) (parsedImageTag []string) {
-	parsedImageTag = append(parsedImageTag, imageTag)
+func parseSrcImageTag(imageTag string) (parsedSrcImageTag []string) {
+	parsedSrcImageTag = append(parsedSrcImageTag, imageTag)
 	return
 }
 
@@ -103,6 +115,13 @@ RUN chown vcap:vcap /app && cd /app && su vcap -c "tar zxf droplet.tgz" && rm dr
 EXPOSE 8080
 USER vcap
 WORKDIR /app
+`
+}
+
+func baseImageDockerfileString(srcImageTag string) string {
+	return `FROM ` + srcImageTag + `
+RUN /usr/sbin/useradd -mU -u ` + userId() + ` -s /bin/bash vcap
+RUN mkdir /app && chown vcap:vcap /app
 `
 }
 

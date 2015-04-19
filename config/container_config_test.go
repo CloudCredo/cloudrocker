@@ -16,7 +16,7 @@ var _ = Describe("ContainerConfig", func() {
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/tmp"]).To(Equal("/tmp"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/buildpacks"]).To(Equal("/cloudrockerbuildpacks"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/rocker"]).To(Equal("/rocker"))
-			Expect(stageConfig.ImageTag).To(Equal("cloudrocker-base:latest"))
+			Expect(stageConfig.SrcImageTag).To(Equal("cloudrocker-base:latest"))
 			Expect(stageConfig.Command).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
 		})
 	})
@@ -36,7 +36,7 @@ var _ = Describe("ContainerConfig", func() {
 				Expect(runtimeConfig.EnvVars["TMPDIR"]).To(Equal("/app/tmp"))
 				Expect(runtimeConfig.EnvVars["VCAP_SERVICES"]).To(Equal("{ \"elephantsql\": [ { \"name\": \"elephantsql-c6c60\", \"label\": \"elephantsql\", \"tags\": [ \"postgres\", \"postgresql\", \"relational\" ], \"plan\": \"turtle\", \"credentials\": { \"uri\": \"postgres://seilbmbd:PHxTPJSbkcDakfK4cYwXHiIX9Q8p5Bxn@babar.elephantsql.com:5432/seilbmbd\" } } ], \"sendgrid\": [ { \"name\": \"mysendgrid\", \"label\": \"sendgrid\", \"tags\": [ \"smtp\" ], \"plan\": \"free\", \"credentials\": { \"hostname\": \"smtp.sendgrid.net\", \"username\": \"QvsXMbJ3rK\", \"password\": \"HCHMOYluTv\" } } ] }"))
 				Expect(runtimeConfig.EnvVars["DATABASE_URL"]).To(Equal("postgres://seilbmbd:PHxTPJSbkcDakfK4cYwXHiIX9Q8p5Bxn@babar.elephantsql.com:5432/seilbmbd"))
-				Expect(runtimeConfig.ImageTag).To(Equal("cloudrocker-base:latest"))
+				Expect(runtimeConfig.SrcImageTag).To(Equal("cloudrocker-base:latest"))
 				Expect(runtimeConfig.Command).To(Equal([]string{"/bin/bash",
 					"/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
 					"/app",
@@ -58,7 +58,7 @@ var _ = Describe("ContainerConfig", func() {
 				Expect(runtimeConfig.EnvVars["PORT"]).To(Equal("8080"))
 				Expect(runtimeConfig.EnvVars["VCAP_SERVICES"]).To(Equal(""))
 				Expect(runtimeConfig.EnvVars["DATABASE_URL"]).To(Equal(""))
-				Expect(runtimeConfig.ImageTag).To(Equal("cloudrocker-base:latest"))
+				Expect(runtimeConfig.SrcImageTag).To(Equal("cloudrocker-base:latest"))
 				Expect(runtimeConfig.Command).To(Equal([]string{"/bin/bash",
 					"/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
 					"/app",

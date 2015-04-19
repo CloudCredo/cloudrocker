@@ -15,16 +15,27 @@ type ContainerConfig struct {
 	Mounts         map[string]string
 	PublishedPorts map[int]int
 	EnvVars        map[string]string
-	ImageTag       string
+	SrcImageTag    string
+	DstImageTag    string
 	Command        []string
 	DropletDir     string
+	BaseConfigDir  string
+}
+
+func NewBaseContainerConfig(baseConfigDir string) (containerConfig *ContainerConfig) {
+	containerConfig = &ContainerConfig{
+		SrcImageTag:   "cloudrocker-raw:latest",
+		DstImageTag:   "cloudrocker-base:latest",
+		BaseConfigDir: baseConfigDir,
+	}
+	return
 }
 
 func NewStageContainerConfig(directories *Directories) (containerConfig *ContainerConfig) {
 	containerConfig = &ContainerConfig{
 		ContainerName: "cloudrocker-staging",
 		Mounts:        directories.Mounts(),
-		ImageTag:      "cloudrocker-base:latest",
+		SrcImageTag:   "cloudrocker-base:latest",
 		Command:       []string{"/rocker/rock", "stage", "internal"},
 	}
 	return
@@ -45,7 +56,7 @@ func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerCon
 			"VCAP_SERVICES": vcapServices(dropletDir),
 			"DATABASE_URL":  databaseURL(dropletDir),
 		},
-		ImageTag: "cloudrocker-base:latest",
+		SrcImageTag: "cloudrocker-base:latest",
 		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
 			parseStartCommand(dropletDir)...),
 		DropletDir: dropletDir,

@@ -32,6 +32,7 @@ var _ = Describe("Parser", func() {
 					"/rocker/rock stage internal"))
 			})
 		})
+
 		Context("with a runtime config ", func() {
 			It("should return a slice with all required arguments", func() {
 				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
@@ -51,7 +52,8 @@ var _ = Describe("Parser", func() {
 			})
 		})
 	})
-	Describe("Parsing a ContainerConfig for a Docker run command", func() {
+
+	Describe("Parsing a ContainerConfig for a Docker build command", func() {
 		Context("with a runtime config ", func() {
 			It("should write a valid Dockerfile", func() {
 				tmpDropletDir, err := ioutil.TempDir(os.TempDir(), "parser-test-tmp-droplet")
@@ -70,13 +72,34 @@ var _ = Describe("Parser", func() {
 				os.RemoveAll(tmpDropletDir)
 			})
 		})
+
+		Context("with a base image building config ", func() {
+			It("should write a valid Dockerfile", func() {
+				tmpBaseConfigDir, err := ioutil.TempDir(os.TempDir(), "parser-test-base-config")
+				Expect(err).ShouldNot(HaveOccurred())
+				testBaseConfigContainerConfig := testBaseConfigContainerConfig(tmpBaseConfigDir)
+
+				docker.WriteBaseImageDockerfile(testBaseConfigContainerConfig)
+
+				result, err := ioutil.ReadFile(tmpBaseConfigDir + "/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				thisUser, _ := user.Current()
+				userId := thisUser.Uid
+				Expect(result).To(Equal([]byte(`FROM cloudrocker-raw:latest
+RUN /usr/sbin/useradd -mU -u ` + userId + ` -s /bin/bash vcap
+RUN mkdir /app && chown vcap:vcap /app
+`)))
+
+				os.RemoveAll(tmpBaseConfigDir)
+			})
+		})
 	})
 })
 
 func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 	containerConfig = &config.ContainerConfig{
 		ContainerName:  "cloudrocker-runtime",
-		ImageTag:       "cloudrocker-base:latest",
+		SrcImageTag:    "cloudrocker-base:latest",
 		PublishedPorts: map[int]int{8080: 8080},
 		Mounts: map[string]string{
 			"/home/testuser/testapp" + "/app": "/app",
@@ -90,6 +113,15 @@ func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 			"PORT":          "8080",
 			"VCAP_SERVICES": "",
 		},
+	}
+	return
+}
+
+func testBaseConfigContainerConfig(tmpBaseConfigDir string) (containerConfig *config.ContainerConfig) {
+	containerConfig = &config.ContainerConfig{
+		BaseConfigDir: tmpBaseConfigDir,
+		SrcImageTag:   "cloudrocker-raw:latest",
+		DstImageTag:   "cloudrocker-base:latest",
 	}
 	return
 }

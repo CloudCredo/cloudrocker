@@ -44,7 +44,7 @@ func PrintVersion(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWr
 func ImportRootfsImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, url string) error {
 	fmt.Fprintln(writer, "Bootstrapping Docker setup - this will take a few minutes...")
 	go func() {
-		err := cli.CmdImport(url, "cloudrocker-base")
+		err := cli.CmdImport(url, "cloudrocker-raw")
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}
@@ -120,6 +120,24 @@ func DeleteContainer(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pip
 	}()
 	CopyFromPipeToPipe(writer, stdout)
 	fmt.Fprintln(writer, "Deleted container.")
+	return nil
+}
+
+func BuildBaseImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.PipeWriter, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	fmt.Fprintln(writer, "Creating image configuration...")
+	WriteBaseImageDockerfile(containerConfig)
+	fmt.Fprintln(writer, "Creating image...")
+	go func() {
+		err := cli.CmdBuild(containerConfig.BaseConfigDir, `--tag="`+containerConfig.DstImageTag+`"`)
+		if err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+		if err = closeWrap(stdout, stdoutPipe); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+	CopyFromPipeToPipe(writer, stdout)
+	fmt.Fprintln(writer, "Created image.")
 	return nil
 }
 

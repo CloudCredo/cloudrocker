@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"os/user"
 
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/docker"
@@ -94,7 +95,34 @@ var _ = Describe("Docker", func() {
 			docker.ImportRootfsImage(fakeDockerClient, stdout, stdoutPipe, buffer, url)
 			Expect(len(fakeDockerClient.cmdImportArgs)).To(Equal(2))
 			Expect(fakeDockerClient.cmdImportArgs[0]).To(Equal("http://test.com/test-img"))
-			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudrocker-base"))
+			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudrocker-raw"))
+		})
+
+		Describe("telling Docker to build a base image from the raw image with the correct config for rocker use", func() {
+			var (
+				buildDir string
+			)
+			BeforeEach(func() {
+				buildDir, _ = ioutil.TempDir(os.TempDir(), "docker-configure-base")
+				fakeDockerClient = new(FakeDockerClient)
+				stdout, stdoutPipe := io.Pipe()
+				docker.BuildBaseImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewBaseContainerConfig(buildDir))
+			})
+			AfterEach(func() {
+				os.RemoveAll(buildDir)
+			})
+
+			It("should write a valid and correct Dockerfile to the filesystem", func() {
+				result, err := ioutil.ReadFile(buildDir + "/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(result).To(Equal(buildBaseImageDockerfile()))
+			})
+
+			It("should tell Docker to build the configured rootfs image from the Dockerfile", func() {
+				Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
+				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(buildDir))
+				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(`--tag="cloudrocker-base:latest"`))
+			})
 		})
 	})
 
@@ -240,4 +268,13 @@ func cp(src string, dst string) {
 	)
 	Ω(err).ShouldNot(HaveOccurred())
 	Eventually(session).Should(gexec.Exit(0))
+}
+
+func buildBaseImageDockerfile() []byte {
+	thisUser, _ := user.Current()
+	userId := thisUser.Uid
+	return []byte(`FROM cloudrocker-raw:latest
+RUN /usr/sbin/useradd -mU -u ` + userId + ` -s /bin/bash vcap
+RUN mkdir /app && chown vcap:vcap /app
+`)
 }
