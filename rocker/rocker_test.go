@@ -40,8 +40,8 @@ var _ = Describe("Rocker", func() {
 
 	Describe("Bootstrapping the base image", func() {
 		//This works, but speed depends on your net connection
-		XIt("should download and tag the lucid64 filesystem", func() {
-			fmt.Println("Downloading lucid64 - this could take a while")
+		XIt("should download and tag the raw filesystem", func() {
+			fmt.Println("Downloading rootfs - this could take a while")
 			rocker.ImportRootfsImage(buffer)
 			Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
 		})
