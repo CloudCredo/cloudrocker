@@ -31,9 +31,10 @@ func DockerVersion(writer io.Writer) {
 	docker.PrintVersion(cli, Stdout, stdoutpipe, writer)
 }
 
-func ImportRootfsImage(writer io.Writer) {
+func (f *Rocker) ImportRootfsImage(writer io.Writer) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
+	f.BuildBaseImage(writer)
 }
 
 func (f *Rocker) BuildBaseImage(writer io.Writer) {

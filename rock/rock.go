@@ -30,7 +30,15 @@ func main() {
 			Name:  "this",
 			Usage: "download the Cloud Foundry base image",
 			Action: func(c *cli.Context) {
-				rocker.ImportRootfsImage(os.Stdout)
+				rocker := rocker.NewRocker()
+				if basebuild := c.Args().First(); basebuild == "basebuild" {
+					//just rebuild the base image from the current raw
+					rocker.BuildBaseImage(os.Stdout)
+				} else {
+					//download the raw image and rebuild the base after
+					rocker.ImportRootfsImage(os.Stdout)
+				}
+
 			},
 		},
 		{

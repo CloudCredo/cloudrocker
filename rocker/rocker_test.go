@@ -39,17 +39,18 @@ var _ = Describe("Rocker", func() {
 	})
 
 	Describe("Managing images", func() {
-		Describe("Bootstrapping the raw image", func() {
-			//This works, but speed depends on your net connection
-			XIt("should download and tag the raw filesystem", func() {
-				fmt.Println("Downloading rootfs - this could take a while")
-				rocker.ImportRootfsImage(buffer)
-				Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
+		Context("REALDOCKER", func() {
+			Describe("Bootstrapping the raw image", func() {
+				//This works, but speed depends on your net connection
+				XIt("should download and tag the raw filesystem", func() {
+					fmt.Println("Downloading rootfs - this could take a while")
+					testrocker.ImportRootfsImage(buffer)
+					Eventually(buffer, 600).Should(gbytes.Say(`[a-f0-9]{64}`))
+					Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+				})
 			})
-		})
 
-		Describe("Creating the base image", func() {
-			Context("REALDOCKER", func() {
+			Describe("Creating the base image", func() {
 				It("should create a base image", func() {
 					testrocker.BuildBaseImage(buffer)
 					Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
