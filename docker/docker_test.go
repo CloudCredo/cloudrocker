@@ -120,8 +120,8 @@ var _ = Describe("Docker", func() {
 
 			It("should tell Docker to build the configured rootfs image from the Dockerfile", func() {
 				Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
-				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(buildDir))
-				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(`--tag="cloudrocker-base:latest"`))
+				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(`--tag="cloudrocker-base:latest"`))
+				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(buildDir))
 			})
 		})
 	})
