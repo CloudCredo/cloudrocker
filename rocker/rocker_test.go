@@ -49,9 +49,11 @@ var _ = Describe("Rocker", func() {
 		})
 
 		Describe("Creating the base image", func() {
-			It("should create a base image", func() {
-				testrocker.BuildBaseImage(buffer)
-				Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+			Context("REALDOCKER", func() {
+				It("should create a base image", func() {
+					testrocker.BuildBaseImage(buffer)
+					Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+				})
 			})
 		})
 	})
