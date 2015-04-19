@@ -274,7 +274,7 @@ func buildBaseImageDockerfile() []byte {
 	thisUser, _ := user.Current()
 	userId := thisUser.Uid
 	return []byte(`FROM cloudrocker-raw:latest
-RUN /usr/sbin/useradd -mU -u ` + userId + ` -s /bin/bash vcap
-RUN mkdir /app && chown vcap:vcap /app
+RUN /usr/sbin/useradd -mU -u ` + userId + ` -d /app -s /bin/bash vcap
+RUN mkdir -p /app/tmp && chown -R vcap:vcap /app
 `)
 }
