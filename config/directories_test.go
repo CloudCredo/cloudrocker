@@ -49,6 +49,10 @@ var _ = Describe("Directories", func() {
 			Expect(testDirectories.Tmp()).To(Equal(cloudRockerHomeDir + "/tmp"))
 		})
 
+		It("should return the host directory for holding the base container configuration", func() {
+			Expect(testDirectories.BaseConfig()).To(Equal(cloudRockerHomeDir + "/baseConfig"))
+		})
+
 		It("should return the application directory", func() {
 			pwd, _ := os.Getwd()
 			Expect(testDirectories.App()).To(Equal(pwd))
@@ -75,6 +79,7 @@ var _ = Describe("Directories", func() {
 				"/path/to/rocker",
 				"/path/to/staging",
 				"/path/to/tmp",
+				"/path/to/baseConfig",
 			))
 		})
 	})

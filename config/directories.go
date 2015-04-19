@@ -23,6 +23,7 @@ func NewDirectories(cloudRockerHomeDir string) *Directories {
 			"staging":    Directory{cloudRockerHomeDir + "/staging", "/tmp/app"},
 			"tmp":        Directory{cloudRockerHomeDir + "/tmp", "/tmp"},
 			"droplet":    Directory{cloudRockerHomeDir + "/droplet", ""},
+			"baseConfig": Directory{cloudRockerHomeDir + "/baseConfig", ""},
 		},
 		app: utils.Pwd(),
 	}
@@ -59,6 +60,10 @@ func (directories *Directories) Tmp() string {
 
 func (directories *Directories) Droplet() string {
 	return directories.mounts["droplet"].HostDirectory
+}
+
+func (directories *Directories) BaseConfig() string {
+	return directories.mounts["baseConfig"].HostDirectory
 }
 
 func (directories *Directories) Mounts() map[string]string {

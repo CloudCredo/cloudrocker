@@ -36,6 +36,13 @@ func ImportRootfsImage(writer io.Writer) {
 	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
 }
 
+func (f *Rocker) BuildBaseImage(writer io.Writer) {
+	createHostDirectories(f.directories)
+	containerConfig := config.NewBaseContainerConfig(f.directories.BaseConfig())
+	cli, Stdout, stdoutpipe := docker.GetNewClient()
+	docker.BuildBaseImage(cli, Stdout, stdoutpipe, writer, containerConfig)
+}
+
 func StopContainer(writer io.Writer, name string) {
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.StopContainer(cli, Stdout, stdoutpipe, writer, name)
