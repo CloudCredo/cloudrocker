@@ -80,6 +80,12 @@ if [ -d "/app/.ssh" ]; then
     echo "Starting SSH Reverse Tunnel"
     ssh -f -N -T -R 2222:localhost:\$VCAP_APP_PORT daniel@\$SSH_HOST
 fi
+
+# Validate args were passed through from parent process
+if [ "\$1" != "TESTARG" ]; then
+  exit 1
+fi
+
 # Start Python Server
 echo "Starting Web Server"
 python /app/boot.py /

@@ -3,6 +3,6 @@
 cat <<EOF
 ---
 default_process_types:
-  web: ./start.sh
+  web: ./start.sh TESTARG
 EOF
 
