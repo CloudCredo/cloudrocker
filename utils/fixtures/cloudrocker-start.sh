@@ -9,4 +9,4 @@ fi
 
 shift
 
-exec bash -c "$@"
+eval "$@"

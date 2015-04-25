@@ -20,7 +20,7 @@ fi
 
 shift
 
-exec bash -c "$@"
+eval "$@"
 `
 
 func GetRootfsUrl() string {
