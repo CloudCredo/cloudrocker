@@ -48,7 +48,7 @@ var _ = Describe("Parser", func() {
 					"--env=\"PORT=8080\" " +
 					"--env=\"TMPDIR=/app/tmp\" " +
 					"cloudrocker-base:latest " +
-					"/bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command"))
+					"/bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command \"quoted string with spaces\""))
 			})
 		})
 	})
@@ -105,7 +105,7 @@ func testRuntimeContainerConfig() (containerConfig *config.ContainerConfig) {
 			"/home/testuser/testapp" + "/app": "/app",
 		},
 		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
-			[]string{"the", "start", "command"}...),
+			[]string{"the", "start", "command", `"quoted`, "string", "with", `spaces"`}...),
 		Daemon: true,
 		EnvVars: map[string]string{
 			"HOME":          "/app",

@@ -1,2 +1,2 @@
 detected_buildpack: Always Matching
-start_command: the start command
+start_command: the start command "quoted string with spaces"

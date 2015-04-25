@@ -136,6 +136,9 @@ func envVarDockerfileString(envVars map[string]string) string {
 }
 
 func commandDockerfileString(command []string) string {
+	for index, commandElement := range command {
+		command[index] = strings.Replace(commandElement, `"`, `\"`, -1)
+	}
 	commandString := `CMD ["`
 	commandString = commandString + strings.Join(command, `", "`)
 	commandString = commandString + "\"]\n"
