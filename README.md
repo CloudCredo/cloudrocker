@@ -258,8 +258,9 @@ Feel free to try Cloud Rocker with boot2docker, and good luck with the volume mo
 
 #####Can I use a non-default base container image?
 
-By default the Cloud Foundry *lucid64* image is used. You can choose to download a different base container image using the $ROCKER_ROOTFS_URL environment variable.
-  
+By default the Cloud Foundry *cflinuxfs2* image is used. You can choose to download a different base container image using the $ROCKER_ROOTFS_URL environment variable. To use *lucid64* instead:
+```$ ROCKER_ROOTFS_URL=https://s3.amazonaws.com/blob.cfblob.com/04a2c4fc-3287-4525-9110-3ab3d84230b8 rock this```
+
 #####Why can't I use the Python CF buildpack?
 
 The pip installer does some interesting things with users that our docker usage doesn't like. There is a ticket to fix this in the backlog.

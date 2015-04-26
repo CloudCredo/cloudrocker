@@ -15,7 +15,7 @@ var _ = Describe("Utils", func() {
 		Context("without a rootfs env var set", func() {
 			It("should return the default URL", func() {
 				os.Setenv("ROCKER_ROOTFS_URL", "")
-				Expect(utils.GetRootfsUrl()).To(Equal("https://s3.amazonaws.com/blob.cfblob.com/fee97b71-17d7-4fab-a5b0-69d4112521e6"))
+				Expect(utils.GetRootfsUrl()).To(Equal("https://s3.amazonaws.com/blob.cfblob.com/04a2c4fc-3287-4525-9110-3ab3d84230b8"))
 			})
 		})
 
