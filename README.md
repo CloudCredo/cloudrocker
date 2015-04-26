@@ -132,6 +132,13 @@ Build a Docker image.
 
 ```$ rock build```
 
+or with a tag
+
+```$ rock build user/image:tag```
+eg
+```$ rock build hatofmonkeys/rocker-test:latest```
+
+
 ```
 <output truncated>
 Step 10 : CMD ["/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app", "bundle", "exec", "rackup", "config.
@@ -148,18 +155,18 @@ In the example above the created image ID is 4a88ad7d67ae.
 ```$ docker images```
 
 ```
-REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-<none>              <none>              4a88ad7d67ae        13 minutes ago      609 MB
+REPOSITORY                TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+hatofmonkeys/rocker-test  latest              4a88ad7d67ae        13 minutes ago      609 MB
 ```
 
 This image can be run like any other Docker image.
 
 ```
-$ docker run -P -d 4a88ad7d67ae
+$ docker run -P -d hatofmonkeys/rocker-test:latest
 0e4825d049ba5390699625be145a8d029a5e2899e52c8c5f967d35e08412f3ba
 $ docker ps
-CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                     NAMES
-0e4825d049ba        4a88ad7d67ae        /bin/bash /app/cloud   4 minutes ago       Up 4 minutes        0.0.0.0:49154->8080/tcp   sick_lumiere        
+CONTAINER ID        IMAGE                            COMMAND                CREATED             STATUS              PORTS                     NAMES
+0e4825d049ba        hatofmonkeys/rocker-test:latest  /bin/bash /app/cloud   4 minutes ago       Up 4 minutes        0.0.0.0:49154->8080/tcp   sick_lumiere        
 $ curl localhost:49154
 Hello world!
 ```

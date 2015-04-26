@@ -54,7 +54,7 @@ func main() {
 		},
 		{
 			Name:  "build",
-			Usage: "build a runnable image of the application",
+			Usage: "build [user/image:tag] - build a runnable image of the application, optional tagging",
 			Action: func(c *cli.Context) {
 				rocker := rocker.NewRocker()
 				if err := rocker.RunStager(os.Stdout); err != nil {
