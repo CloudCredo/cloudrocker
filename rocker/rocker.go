@@ -116,9 +116,9 @@ func (f *Rocker) StopRuntime(writer io.Writer) {
 	DeleteContainer(writer, "cloudrocker-runtime")
 }
 
-func (f *Rocker) BuildRuntimeImage(writer io.Writer) {
+func (f *Rocker) BuildRuntimeImage(writer io.Writer, destImageTagOptional ...string) {
 	prepareRuntimeFilesystem(f.directories)
-	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
+	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet(), destImageTagOptional...)
 	cli, Stdout, stdoutpipe := docker.GetNewClient()
 	docker.BuildRuntimeImage(cli, Stdout, stdoutpipe, writer, containerConfig)
 }

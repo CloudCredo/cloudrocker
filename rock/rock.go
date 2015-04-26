@@ -60,7 +60,11 @@ func main() {
 				if err := rocker.RunStager(os.Stdout); err != nil {
 					log.Fatalf(" %s", err)
 				}
-				rocker.BuildRuntimeImage(os.Stdout)
+				if tag := c.Args().First(); tag != "" {
+					rocker.BuildRuntimeImage(os.Stdout, tag)
+				} else {
+					rocker.BuildRuntimeImage(os.Stdout)
+				}
 			},
 		},
 		{

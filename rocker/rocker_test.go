@@ -212,10 +212,19 @@ var _ = Describe("Rocker", func() {
 				})
 			})
 			Describe("when outputting a runnable application as a docker image", func() {
-				It("should output the built image ID", func() {
-					testrocker.RunStager(buffer)
-					testrocker.BuildRuntimeImage(buffer)
-					Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+				Context("without a tag", func() {
+					It("should output the built image ID", func() {
+						testrocker.RunStager(buffer)
+						testrocker.BuildRuntimeImage(buffer)
+						Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+					})
+				})
+				Context("with a tag", func() {
+					It("should output the built image ID", func() {
+						testrocker.RunStager(buffer)
+						testrocker.BuildRuntimeImage(buffer, "rockertestsuite/image-tag:test")
+						Eventually(buffer).Should(gbytes.Say(`Successfully built [a-f0-9]{12}`))
+					})
 				})
 			})
 		})

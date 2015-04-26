@@ -170,36 +170,52 @@ var _ = Describe("Docker", func() {
 		var (
 			dropletDir       string
 			fakeDockerClient *FakeDockerClient
+			stdout           *io.PipeReader
+			stdoutPipe       *io.PipeWriter
 		)
 
 		BeforeEach(func() {
 			fakeDockerClient = new(FakeDockerClient)
-			stdout, stdoutPipe := io.Pipe()
+			stdout, stdoutPipe = io.Pipe()
 			tmpDir, _ := ioutil.TempDir(os.TempDir(), "docker-runtime-image-test")
 			cp("fixtures/build/droplet", tmpDir)
 			dropletDir = tmpDir + "/droplet"
-			docker.BuildRuntimeImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewRuntimeContainerConfig(dropletDir))
 		})
 
-		It("should create a tarred version of the droplet mount, for extraction in the container, so as to not have AUFS permissions issues in https://github.com/docker/docker/issues/783", func() {
-			dropletDirFile, err := os.Open(dropletDir)
-			Expect(err).ShouldNot(HaveOccurred())
-			dropletDirContents, err := dropletDirFile.Readdirnames(0)
-			Expect(err).ShouldNot(HaveOccurred())
-			Expect(dropletDirContents, err).Should(ContainElement("droplet.tgz"))
-		})
+		Context("without an image tag", func() {
+			BeforeEach(func() {
+				docker.BuildRuntimeImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewRuntimeContainerConfig(dropletDir))
+			})
 
-		It("should write a valid Dockerfile to the filesystem", func() {
-			result, err := ioutil.ReadFile(dropletDir + "/Dockerfile")
-			Expect(err).ShouldNot(HaveOccurred())
-			expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
-			Expect(err).ShouldNot(HaveOccurred())
-			Expect(result).To(Equal(expected))
-		})
+			It("should create a tarred version of the droplet mount, for extraction in the container, so as to not have AUFS permissions issues in https://github.com/docker/docker/issues/783", func() {
+				dropletDirFile, err := os.Open(dropletDir)
+				Expect(err).ShouldNot(HaveOccurred())
+				dropletDirContents, err := dropletDirFile.Readdirnames(0)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(dropletDirContents, err).Should(ContainElement("droplet.tgz"))
+			})
 
-		It("should tell Docker to build the container from the Dockerfile", func() {
-			Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(1))
-			Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(dropletDir))
+			It("should write a valid Dockerfile to the filesystem", func() {
+				result, err := ioutil.ReadFile(dropletDir + "/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(result).To(Equal(expected))
+			})
+
+			It("should tell Docker to build the container from the Dockerfile", func() {
+				Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
+				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(`--tag="cloudrocker-build:latest"`))
+				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(dropletDir))
+			})
+		})
+		Context("with an image tag", func() {
+			It("should tell Docker to build the container from the Dockerfile", func() {
+				docker.BuildRuntimeImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewRuntimeContainerConfig(dropletDir, "repository/image:tag"))
+				Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
+				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(`--tag="repository/image:tag"`))
+				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(dropletDir))
+			})
 		})
 	})
 

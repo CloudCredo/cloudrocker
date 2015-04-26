@@ -148,7 +148,7 @@ func BuildRuntimeImage(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.P
 	WriteRuntimeDockerfile(containerConfig)
 	fmt.Fprintln(writer, "Creating image...")
 	go func() {
-		err := cli.CmdBuild(containerConfig.DropletDir)
+		err := cli.CmdBuild(`--tag="`+containerConfig.DstImageTag+`"`, containerConfig.DropletDir)
 		if err != nil {
 			log.Fatalf("Error: %s", err)
 		}

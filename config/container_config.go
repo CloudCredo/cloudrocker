@@ -42,7 +42,14 @@ func NewStageContainerConfig(directories *Directories) (containerConfig *Contain
 	return
 }
 
-func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerConfig) {
+func NewRuntimeContainerConfig(dropletDir string, dstImageTagOptional ...string) (containerConfig *ContainerConfig) {
+	var dstImageTag string
+	if dstImageTagOptional == nil {
+		dstImageTag = "cloudrocker-build:latest"
+	} else {
+		dstImageTag = dstImageTagOptional[0]
+	}
+
 	containerConfig = &ContainerConfig{
 		ContainerName: "cloudrocker-runtime",
 		Daemon:        true,
@@ -58,6 +65,7 @@ func NewRuntimeContainerConfig(dropletDir string) (containerConfig *ContainerCon
 			"DATABASE_URL":  databaseURL(dropletDir),
 		},
 		SrcImageTag: "cloudrocker-base:latest",
+		DstImageTag: dstImageTag,
 		Command: append([]string{"/bin/bash", "/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh", "/app"},
 			parseStartCommand(dropletDir)...),
 		DropletDir: dropletDir,
