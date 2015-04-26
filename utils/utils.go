@@ -26,7 +26,7 @@ eval "$@"
 func GetRootfsUrl() string {
 	url := os.Getenv("ROCKER_ROOTFS_URL")
 	if url == "" {
-		url = "https://s3.amazonaws.com/blob.cfblob.com/04a2c4fc-3287-4525-9110-3ab3d84230b8"
+		url = "https://s3.amazonaws.com/blob.cfblob.com/1030f8d6-15c8-48d6-a99f-db8742b136f4"
 	}
 	return url
 }
