@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = "https://s3.amazonaws.com/cloudrocker/vagrantboxes/cloudrocker-0.0.3-vbox.box"
 
 #uncomment the line below and modify to mount your workspace directory
-#  config.vm.synced_folder "my/workspace/location/", "/vagrant/workspace"
+#  config.vm.synced_folder "my/workspace/location/", "/home/vagrant/workspace"
 
 =begin
   config.vm.box = "phusion-open-ubuntu-14.04-amd64"
