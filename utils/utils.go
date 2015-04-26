@@ -34,7 +34,7 @@ func GetRootfsUrl() string {
 func CloudrockerHome() string {
 	cfhome := os.Getenv("CLOUDROCKER_HOME")
 	if cfhome == "" {
-		cfhome = os.Getenv("HOME") + "/.cloudrocker"
+		cfhome = os.Getenv("HOME") + "/cloudrocker"
 	}
 	return cfhome
 }

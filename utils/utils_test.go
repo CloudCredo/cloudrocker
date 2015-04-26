@@ -31,7 +31,7 @@ var _ = Describe("Utils", func() {
 		Context("without a CLOUDROCKER_HOME env var set", func() {
 			It("should return the default URL", func() {
 				os.Setenv("CLOUDROCKER_HOME", "")
-				Expect(utils.CloudrockerHome()).To(Equal(os.Getenv("HOME") + "/.cloudrocker"))
+				Expect(utils.CloudrockerHome()).To(Equal(os.Getenv("HOME") + "/cloudrocker"))
 			})
 		})
 
