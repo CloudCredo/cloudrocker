@@ -5,31 +5,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 
 #comment out the two lines below, and uncomment the following block, to change the VM
-  config.vm.box = "cloudrocker-0.0.2-amd64"
-  config.vm.box_url = "https://s3.amazonaws.com/cloudrocker/vagrantboxes/cloudrocker-0.0.2-vbox.box"
+  config.vm.box = "cloudrocker-0.0.3-amd64"
+  config.vm.box_url = "https://s3.amazonaws.com/cloudrocker/vagrantboxes/cloudrocker-0.0.3-vbox.box"
+
+#uncomment the line below and modify to mount your workspace directory
+#  config.vm.synced_folder "my/workspace/location/", "/vagrant/workspace"
 
 =begin
   config.vm.box = "phusion-open-ubuntu-14.04-amd64"
   config.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box"
-  # Or, for Ubuntu 12.04:
-  #config.vm.box = "phusion-open-ubuntu-12.04-amd64"
-  #config.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-12.04-amd64-vbox.box"
 
   config.vm.provider :vmware_workstation do |f, override|
     override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
-    #override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-12.04-amd64-vmwarefusion.box"
   end
 
   config.vm.provider :vmware_fusion do |f, override|
     override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
-    #override.vm.box_url = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-12.04-amd64-vmwarefusion.box"
   end
 
   if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
     # Install Docker
     pkg_cmd = "wget -q -O - https://get.docker.io/gpg | apt-key add -;" \
       "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list;" \
-      "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker-1.3.0; "
+      "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker-1.5.0; "
     # Add vagrant user to the docker group
     pkg_cmd << "usermod -a -G docker vagrant; "
 
@@ -39,7 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     pkg_cmd << "/etc/init.d/redis-server restart; "
 
     # Install golang + rocker
-    pkg_cmd << "wget -q -O /tmp/go.tgz http://golang.org/dl/go1.3.linux-amd64.tar.gz; "
+    pkg_cmd << "wget -q -O /tmp/go.tgz http://golang.org/dl/go1.4.linux-amd64.tar.gz; "
     pkg_cmd << "tar xzf /tmp/go.tgz -C /usr/lib; "
     pkg_cmd << "apt-get install -q -y --force-yes bzr mercurial; "
     pkg_cmd << "mkdir -p /home/vagrant/go; chown vagrant /home/vagrant/go; "
