@@ -18,6 +18,8 @@ vagrant ssh
 ```
 Please use the Vagrantfile in the root of this repository. All later commands are entered as the vagrant user's shell in the vagrant VM.
 
+Modify the [Vagrantfile](https://github.com/CloudCredo/cloudrocker/blob/master/Vagrantfile#L12) to mount your local workspace to make development easy.
+
 ####Option 2 : Advanced users - Linux only - using a local Docker daemon
 
 ```
@@ -199,8 +201,26 @@ Get the value.
 
 [http://localhost:8080/get/hello](http://localhost:8080/get/hello)
 
+##Working with [Lattice](http://lattice.cf)
+
+In the root directory of your application, the workflow is three simple commands to build and deploy your own containers to Lattice.
+
+*replace hatofmonkeys/rocker-test:latest with your own user/image:tag*
+
+```$ rock build hatofmonkeys/rocker-test:latest```
+
+```$ docker push hatofmonkeys/rocker-test:latest```
+
+```$ ltc create rocker-test hatofmonkeys/rocker-test:latest```
+
+*note this may appear to timeout on slow connections. Watch ```ltc status rocker-test``` until the application is running*
+
+##Debugging your app, your buildpack, your staging process
+
+Build/staging artefacts are placed in $CLOUDROCKER_HOME. By default this is $HOME/cloudrocker, eg. /vagrant/cloudrocker. This is a treasure trove of interesting information when debugging staging failures.
+
 ##Potential Uses
-  
+
 ####For application development
 
 Cloud Rocker gives a fast-feedback, production-like Cloud Foundry environment on a developer's machine. Make a change, *rock up*, rinse, repeat. When you're finished, just *rock off*.
