@@ -217,7 +217,7 @@ In the root directory of your application, the workflow is three simple commands
 
 ##Debugging your app, your buildpack, your staging process
 
-Build/staging artefacts are placed in $CLOUDROCKER_HOME. By default this is $HOME/cloudrocker, eg. /vagrant/cloudrocker. This is a treasure trove of interesting information when debugging staging failures.
+Build/staging artefacts are placed in $CLOUDROCKER_HOME. By default this is $HOME/cloudrocker, eg. /home/vagrant/cloudrocker. This is a treasure trove of interesting information when debugging staging failures.
 
 ##Potential Uses
 
