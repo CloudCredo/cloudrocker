@@ -12,7 +12,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "rock"
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.Usage = "Cloud Rocker - rock the Cloud, run apps locally!"
 	app.Action = func(c *cli.Context) {
 		cli.ShowAppHelp(c)
