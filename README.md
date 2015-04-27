@@ -227,7 +227,7 @@ Cloud Rocker gives a fast-feedback, production-like Cloud Foundry environment on
 
 ####For buildpack development
 
-Cloud Rocker gives a fast-feedback environment for iterating on buildpacks. Buildpacks are stored in $CLOUDROCKER_HOME(default ~/.cloudrocker)/buildpacks and can be edited directly.
+Cloud Rocker gives a fast-feedback environment for iterating on buildpacks. Buildpacks are stored in $CLOUDROCKER_HOME(default ~/cloudrocker)/buildpacks and can be edited directly.
 
 ####For continuous integration
 
