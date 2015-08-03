@@ -294,7 +294,7 @@ This is what happens when good Cloud Rockers turn bad. Simply run:
 
 ```$ docker rm cloudrocker-runtime```
 
-We will automate this when we have a better understanding of all the scenrios in which it occurs.
+We will automate this when we have a better understanding of all the scenarios in which it occurs.
 
 #####Did you only create this project so you could have fun making endless *double entendres* in the README?
 
