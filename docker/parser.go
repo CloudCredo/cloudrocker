@@ -119,7 +119,7 @@ WORKDIR /app
 
 func baseImageDockerfileString(srcImageTag string) string {
 	return `FROM ` + srcImageTag + `
-RUN /usr/sbin/useradd -mU -u ` + userId() + ` -d /app -s /bin/bash vcap
+RUN id vcap || /usr/sbin/useradd -mU -u ` + userId() + ` -d /app -s /bin/bash vcap
 RUN mkdir -p /app/tmp && chown -R vcap:vcap /app
 `
 }

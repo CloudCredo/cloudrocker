@@ -16,6 +16,7 @@ var _ = Describe("ContainerConfig", func() {
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/tmp"]).To(Equal("/tmp"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/buildpacks"]).To(Equal("/cloudrockerbuildpacks"))
 			Expect(stageConfig.Mounts["TEST_CLOUDROCKERHOME/rocker"]).To(Equal("/rocker"))
+			Expect(stageConfig.EnvVars["CF_STACK"]).To(Equal("cflinuxfs2"))
 			Expect(stageConfig.SrcImageTag).To(Equal("cloudrocker-base:latest"))
 			Expect(stageConfig.Command).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
 		})

@@ -36,8 +36,12 @@ func NewStageContainerConfig(directories *Directories) (containerConfig *Contain
 	containerConfig = &ContainerConfig{
 		ContainerName: "cloudrocker-staging",
 		Mounts:        directories.Mounts(),
-		SrcImageTag:   "cloudrocker-base:latest",
-		Command:       []string{"/rocker/rock", "stage", "internal"},
+		//This is a hack until we follow the one true way for env vars
+		EnvVars: map[string]string{
+			"CF_STACK": "cflinuxfs2",
+		},
+		SrcImageTag: "cloudrocker-base:latest",
+		Command:     []string{"/rocker/rock", "stage", "internal"},
 	}
 	return
 }

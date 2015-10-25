@@ -28,6 +28,7 @@ var _ = Describe("Parser", func() {
 					"--volume=/home/testuser/.cloudrocker/rocker:/rocker " +
 					"--volume=/home/testuser/.cloudrocker/staging:/tmp/app " +
 					"--volume=/home/testuser/.cloudrocker/tmp:/tmp " +
+					"--env=\"CF_STACK=cflinuxfs2\" " +
 					"cloudrocker-base:latest " +
 					"/rocker/rock stage internal"))
 			})
@@ -86,7 +87,7 @@ var _ = Describe("Parser", func() {
 				thisUser, _ := user.Current()
 				userId := thisUser.Uid
 				Expect(result).To(Equal([]byte(`FROM cloudrocker-raw:latest
-RUN /usr/sbin/useradd -mU -u ` + userId + ` -d /app -s /bin/bash vcap
+RUN id vcap || /usr/sbin/useradd -mU -u ` + userId + ` -d /app -s /bin/bash vcap
 RUN mkdir -p /app/tmp && chown -R vcap:vcap /app
 `)))
 

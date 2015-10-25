@@ -131,8 +131,8 @@ var _ = Describe("Docker", func() {
 			fakeDockerClient = new(FakeDockerClient)
 			stdout, stdoutPipe := io.Pipe()
 			docker.RunConfiguredContainer(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewStageContainerConfig(config.NewDirectories("test")))
-			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(10))
-			Expect(fakeDockerClient.cmdRunArgs[9]).To(Equal("internal"))
+			Expect(len(fakeDockerClient.cmdRunArgs)).To(Equal(11))
+			Expect(fakeDockerClient.cmdRunArgs[10]).To(Equal("internal"))
 		})
 	})
 
@@ -290,7 +290,7 @@ func buildBaseImageDockerfile() []byte {
 	thisUser, _ := user.Current()
 	userId := thisUser.Uid
 	return []byte(`FROM cloudrocker-raw:latest
-RUN /usr/sbin/useradd -mU -u ` + userId + ` -d /app -s /bin/bash vcap
+RUN id vcap || /usr/sbin/useradd -mU -u ` + userId + ` -d /app -s /bin/bash vcap
 RUN mkdir -p /app/tmp && chown -R vcap:vcap /app
 `)
 }
