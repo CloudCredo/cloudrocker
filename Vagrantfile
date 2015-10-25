@@ -5,8 +5,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 8080, host: 8080
 
 #comment out the two lines below, and uncomment the following block, to change the VM
-  config.vm.box = "cloudrocker-0.0.3-amd64"
-  config.vm.box_url = "https://s3.amazonaws.com/cloudrocker/vagrantboxes/cloudrocker-0.0.3-vbox.box"
+  config.vm.box = "cloudrocker-0.0.4-amd64"
+  config.vm.box_url = "https://s3.amazonaws.com/cloudrocker/vagrantboxes/cloudrocker-0.0.4-vbox.box"
 
 #uncomment the line below and modify to mount your workspace directory
 #  config.vm.synced_folder "my/workspace/location/", "/home/vagrant/workspace"
