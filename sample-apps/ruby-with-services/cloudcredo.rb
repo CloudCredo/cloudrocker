@@ -9,14 +9,14 @@ class CloudCredo < Sinatra::Base
   end
 
   get '/' do
-    'CloudCredo help you deliver value with Cloud Foundry!'
+    'CloudCredo helps you deliver value with Cloud Foundry!'
   end
 
   get '/set/:key/to/:value' do
     $redis.set(params[:key], params[:value])
     "set #{params[:key]} to #{params[:value]}"
   end
-  
+
   get '/get/:key' do
     $redis.get(params[:key])
   end
