@@ -1,2 +1,3 @@
 **/.DS_Store
 .vagrant
+ci/credentials.yml
