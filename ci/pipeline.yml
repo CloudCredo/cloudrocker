@@ -3,6 +3,7 @@ jobs:
 - name: test
   plan:
   - get: cloudrocker
+    trigger: true
   - task: test
     file: cloudrocker/ci/test.yml
 
