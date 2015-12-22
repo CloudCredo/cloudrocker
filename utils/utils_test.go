@@ -88,7 +88,8 @@ var _ = Describe("Utils", func() {
 		It("should return the PWD", func() {
 			testDir, _ := ioutil.TempDir(os.TempDir(), "utils-test-pwd")
 			os.Chdir(testDir)
-			Expect(utils.Pwd()).To(Equal(testDir))
+			rootedPath, _ := os.Getwd()
+			Expect(utils.Pwd()).To(Equal(rootedPath))
 		})
 	})
 })
