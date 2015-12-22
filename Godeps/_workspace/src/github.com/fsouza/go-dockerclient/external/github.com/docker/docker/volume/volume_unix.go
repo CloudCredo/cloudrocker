@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	derr "github.com/fsouza/go-dockerclient/external/github.com/docker/docker/errors"
+	derr "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/docker/docker/errors"
 )
 
 // read-write modes

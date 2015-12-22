@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fsouza/go-dockerclient/external/github.com/Sirupsen/logrus"
-	derr "github.com/fsouza/go-dockerclient/external/github.com/docker/docker/errors"
-	"github.com/fsouza/go-dockerclient/external/github.com/docker/docker/pkg/system"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/Sirupsen/logrus"
+	derr "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/docker/docker/errors"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/docker/docker/pkg/system"
 )
 
 // DefaultDriverName is the driver name used for the driver

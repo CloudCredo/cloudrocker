@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/fsouza/go-dockerclient/external/github.com/Sirupsen/logrus"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/Sirupsen/logrus"
 )
 
 // GetTotalUsedFds Returns the number of used File Descriptors by

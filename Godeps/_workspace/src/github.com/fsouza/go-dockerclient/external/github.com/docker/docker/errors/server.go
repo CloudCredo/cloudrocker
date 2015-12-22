@@ -3,7 +3,7 @@ package errors
 import (
 	"net/http"
 
-	"github.com/fsouza/go-dockerclient/external/github.com/docker/distribution/registry/api/errcode"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient/external/github.com/docker/distribution/registry/api/errcode"
 )
 
 var (
