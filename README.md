@@ -285,7 +285,7 @@ Feel free to try Cloud Rocker with boot2docker, and good luck with the volume mo
 
 #####Can I use a non-default base container image?
 
-By default the Cloud Foundry *lucid64* image is used. You can choose to download a different base container image using the $ROCKER_ROOTFS_URL environment variable. To use *cflinuxfs version 2-1.11.0* instead:
+By default the Cloud Foundry *cflinuxfs version 2-1.11.0* image is used. You can choose to download a different base container image using the $ROCKER_ROOTFS_URL environment variable. e.g.
 ```ROCKER_ROOTFS_URL=https://s3.amazonaws.com/blob.cfblob.com/978883d5-2e4d-495b-8aec-fc7c7e2988ad rock this```
 
 #####What about 'Error response from daemon: Conflict, The name cloudrocker-runtime is already assigned to 7a519360a3d3. You have to delete (or rename) that container to be able to assign cloudrocker-runtime to a container again.'?
