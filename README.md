@@ -1,6 +1,6 @@
 #Cloud Rocker
 
-Cloud Rocker is the convergence of [Cloud Foundry](http://cloudfoundry.org/index.html) and [Docker](https://www.docker.com/) aiming to bring the Cloud Foundry experience to a developer's machine. 
+Cloud Rocker is the convergence of [Cloud Foundry](http://cloudfoundry.org/index.html) and [Docker](https://www.docker.com/) aiming to bring the Cloud Foundry experience to a developer's machine.
 
 ##Tutorial
 
@@ -48,16 +48,16 @@ Download the base Cloud Foundry container image.
 
 ```$ rock this```
 
-###Add a buildpack 
+###Add a buildpack
 
-```$ rock add-buildpack https://github.com/cloudfoundry/java-buildpack``` 
+```$ rock add-buildpack https://github.com/cloudfoundry/java-buildpack```
 
 ###Deploy your application
 
 Change PWD to the sample Java application.
 
 ```$ cd /vagrant/sample-apps/java/```
-  
+
 Start the application.
 
 ```$ rock up```
@@ -86,14 +86,14 @@ You should also be able to browse the output on your host machine.
 [The rocking site.](http://localhost:8080/)
 
 Please note the unsubtle [CloudCredo](http://www.cloudcredo.com/) advertising.
-  
+
 ###Shut the application down
 
 ```$ rock off```
 
 ##Buildpacks
 
-A great list of Cloud Foundry buildpacks is [available on the Cloud Foundry community wiki](https://github.com/cloudfoundry-community/cf-docs-contrib/wiki/Buildpacks). 
+A great list of Cloud Foundry buildpacks is [available on the Cloud Foundry community wiki](https://github.com/cloudfoundry-community/cf-docs-contrib/wiki/Buildpacks).
 
 List buildpacks
 
@@ -176,7 +176,7 @@ Hello world!
 The image can be uploaded to a Docker registry, or deployed and run in a system such as [Kubernetes](https://github.com/GoogleCloudPlatform/kubernetes), [Decker](https://github.com/hatofmonkeys/decker-release), or [Diego](http://thenewstack.io/docker-on-diego-cloud-foundrys-new-elastic-runtime/).
 
 ##External Services
-  
+
 Services can be connected to your application by adding a *vcap_services.json* file to the root directory of your application. This is demonstrated in the [ruby-with-services sample application](https://github.com/CloudCredo/cloudrocker/tree/master/sample-apps/ruby-with-services).
 
 #####Note - the following steps are only appropriate to users of the Vagrant image (tutorial option 1 above).
@@ -231,7 +231,7 @@ Cloud Rocker gives a fast-feedback environment for iterating on buildpacks. Buil
 
 ####For continuous integration
 
-Deploying Cloud Rocker to your CI server means you can quickly get feedback about your Cloud Foundry applications. 
+Deploying Cloud Rocker to your CI server means you can quickly get feedback about your Cloud Foundry applications.
 
 ####For deploying applications to non-Cloud-Foundry environments
 
@@ -265,23 +265,23 @@ Cloud Rocker uses the Cloud Foundry components as far as possible to provide a p
 
 #####How is this different to Micro Cloud Foundry?
 
-MCF has been defunct since Cloud Foundry v1, and even back then it ate a considerable amount of resources. Cloud Rocker runs on any machine capable of running Docker, only consuming the resources necessary to stage and run the application. 
+MCF has been defunct since Cloud Foundry v1, and even back then it ate a considerable amount of resources. Cloud Rocker runs on any machine capable of running Docker, only consuming the resources necessary to stage and run the application.
 
 #####Just how 'production-like' is this?
 
-Cloud Rocker attempts to use the same components as Cloud Foundry's 'Diego'. 
+Cloud Rocker attempts to use the same components as Cloud Foundry's 'Diego'.
 
 The base filesystem is exactly the same as a Cloud Foundry container.
-  
+
 Environment variables are currently handled in a different manner to CF. File locations and user mapping are also slightly different, which may cause subtle issues. Cloud Rocker is under development to bridge this gap.
-  
+
 #####How do I enter the running container to 'poke around' in the shell?
 
 We will be automating this process, for now use [nsenter](https://github.com/jpetazzo/nsenter).
 
 #####Why can't I use my boot2docker setup on win/mac, not vagrant?
 
-Feel free to try Cloud Rocker with boot2docker, and good luck with the volume mounts. 
+Feel free to try Cloud Rocker with boot2docker, and good luck with the volume mounts.
 
 #####Can I use a non-default base container image?
 
