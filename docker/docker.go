@@ -10,7 +10,7 @@ import (
 
 	"github.com/cloudcredo/cloudrocker/config"
 
-	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/api/client"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
 
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
@@ -185,15 +185,15 @@ func GetContainerId(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pipe
 	return
 }
 
-//A few of functions stolen from Deis dockercliuitls! Thanks guys
-func GetNewClient() (
-	cli *client.DockerCli, stdout *io.PipeReader, stdoutPipe *io.PipeWriter) {
-	stdout, stdoutPipe = io.Pipe()
-	cli = client.NewDockerCli(
-		nil, stdoutPipe, nil, nil, "unix", "/var/run/docker.sock", nil)
+func GetNewClient() (cli *docker.Client) {
+	cli, err := docker.NewClient("unix:///var/run/docker.sock")
+  if err != nil {
+    log.Fatalf("Error: %s", err)
+  }
 	return
 }
 
+//A few of functions stolen from Deis dockercliuitls! Thanks guys
 func CopyFromPipeToPipe(outputPipe io.Writer, inputPipe *io.PipeReader) {
 	scanner := bufio.NewScanner(inputPipe)
 	for scanner.Scan() {
