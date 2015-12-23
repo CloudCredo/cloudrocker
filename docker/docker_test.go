@@ -19,13 +19,13 @@ import (
 
 type FakeDockerClient struct {
 	cmdVersionCalled bool
-	cmdImportArgs    []string
-	cmdRunArgs       []string
-	cmdStopArgs      []string
-	cmdRmArgs        []string
-	cmdKillArgs      []string
-	cmdBuildArgs     []string
-	cmdPsCalled      bool
+	cmdImportArgs []string
+	cmdRunArgs    []string
+	cmdStopArgs   []string
+	cmdRmArgs     []string
+	cmdKillArgs   []string
+	cmdBuildArgs  []string
+	cmdPsCalled   bool
 }
 
 func (f *FakeDockerClient) CmdVersion(_ ...string) error {

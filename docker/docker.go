@@ -187,9 +187,9 @@ func GetContainerId(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pipe
 
 func GetNewClient() (cli *docker.Client) {
 	cli, err := docker.NewClient("unix:///var/run/docker.sock")
-  if err != nil {
-    log.Fatalf("Error: %s", err)
-  }
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
 	return
 }
 
