@@ -27,21 +27,21 @@ func NewRocker() *Rocker {
 }
 
 func DockerVersion(writer io.Writer) {
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.PrintVersion(cli, Stdout, stdoutpipe, writer)
+	cli := docker.GetNewClient()
+	docker.PrintVersion(cli, writer)
 }
 
 func (f *Rocker) ImportRootfsImage(writer io.Writer) {
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.ImportRootfsImage(cli, Stdout, stdoutpipe, writer, utils.GetRootfsUrl())
+	cli := docker.GetNewClient()
+	docker.ImportRootfsImage(cli, writer, utils.GetRootfsUrl())
 	f.BuildBaseImage(writer)
 }
 
 func (f *Rocker) BuildBaseImage(writer io.Writer) {
 	createHostDirectories(f.directories)
 	containerConfig := config.NewBaseContainerConfig(f.directories.BaseConfig())
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.BuildBaseImage(cli, Stdout, stdoutpipe, writer, containerConfig)
+	cli := docker.GetNewClient()
+	docker.BuildBaseImage(cli, writer, containerConfig)
 }
 
 func StopContainer(writer io.Writer, name string) {

@@ -11,6 +11,8 @@ import (
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/docker"
 
+	goDockerClient "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
+
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
@@ -18,18 +20,38 @@ import (
 )
 
 type FakeDockerClient struct {
-	cmdVersionCalled bool
-	cmdImportArgs []string
-	cmdRunArgs    []string
-	cmdStopArgs   []string
-	cmdRmArgs     []string
-	cmdKillArgs   []string
-	cmdBuildArgs  []string
-	cmdPsCalled   bool
+	versionCalled  bool
+	importImageArg goDockerClient.ImportImageOptions
+	buildImageArg  goDockerClient.BuildImageOptions
+	cmdImportArgs  []string
+	cmdRunArgs     []string
+	cmdStopArgs    []string
+	cmdRmArgs      []string
+	cmdKillArgs    []string
+	cmdBuildArgs   []string
+	cmdPsCalled    bool
 }
 
-func (f *FakeDockerClient) CmdVersion(_ ...string) error {
-	f.cmdVersionCalled = true
+func (f *FakeDockerClient) Version() (*goDockerClient.Env, error) {
+	f.versionCalled = true
+	versionList := new(goDockerClient.Env)
+	versionList.Set("Os", "linux")
+	versionList.Set("Arch", "amd64")
+	versionList.Set("GitCommit", "a8a31ef")
+	versionList.Set("GoVersion", "go1.4.1")
+	versionList.Set("KernelVersion", "3.13.0-24-generic")
+	versionList.Set("Version", "1.5.0")
+	versionList.Set("ApiVersion", "1.17")
+	return versionList, nil
+}
+
+func (f *FakeDockerClient) ImportImage(options goDockerClient.ImportImageOptions) error {
+	f.importImageArg = options
+	return nil
+}
+
+func (f *FakeDockerClient) BuildImage(options goDockerClient.BuildImageOptions) error {
+	f.buildImageArg = options
 	return nil
 }
 
@@ -81,9 +103,13 @@ var _ = Describe("Docker", func() {
 	Describe("Displaying the Docker version", func() {
 		It("should tell Docker to output its version", func() {
 			fakeDockerClient = new(FakeDockerClient)
-			stdout, stdoutPipe := io.Pipe()
-			docker.PrintVersion(fakeDockerClient, stdout, stdoutPipe, buffer)
-			Expect(fakeDockerClient.cmdVersionCalled).To(Equal(true))
+			docker.PrintVersion(fakeDockerClient, buffer)
+			Expect(fakeDockerClient.versionCalled).To(Equal(true))
+			Eventually(buffer).Should(gbytes.Say("Client OS/Arch: linux/amd64"))
+			Eventually(buffer).Should(gbytes.Say("Server version: 1.5.0"))
+			Eventually(buffer).Should(gbytes.Say("Server API version: 1.17"))
+			Eventually(buffer).Should(gbytes.Say("Server Go version: go1.4.1"))
+			Eventually(buffer).Should(gbytes.Say("Server Git commit: a8a31ef"))
 		})
 	})
 
@@ -91,11 +117,11 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to import the rootfs from the supplied URL", func() {
 			url := "http://test.com/test-img"
 			fakeDockerClient = new(FakeDockerClient)
-			stdout, stdoutPipe := io.Pipe()
-			docker.ImportRootfsImage(fakeDockerClient, stdout, stdoutPipe, buffer, url)
-			Expect(len(fakeDockerClient.cmdImportArgs)).To(Equal(2))
-			Expect(fakeDockerClient.cmdImportArgs[0]).To(Equal("http://test.com/test-img"))
-			Expect(fakeDockerClient.cmdImportArgs[1]).To(Equal("cloudrocker-raw"))
+			docker.ImportRootfsImage(fakeDockerClient, buffer, url)
+			Expect(fakeDockerClient.importImageArg.Source).To(Equal("http://test.com/test-img"))
+			Expect(fakeDockerClient.importImageArg.Repository).To(Equal("cloudrocker-raw"))
+			Expect(fakeDockerClient.importImageArg.Tag).To(Equal("cloudrocker-base:latest"))
+			Expect(fakeDockerClient.importImageArg.OutputStream).To(Equal(buffer))
 		})
 
 		Describe("telling Docker to build a base image from the raw image with the correct config for rocker use", func() {
@@ -105,8 +131,7 @@ var _ = Describe("Docker", func() {
 			BeforeEach(func() {
 				buildDir, _ = ioutil.TempDir(os.TempDir(), "docker-configure-base")
 				fakeDockerClient = new(FakeDockerClient)
-				stdout, stdoutPipe := io.Pipe()
-				docker.BuildBaseImage(fakeDockerClient, stdout, stdoutPipe, buffer, config.NewBaseContainerConfig(buildDir))
+				docker.BuildBaseImage(fakeDockerClient, buffer, config.NewBaseContainerConfig(buildDir))
 			})
 			AfterEach(func() {
 				os.RemoveAll(buildDir)
@@ -119,9 +144,11 @@ var _ = Describe("Docker", func() {
 			})
 
 			It("should tell Docker to build the configured rootfs image from the Dockerfile", func() {
-				Expect(len(fakeDockerClient.cmdBuildArgs)).To(Equal(2))
-				Expect(fakeDockerClient.cmdBuildArgs[0]).To(Equal(`--tag="cloudrocker-base:latest"`))
-				Expect(fakeDockerClient.cmdBuildArgs[1]).To(Equal(buildDir))
+				Expect(fakeDockerClient.buildImageArg.Name).To(Equal("cloudrocker-base:latest"))
+				Expect(fakeDockerClient.buildImageArg.ContextDir).To(Equal(buildDir))
+				Expect(fakeDockerClient.buildImageArg.Dockerfile).To(Equal("/Dockerfile"))
+				Expect(fakeDockerClient.buildImageArg.OutputStream).To(Equal(buffer))
+				Eventually(buffer).Should(gbytes.Say("Created image."))
 			})
 		})
 	})
