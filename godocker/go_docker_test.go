@@ -3,6 +3,7 @@ package godocker_test
 import (
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"os/user"
 
 	"github.com/cloudcredo/cloudrocker/config"
@@ -13,12 +14,15 @@ import (
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
 )
 
 type FakeDockerClient struct {
-	versionCalled  bool
-	importImageArg goDockerClient.ImportImageOptions
-	buildImageArg  goDockerClient.BuildImageOptions
+	versionCalled      bool
+	importImageArg     goDockerClient.ImportImageOptions
+	buildImageArg      goDockerClient.BuildImageOptions
+	listContainersArg  goDockerClient.ListContainersOptions
+	removeContainerArg goDockerClient.RemoveContainerOptions
 }
 
 func (f *FakeDockerClient) Version() (*goDockerClient.Env, error) {
@@ -41,6 +45,22 @@ func (f *FakeDockerClient) ImportImage(options goDockerClient.ImportImageOptions
 
 func (f *FakeDockerClient) BuildImage(options goDockerClient.BuildImageOptions) error {
 	f.buildImageArg = options
+	return nil
+}
+
+func (f *FakeDockerClient) ListContainers(options goDockerClient.ListContainersOptions) ([]goDockerClient.APIContainers, error) {
+	f.listContainersArg = options
+	containers := []goDockerClient.APIContainers{
+		{
+			ID:    "e8096241370a",
+			Names: []string{"/cloudrocker-runtime"},
+		},
+	}
+	return containers, nil
+}
+
+func (f *FakeDockerClient) RemoveContainer(options goDockerClient.RemoveContainerOptions) error {
+	f.removeContainerArg = options
 	return nil
 }
 
@@ -115,7 +135,47 @@ var _ = Describe("Docker", func() {
 			})
 		})
 	})
+
+	Describe("Getting a cloudrocker container ID", func() {
+		Context("when no cloudrocker container is found", func() {
+			It("should return empty string", func() {
+				fakeDockerClient = new(FakeDockerClient)
+				containerID := godocker.GetContainerID(fakeDockerClient, "another-container")
+				Expect(fakeDockerClient.listContainersArg.All).To(Equal(true))
+				Expect(containerID).To(Equal(""))
+			})
+		})
+
+		Context("when a cloudrocker container exists", func() {
+			It("should return the container ID", func() {
+				fakeDockerClient = new(FakeDockerClient)
+				containerID := godocker.GetContainerID(fakeDockerClient, "cloudrocker-runtime")
+				Expect(fakeDockerClient.listContainersArg.All).To(Equal(true))
+				Expect(containerID).To(Equal("e8096241370a"))
+			})
+		})
+	})
+
+	Describe("Deleting the docker container", func() {
+		It("should tell Docker to delete the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			godocker.DeleteContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
+			Expect(fakeDockerClient.removeContainerArg.Force).To(Equal(true))
+			Expect(fakeDockerClient.removeContainerArg.ID).To(Equal("e8096241370a"))
+		})
+	})
+
 })
+
+func cp(src string, dst string) {
+	session, err := gexec.Start(
+		exec.Command("cp", "-a", src, dst),
+		GinkgoWriter,
+		GinkgoWriter,
+	)
+	Ω(err).ShouldNot(HaveOccurred())
+	Eventually(session).Should(gexec.Exit(0))
+}
 
 func buildBaseImageDockerfile() []byte {
 	thisUser, _ := user.Current()

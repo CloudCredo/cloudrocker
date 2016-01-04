@@ -13,6 +13,8 @@ type DockerClient interface {
 	Version() (*docker.Env, error)
 	ImportImage(docker.ImportImageOptions) error
 	BuildImage(docker.BuildImageOptions) error
+	ListContainers(docker.ListContainersOptions) ([]docker.APIContainers, error)
+	RemoveContainer(docker.RemoveContainerOptions) error
 }
 
 func GetNewClient() (cli *docker.Client) {
@@ -39,13 +41,13 @@ func PrintVersion(cli DockerClient, writer io.Writer) error {
 
 func ImportRootfsImage(cli DockerClient, writer io.Writer, url string) error {
 	fmt.Fprintln(writer, "Bootstrapping Docker setup - this will take a few minutes...")
-	opts := docker.ImportImageOptions{
+	options := docker.ImportImageOptions{
 		Source:       url,
 		Repository:   "cloudrocker-raw",
 		Tag:          "cloudrocker-base:latest",
 		OutputStream: writer,
 	}
-	err := cli.ImportImage(opts)
+	err := cli.ImportImage(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -56,16 +58,50 @@ func BuildBaseImage(cli DockerClient, writer io.Writer, containerConfig *config.
 	fmt.Fprintln(writer, "Creating image configuration...")
 	WriteBaseImageDockerfile(containerConfig)
 	fmt.Fprintln(writer, "Creating image...")
-	opts := docker.BuildImageOptions{
+	options := docker.BuildImageOptions{
 		Name:         containerConfig.DstImageTag,
 		ContextDir:   containerConfig.BaseConfigDir,
 		Dockerfile:   "/Dockerfile",
 		OutputStream: writer,
 	}
-	err := cli.BuildImage(opts)
+	err := cli.BuildImage(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 	fmt.Fprintln(writer, "Created image.")
+	return nil
+}
+
+func GetContainerID(cli DockerClient, containerName string) (containerID string) {
+	options := docker.ListContainersOptions{
+		All: true,
+	}
+	containers, err := cli.ListContainers(options)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	for _, container := range containers {
+		if container.Names[0] == "/"+containerName {
+			return container.ID
+		}
+	}
+	return ""
+}
+
+func DeleteContainer(cli DockerClient, writer io.Writer, containerName string) error {
+	fmt.Fprintln(writer, "Deleting the CloudRocker container...")
+	containerID := GetContainerID(cli, containerName)
+	if containerID == "" {
+		log.Fatalf("Error: No such container: %s", containerName)
+	}
+	options := docker.RemoveContainerOptions{
+		ID:    containerID,
+		Force: true,
+	}
+	err := cli.RemoveContainer(options)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	fmt.Fprintln(writer, "Deleted container.")
 	return nil
 }

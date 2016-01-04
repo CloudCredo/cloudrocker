@@ -51,8 +51,8 @@ func StopContainer(writer io.Writer, name string) {
 }
 
 func DeleteContainer(writer io.Writer, name string) {
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.DeleteContainer(cli, Stdout, stdoutpipe, writer, name)
+	cli := godocker.GetNewClient()
+	godocker.DeleteContainer(cli, writer, name)
 }
 
 func (f *Rocker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
