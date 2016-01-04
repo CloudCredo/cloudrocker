@@ -46,8 +46,8 @@ func (f *Rocker) BuildBaseImage(writer io.Writer) {
 }
 
 func StopContainer(writer io.Writer, name string) {
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.StopContainer(cli, Stdout, stdoutpipe, writer, name)
+	cli := godocker.GetNewClient()
+	godocker.StopContainer(cli, writer, name)
 }
 
 func DeleteContainer(writer io.Writer, name string) {

@@ -18,15 +18,17 @@ import (
 )
 
 type FakeDockerClient struct {
-	versionCalled      bool
-	importImageArg     goDockerClient.ImportImageOptions
-	buildImageArg      goDockerClient.BuildImageOptions
-	listContainersArg  goDockerClient.ListContainersOptions
-	removeContainerArg goDockerClient.RemoveContainerOptions
+	versionCalled           bool
+	importImageArg          goDockerClient.ImportImageOptions
+	buildImageArg           goDockerClient.BuildImageOptions
+	listContainersArg       goDockerClient.ListContainersOptions
+	removeContainerArg      goDockerClient.RemoveContainerOptions
+	stopContainerArgID      string
+	stopContainerArgTimeout uint
 }
 
-func (f *FakeDockerClient) Version() (*goDockerClient.Env, error) {
-	f.versionCalled = true
+func (fake *FakeDockerClient) Version() (*goDockerClient.Env, error) {
+	fake.versionCalled = true
 	versionList := new(goDockerClient.Env)
 	versionList.Set("Os", "linux")
 	versionList.Set("Arch", "amd64")
@@ -38,18 +40,18 @@ func (f *FakeDockerClient) Version() (*goDockerClient.Env, error) {
 	return versionList, nil
 }
 
-func (f *FakeDockerClient) ImportImage(options goDockerClient.ImportImageOptions) error {
-	f.importImageArg = options
+func (fake *FakeDockerClient) ImportImage(options goDockerClient.ImportImageOptions) error {
+	fake.importImageArg = options
 	return nil
 }
 
-func (f *FakeDockerClient) BuildImage(options goDockerClient.BuildImageOptions) error {
-	f.buildImageArg = options
+func (fake *FakeDockerClient) BuildImage(options goDockerClient.BuildImageOptions) error {
+	fake.buildImageArg = options
 	return nil
 }
 
-func (f *FakeDockerClient) ListContainers(options goDockerClient.ListContainersOptions) ([]goDockerClient.APIContainers, error) {
-	f.listContainersArg = options
+func (fake *FakeDockerClient) ListContainers(options goDockerClient.ListContainersOptions) ([]goDockerClient.APIContainers, error) {
+	fake.listContainersArg = options
 	containers := []goDockerClient.APIContainers{
 		{
 			ID:    "e8096241370a",
@@ -59,8 +61,14 @@ func (f *FakeDockerClient) ListContainers(options goDockerClient.ListContainersO
 	return containers, nil
 }
 
-func (f *FakeDockerClient) RemoveContainer(options goDockerClient.RemoveContainerOptions) error {
-	f.removeContainerArg = options
+func (fake *FakeDockerClient) RemoveContainer(options goDockerClient.RemoveContainerOptions) error {
+	fake.removeContainerArg = options
+	return nil
+}
+
+func (fake *FakeDockerClient) StopContainer(id string, timeout uint) error {
+	fake.stopContainerArgID = id
+	fake.stopContainerArgTimeout = timeout
 	return nil
 }
 
@@ -162,6 +170,16 @@ var _ = Describe("Docker", func() {
 			godocker.DeleteContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
 			Expect(fakeDockerClient.removeContainerArg.Force).To(Equal(true))
 			Expect(fakeDockerClient.removeContainerArg.ID).To(Equal("e8096241370a"))
+		})
+	})
+
+	Describe("Stopping the docker container", func() {
+		It("should tell Docker to stop the container", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			godocker.StopContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
+			Expect(fakeDockerClient.stopContainerArgID).To(Equal("e8096241370a"))
+			var timeout uint = 10
+			Expect(fakeDockerClient.stopContainerArgTimeout).To(Equal(timeout))
 		})
 	})
 

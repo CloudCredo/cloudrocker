@@ -15,6 +15,7 @@ type DockerClient interface {
 	BuildImage(docker.BuildImageOptions) error
 	ListContainers(docker.ListContainersOptions) ([]docker.APIContainers, error)
 	RemoveContainer(docker.RemoveContainerOptions) error
+	StopContainer(containerName string, timeout uint) error
 }
 
 func GetNewClient() (cli *docker.Client) {
@@ -103,5 +104,19 @@ func DeleteContainer(cli DockerClient, writer io.Writer, containerName string) e
 		log.Fatalf("Error: %s", err)
 	}
 	fmt.Fprintln(writer, "Deleted container.")
+	return nil
+}
+
+func StopContainer(cli DockerClient, writer io.Writer, containerName string) error {
+	fmt.Fprintln(writer, "Stopping the CloudRocker container...")
+	containerID := GetContainerID(cli, containerName)
+	if containerID == "" {
+		log.Fatalf("Error: No such container: %s", containerName)
+	}
+	err := cli.StopContainer(containerID, 10)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	fmt.Fprintln(writer, "Stopped your application.")
 	return nil
 }
