@@ -31,9 +31,9 @@ var _ = Describe("Rocker", func() {
 		Context("REALDOCKER", func() {
 			It("should tell Docker to output its version", func() {
 				rocker.DockerVersion(buffer)
-				Eventually(buffer).Should(gbytes.Say(`Checking Docker version`))
-				Eventually(buffer).Should(gbytes.Say(`Client API version: `))
-				Eventually(buffer).Should(gbytes.Say(`Go version \(client\): go`))
+				Eventually(buffer).Should(gbytes.Say("Checking Docker version"))
+				Eventually(buffer).Should(gbytes.Say("Client OS/Arch: "))
+				Eventually(buffer).Should(gbytes.Say("Server Go version: go"))
 			})
 		})
 	})

@@ -194,16 +194,6 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
-	Describe("Getting a Docker client", func() {
-		Context("REALDOCKER", func() {
-			It("should return a usable docker client on unix", func() {
-				cli, stdout, stdoutpipe := docker.GetNewClient()
-				docker.PrintVersion(cli, stdout, stdoutpipe, buffer)
-				Eventually(buffer).Should(gbytes.Say(`Client API version: `))
-			})
-		})
-	})
-
 	Describe("Container I/O plumbing", func() {
 		It("Copies from a pipe to a writer without waiting for the pipe to close", func() {
 			stdout, stdoutPipe := io.Pipe()
