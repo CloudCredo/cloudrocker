@@ -10,6 +10,8 @@ import (
 
 	"github.com/cloudcredo/cloudrocker/config"
 
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/docker/docker/api/client"
+
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 )
 
@@ -131,6 +133,14 @@ func GetContainerId(cli DockerClient, stdout *io.PipeReader, stdoutPipe *io.Pipe
 			return
 		}
 	}
+	return
+}
+
+func GetNewClient() (
+	cli *client.DockerCli, stdout *io.PipeReader, stdoutPipe *io.PipeWriter) {
+	stdout, stdoutPipe = io.Pipe()
+	cli = client.NewDockerCli(
+		nil, stdoutPipe, nil, nil, "unix", "/var/run/docker.sock", nil)
 	return
 }
 
