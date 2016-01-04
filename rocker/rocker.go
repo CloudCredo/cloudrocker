@@ -11,6 +11,7 @@ import (
 	"github.com/cloudcredo/cloudrocker/buildpack"
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/docker"
+	"github.com/cloudcredo/cloudrocker/godocker"
 	"github.com/cloudcredo/cloudrocker/stager"
 	"github.com/cloudcredo/cloudrocker/utils"
 )
@@ -27,21 +28,21 @@ func NewRocker() *Rocker {
 }
 
 func DockerVersion(writer io.Writer) {
-	cli := docker.GetNewClient()
-	docker.PrintVersion(cli, writer)
+	cli := godocker.GetNewClient()
+	godocker.PrintVersion(cli, writer)
 }
 
 func (f *Rocker) ImportRootfsImage(writer io.Writer) {
-	cli := docker.GetNewClient()
-	docker.ImportRootfsImage(cli, writer, utils.GetRootfsUrl())
+	cli := godocker.GetNewClient()
+	godocker.ImportRootfsImage(cli, writer, utils.GetRootfsUrl())
 	f.BuildBaseImage(writer)
 }
 
 func (f *Rocker) BuildBaseImage(writer io.Writer) {
 	createHostDirectories(f.directories)
 	containerConfig := config.NewBaseContainerConfig(f.directories.BaseConfig())
-	cli := docker.GetNewClient()
-	docker.BuildBaseImage(cli, writer, containerConfig)
+	cli := godocker.GetNewClient()
+	godocker.BuildBaseImage(cli, writer, containerConfig)
 }
 
 func StopContainer(writer io.Writer, name string) {
