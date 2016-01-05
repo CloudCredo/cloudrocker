@@ -9,6 +9,8 @@ import (
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/godocker"
 
+	goDockerClient "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
+
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/gomega"
 )
@@ -50,6 +52,76 @@ var _ = Describe("Parser", func() {
 					"--env=\"TMPDIR=/app/tmp\" " +
 					"cloudrocker-base:latest " +
 					"/bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command \"quoted string with spaces\""))
+			})
+		})
+	})
+
+	Describe("Parsing a ContainerConfig for a create container request", func() {
+		Context("with a staging config", func() {
+			It("should return a CreateContainerOptions with all required attributes", func() {
+				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
+				thisUser, _ := user.Current()
+				userID := thisUser.Uid
+				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudrocker"))
+
+				createContainerOptions := godocker.ParseCreateContainer(stageConfig)
+
+				Expect(createContainerOptions.Name).To(Equal("cloudrocker-staging"))
+				Expect(createContainerOptions.Config.User).To(Equal(userID))
+				Expect(createContainerOptions.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
+				Expect(createContainerOptions.Config.Image).To(Equal("cloudrocker-base:latest"))
+				Expect(createContainerOptions.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+				var binds = []string{
+					"/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks",
+					"/home/testuser/.cloudrocker/rocker:/rocker",
+					"/home/testuser/.cloudrocker/staging:/tmp/app",
+					"/home/testuser/.cloudrocker/tmp:/tmp",
+				}
+				Expect(createContainerOptions.HostConfig.Binds).To(Equal(binds))
+			})
+		})
+
+		Context("with a runtime config ", func() {
+			It("should return a CreateContainerOptions with all required attributes", func() {
+				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
+				thisUser, _ := user.Current()
+				userID := thisUser.Uid
+				testRuntimeContainerConfig := testRuntimeContainerConfig()
+
+				createContainerOptions := godocker.ParseCreateContainer(testRuntimeContainerConfig)
+
+				Expect(createContainerOptions.Name).To(Equal("cloudrocker-runtime"))
+				Expect(createContainerOptions.Config.User).To(Equal(userID))
+				Expect(createContainerOptions.Config.Env).To(Equal([]string{
+					"HOME=/app",
+					"PORT=8080",
+					"TMPDIR=/app/tmp",
+				}))
+				Expect(createContainerOptions.Config.Image).To(Equal("cloudrocker-base:latest"))
+				Expect(createContainerOptions.Config.Cmd).To(Equal([]string{
+					"/bin/bash",
+					"/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
+					"/app",
+					"the",
+					"start",
+					"command",
+					"\"quoted",
+					"string",
+					"with",
+					"spaces\"",
+				}))
+				Expect(createContainerOptions.HostConfig.Binds).To(Equal([]string{
+					"/home/testuser/testapp/app:/app",
+				}))
+				var portBindings = map[goDockerClient.Port][]goDockerClient.PortBinding{
+					"8080/tcp": []goDockerClient.PortBinding{
+						{
+							HostIP:   "0.0.0.0",
+							HostPort: "8080",
+						},
+					},
+				}
+				Expect(createContainerOptions.HostConfig.PortBindings).To(Equal(portBindings))
 			})
 		})
 	})

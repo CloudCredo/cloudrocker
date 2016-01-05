@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
 	"github.com/cloudcredo/cloudrocker/config"
@@ -16,6 +17,8 @@ type DockerClient interface {
 	ListContainers(docker.ListContainersOptions) ([]docker.APIContainers, error)
 	RemoveContainer(docker.RemoveContainerOptions) error
 	StopContainer(containerName string, timeout uint) error
+	CreateContainer(docker.CreateContainerOptions) (*docker.Container, error)
+	StartContainer(string, *docker.HostConfig) error
 }
 
 func GetNewClient() (cli *docker.Client) {
@@ -117,5 +120,25 @@ func StopContainer(cli DockerClient, writer io.Writer, containerName string) err
 		log.Fatalf("Error: %s", err)
 	}
 	fmt.Fprintln(writer, "Stopped your application.")
+	return nil
+}
+
+func RunConfiguredContainer(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	fmt.Fprintln(writer, "Starting the CloudRocker container...")
+	var createOptions = ParseCreateContainer(containerConfig)
+	if os.Getenv("DEBUG") == "true" {
+		fmt.Println(createOptions.Name)
+		fmt.Println(createOptions.Config)
+		fmt.Println(createOptions.HostConfig)
+	}
+	container, err := cli.CreateContainer(createOptions)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	err = cli.StartContainer(container.ID, &docker.HostConfig{})
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	fmt.Fprintln(writer, "Started the CloudRocker container.")
 	return nil
 }

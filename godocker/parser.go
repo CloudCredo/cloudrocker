@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
 	"github.com/cloudcredo/cloudrocker/config"
 )
 
@@ -21,6 +22,23 @@ func ParseRunCommand(config *config.ContainerConfig) (runCmd []string) {
 	runCmd = append(runCmd, parseSrcImageTag(config.SrcImageTag)...)
 	runCmd = append(runCmd, parseCommand(config.Command)...)
 	return
+}
+
+func ParseCreateContainer(config *config.ContainerConfig) docker.CreateContainerOptions {
+	var options = docker.CreateContainerOptions{
+		Name: config.ContainerName,
+		Config: &docker.Config{
+			User:  userID(),
+			Env:   parseEnvVarsOptions(config.EnvVars),
+			Image: config.SrcImageTag,
+			Cmd:   config.Command,
+		},
+		HostConfig: &docker.HostConfig{
+			Binds:        parseBinds(config.Mounts),
+			PortBindings: parsePublishedPortsOptions(config.PublishedPorts),
+		},
+	}
+	return options
 }
 
 func WriteRuntimeDockerfile(config *config.ContainerConfig) {
@@ -42,10 +60,10 @@ func WriteBaseImageDockerfile(config *config.ContainerConfig) {
 }
 
 func userString() string {
-	return "-u=" + userId()
+	return "-u=" + userID()
 }
 
-func userId() string {
+func userID() string {
 	var thisUser *user.User
 	var err error
 	if thisUser, err = user.Current(); err != nil {
@@ -77,6 +95,14 @@ func parseMounts(mounts map[string]string) (parsedMounts []string) {
 	return
 }
 
+func parseBinds(mounts map[string]string) (parsedBinds []string) {
+	for src, dst := range mounts {
+		parsedBinds = append(parsedBinds, src+":"+dst)
+	}
+	sort.Strings(parsedBinds)
+	return
+}
+
 func parsePublishedPorts(publishedPorts map[int]int) (parsedPublishedPorts []string) {
 	for host, cont := range publishedPorts {
 		parsedPublishedPorts = append(parsedPublishedPorts,
@@ -86,11 +112,34 @@ func parsePublishedPorts(publishedPorts map[int]int) (parsedPublishedPorts []str
 	return
 }
 
+func parsePublishedPortsOptions(publishedPorts map[int]int) map[docker.Port][]docker.PortBinding {
+	var parsedPublishedPorts = make(map[docker.Port][]docker.PortBinding)
+	for hostPort, containerPort := range publishedPorts {
+		parsedPublishedPorts[docker.Port(strconv.Itoa(hostPort)+"/tcp")] = []docker.PortBinding{
+			{
+				HostIP:   "0.0.0.0",
+				HostPort: strconv.Itoa(containerPort),
+			},
+		}
+	}
+	return parsedPublishedPorts
+}
+
 func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
 	for key, val := range envVars {
 		if val != "" {
 			parsedEnvVars = append(parsedEnvVars,
 				"--env=\""+key+"="+val+"\"")
+		}
+	}
+	sort.Strings(parsedEnvVars)
+	return
+}
+
+func parseEnvVarsOptions(envVars map[string]string) (parsedEnvVars []string) {
+	for key, val := range envVars {
+		if val != "" {
+			parsedEnvVars = append(parsedEnvVars, key+"="+val)
 		}
 	}
 	sort.Strings(parsedEnvVars)
@@ -119,7 +168,7 @@ WORKDIR /app
 
 func baseImageDockerfileString(srcImageTag string) string {
 	return `FROM ` + srcImageTag + `
-RUN id vcap || /usr/sbin/useradd -mU -u ` + userId() + ` -d /app -s /bin/bash vcap
+RUN id vcap || /usr/sbin/useradd -mU -u ` + userID() + ` -d /app -s /bin/bash vcap
 RUN mkdir -p /app/tmp && chown -R vcap:vcap /app
 `
 }

@@ -25,6 +25,8 @@ type FakeDockerClient struct {
 	removeContainerArg      goDockerClient.RemoveContainerOptions
 	stopContainerArgID      string
 	stopContainerArgTimeout uint
+	createContainerArg      goDockerClient.CreateContainerOptions
+	startContainerArgID     string
 }
 
 func (fake *FakeDockerClient) Version() (*goDockerClient.Env, error) {
@@ -69,6 +71,19 @@ func (fake *FakeDockerClient) RemoveContainer(options goDockerClient.RemoveConta
 func (fake *FakeDockerClient) StopContainer(id string, timeout uint) error {
 	fake.stopContainerArgID = id
 	fake.stopContainerArgTimeout = timeout
+	return nil
+}
+
+func (fake *FakeDockerClient) CreateContainer(options goDockerClient.CreateContainerOptions) (*goDockerClient.Container, error) {
+	fake.createContainerArg = options
+	var container = goDockerClient.Container{
+		ID: "5716e9326cd9",
+	}
+	return &container, nil
+}
+
+func (fake *FakeDockerClient) StartContainer(id string, hostConfig *goDockerClient.HostConfig) error {
+	fake.startContainerArgID = id
 	return nil
 }
 
@@ -182,6 +197,26 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
+	Describe("Running a configured container", func() {
+		It("should tell Docker to run the container with the correct arguments", func() {
+			fakeDockerClient = new(FakeDockerClient)
+			godocker.RunConfiguredContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("test")))
+			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-staging"))
+			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal("1000"))
+			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
+			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
+			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+			var binds = []string{
+				"test/buildpacks:/cloudrockerbuildpacks",
+				"test/rocker:/rocker",
+				"test/staging:/tmp/app",
+				"test/tmp:/tmp",
+			}
+			Expect(fakeDockerClient.createContainerArg.HostConfig.Binds).To(Equal(binds))
+
+			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
+		})
+	})
 })
 
 func cp(src string, dst string) {
