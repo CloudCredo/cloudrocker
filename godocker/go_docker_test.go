@@ -199,10 +199,14 @@ var _ = Describe("Docker", func() {
 
 	Describe("Running a configured container", func() {
 		It("should tell Docker to run the container with the correct arguments", func() {
+			thisUser, _ := user.Current()
+			userID := thisUser.Uid
 			fakeDockerClient = new(FakeDockerClient)
+
 			godocker.RunConfiguredContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("test")))
+
 			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-staging"))
-			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal("1000"))
+			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal(userID))
 			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
 			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
@@ -213,7 +217,6 @@ var _ = Describe("Docker", func() {
 				"test/tmp:/tmp",
 			}
 			Expect(fakeDockerClient.createContainerArg.HostConfig.Binds).To(Equal(binds))
-
 			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
 		})
 	})
