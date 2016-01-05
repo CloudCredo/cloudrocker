@@ -111,7 +111,6 @@ var _ = Describe("Docker", func() {
 			godocker.ImportRootfsImage(fakeDockerClient, buffer, url)
 			Expect(fakeDockerClient.importImageArg.Source).To(Equal("http://test.com/test-img"))
 			Expect(fakeDockerClient.importImageArg.Repository).To(Equal("cloudrocker-raw"))
-			Expect(fakeDockerClient.importImageArg.Tag).To(Equal("cloudrocker-base:latest"))
 			Expect(fakeDockerClient.importImageArg.OutputStream).To(Equal(buffer))
 		})
 

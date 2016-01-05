@@ -45,7 +45,6 @@ func ImportRootfsImage(cli DockerClient, writer io.Writer, url string) error {
 	options := docker.ImportImageOptions{
 		Source:       url,
 		Repository:   "cloudrocker-raw",
-		Tag:          "cloudrocker-base:latest",
 		OutputStream: writer,
 	}
 	err := cli.ImportImage(options)
