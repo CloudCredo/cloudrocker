@@ -266,12 +266,6 @@ var _ = Describe("Docker", func() {
 			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
 			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
-			Expect(fakeDockerClient.createContainerArg.Config.Volumes).To(Equal(map[string]struct{}{
-				"/cloudrockerbuildpacks": struct{}{},
-				"/rocker":                struct{}{},
-				"/tmp/app":               struct{}{},
-				"/tmp":                   struct{}{},
-			}))
 			var binds = []string{
 				"test/buildpacks:/cloudrockerbuildpacks",
 				"test/rocker:/rocker",

@@ -16,11 +16,10 @@ func ParseCreateContainerOptions(config *config.ContainerConfig) docker.CreateCo
 	var options = docker.CreateContainerOptions{
 		Name: config.ContainerName,
 		Config: &docker.Config{
-			User:    userID(),
-			Env:     parseEnvVars(config.EnvVars),
-			Image:   config.SrcImageTag,
-			Cmd:     config.Command,
-			Volumes: parseVolumes(config.Mounts),
+			User:  userID(),
+			Env:   parseEnvVars(config.EnvVars),
+			Image: config.SrcImageTag,
+			Cmd:   config.Command,
 		},
 		HostConfig: &docker.HostConfig{
 			Binds:        parseBinds(config.Mounts),
@@ -63,14 +62,6 @@ func parseBinds(mounts map[string]string) (parsedBinds []string) {
 	}
 	sort.Strings(parsedBinds)
 	return
-}
-
-func parseVolumes(mounts map[string]string) map[string]struct{} {
-	var parsedVolumes = make(map[string]struct{})
-	for _, containerPath := range mounts {
-		parsedVolumes[containerPath] = struct{}{}
-	}
-	return parsedVolumes
 }
 
 func parsePublishedPorts(publishedPorts map[int]int) map[docker.Port][]docker.PortBinding {
