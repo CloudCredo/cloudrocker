@@ -153,7 +153,7 @@ var _ = Describe("Docker", func() {
 				Expect(fakeDockerClient.buildImageArg.ContextDir).To(Equal(buildDir))
 				Expect(fakeDockerClient.buildImageArg.Dockerfile).To(Equal("/Dockerfile"))
 				Expect(fakeDockerClient.buildImageArg.OutputStream).To(Equal(buffer))
-				Eventually(buffer).Should(gbytes.Say("Created image."))
+				Eventually(buffer).Should(gbytes.Say("Created base image."))
 			})
 		})
 	})
@@ -197,6 +197,62 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
+	Describe("Building a runtime image", func() {
+		var (
+			dropletDir       string
+			fakeDockerClient *FakeDockerClient
+		)
+
+		BeforeEach(func() {
+			fakeDockerClient = new(FakeDockerClient)
+			tmpDir, _ := ioutil.TempDir(os.TempDir(), "docker-runtime-image-test")
+			cp("fixtures/build/droplet", tmpDir)
+			dropletDir = tmpDir + "/droplet"
+		})
+
+		Context("without an image tag", func() {
+			BeforeEach(func() {
+				godocker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir))
+			})
+
+			It("should create a tarred version of the droplet mount, for extraction in the container, so as to not have AUFS permissions issues in https://github.com/docker/docker/issues/783", func() {
+				dropletDirFile, err := os.Open(dropletDir)
+				Expect(err).ShouldNot(HaveOccurred())
+				dropletDirContents, err := dropletDirFile.Readdirnames(0)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(dropletDirContents, err).Should(ContainElement("droplet.tgz"))
+			})
+
+			It("should write a valid Dockerfile to the filesystem", func() {
+				result, err := ioutil.ReadFile(dropletDir + "/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(result).To(Equal(expected))
+			})
+
+			It("should tell Docker to build the container from the Dockerfile", func() {
+				Expect(fakeDockerClient.buildImageArg.Name).To(Equal("cloudrocker-build:latest"))
+				Expect(fakeDockerClient.buildImageArg.ContextDir).To(Equal(dropletDir))
+				Expect(fakeDockerClient.buildImageArg.Dockerfile).To(Equal("/Dockerfile"))
+				Expect(fakeDockerClient.buildImageArg.OutputStream).To(Equal(buffer))
+				Eventually(buffer).Should(gbytes.Say("Created runtime image."))
+			})
+		})
+
+		Context("with an image tag", func() {
+			It("should tell Docker to build the container from the Dockerfile", func() {
+				godocker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir, "repository/image:tag"))
+
+				Expect(fakeDockerClient.buildImageArg.Name).To(Equal("repository/image:tag"))
+				Expect(fakeDockerClient.buildImageArg.ContextDir).To(Equal(dropletDir))
+				Expect(fakeDockerClient.buildImageArg.Dockerfile).To(Equal("/Dockerfile"))
+				Expect(fakeDockerClient.buildImageArg.OutputStream).To(Equal(buffer))
+				Eventually(buffer).Should(gbytes.Say("Created runtime image."))
+			})
+		})
+	})
+
 	Describe("Running a configured container", func() {
 		It("should tell Docker to run the container with the correct arguments", func() {
 			thisUser, _ := user.Current()
@@ -210,6 +266,12 @@ var _ = Describe("Docker", func() {
 			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
 			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+			Expect(fakeDockerClient.createContainerArg.Config.Volumes).To(Equal(map[string]struct{}{
+				"/cloudrockerbuildpacks": struct{}{},
+				"/rocker":                struct{}{},
+				"/tmp/app":               struct{}{},
+				"/tmp":                   struct{}{},
+			}))
 			var binds = []string{
 				"test/buildpacks:/cloudrockerbuildpacks",
 				"test/rocker:/rocker",

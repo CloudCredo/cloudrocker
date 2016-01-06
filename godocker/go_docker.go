@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
+	"github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/pivotal-golang/archiver/compressor"
 	"github.com/cloudcredo/cloudrocker/config"
 )
 
@@ -71,7 +72,27 @@ func BuildBaseImage(cli DockerClient, writer io.Writer, containerConfig *config.
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
-	fmt.Fprintln(writer, "Created image.")
+	fmt.Fprintln(writer, "Created base image.")
+	return nil
+}
+
+func BuildRuntimeImage(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	fmt.Fprintln(writer, "Creating image configuration...")
+	compressor := compressor.NewTgz()
+	compressor.Compress(containerConfig.DropletDir+"/app/", containerConfig.DropletDir+"/droplet.tgz")
+	WriteRuntimeDockerfile(containerConfig)
+	fmt.Fprintln(writer, "Creating image...")
+	options := docker.BuildImageOptions{
+		Name:         containerConfig.DstImageTag,
+		ContextDir:   containerConfig.DropletDir,
+		Dockerfile:   "/Dockerfile",
+		OutputStream: writer,
+	}
+	err := cli.BuildImage(options)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+	fmt.Fprintln(writer, "Created runtime image.")
 	return nil
 }
 
