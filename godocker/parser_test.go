@@ -30,6 +30,12 @@ var _ = Describe("Parser", func() {
 				Expect(createContainerOptions.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 				Expect(createContainerOptions.Config.Image).To(Equal("cloudrocker-base:latest"))
 				Expect(createContainerOptions.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+				Expect(createContainerOptions.Config.Volumes).To(Equal(map[string]struct{}{
+					"/cloudrockerbuildpacks": struct{}{},
+					"/rocker":                struct{}{},
+					"/tmp/app":               struct{}{},
+					"/tmp":                   struct{}{},
+				}))
 				var binds = []string{
 					"/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks",
 					"/home/testuser/.cloudrocker/rocker:/rocker",
@@ -68,6 +74,9 @@ var _ = Describe("Parser", func() {
 					"string",
 					"with",
 					"spaces\"",
+				}))
+				Expect(createContainerOptions.Config.Volumes).To(Equal(map[string]struct{}{
+					"/app": struct{}{},
 				}))
 				Expect(createContainerOptions.HostConfig.Binds).To(Equal([]string{
 					"/home/testuser/testapp/app:/app",
