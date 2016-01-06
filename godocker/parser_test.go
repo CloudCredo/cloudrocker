@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
-	"strings"
 
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/godocker"
@@ -16,46 +15,6 @@ import (
 )
 
 var _ = Describe("Parser", func() {
-	Describe("Parsing a ContainerConfig for a Docker run command", func() {
-		Context("with a staging config ", func() {
-			It("should return a slice with all required arguments", func() {
-				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
-				thisUser, _ := user.Current()
-				userID := thisUser.Uid
-				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudrocker"))
-				parsedRunCommand := godocker.ParseRunCommand(stageConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userID +
-					" --name=cloudrocker-staging " +
-					"--volume=/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks " +
-					"--volume=/home/testuser/.cloudrocker/rocker:/rocker " +
-					"--volume=/home/testuser/.cloudrocker/staging:/tmp/app " +
-					"--volume=/home/testuser/.cloudrocker/tmp:/tmp " +
-					"--env=\"CF_STACK=cflinuxfs2\" " +
-					"cloudrocker-base:latest " +
-					"/rocker/rock stage internal"))
-			})
-		})
-
-		Context("with a runtime config ", func() {
-			It("should return a slice with all required arguments", func() {
-				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
-				thisUser, _ := user.Current()
-				userID := thisUser.Uid
-				testRuntimeContainerConfig := testRuntimeContainerConfig()
-				parsedRunCommand := godocker.ParseRunCommand(testRuntimeContainerConfig)
-				Expect(strings.Join(parsedRunCommand, " ")).To(Equal("-u=" + userID +
-					" --name=cloudrocker-runtime -d " +
-					"--volume=/home/testuser/testapp/app:/app " +
-					"--publish=8080:8080 " +
-					"--env=\"HOME=/app\" " +
-					"--env=\"PORT=8080\" " +
-					"--env=\"TMPDIR=/app/tmp\" " +
-					"cloudrocker-base:latest " +
-					"/bin/bash /app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh /app the start command \"quoted string with spaces\""))
-			})
-		})
-	})
-
 	Describe("Parsing a ContainerConfig for a create container request", func() {
 		Context("with a staging config", func() {
 			It("should return a CreateContainerOptions with all required attributes", func() {
@@ -64,7 +23,7 @@ var _ = Describe("Parser", func() {
 				userID := thisUser.Uid
 				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudrocker"))
 
-				createContainerOptions := godocker.ParseCreateContainer(stageConfig)
+				createContainerOptions := godocker.ParseCreateContainerOptions(stageConfig)
 
 				Expect(createContainerOptions.Name).To(Equal("cloudrocker-staging"))
 				Expect(createContainerOptions.Config.User).To(Equal(userID))
@@ -88,7 +47,7 @@ var _ = Describe("Parser", func() {
 				userID := thisUser.Uid
 				testRuntimeContainerConfig := testRuntimeContainerConfig()
 
-				createContainerOptions := godocker.ParseCreateContainer(testRuntimeContainerConfig)
+				createContainerOptions := godocker.ParseCreateContainerOptions(testRuntimeContainerConfig)
 
 				Expect(createContainerOptions.Name).To(Equal("cloudrocker-runtime"))
 				Expect(createContainerOptions.Config.User).To(Equal(userID))
@@ -127,25 +86,6 @@ var _ = Describe("Parser", func() {
 	})
 
 	Describe("Parsing a ContainerConfig for a Docker build command", func() {
-		Context("with a runtime config ", func() {
-			It("should write a valid Dockerfile", func() {
-				tmpDropletDir, err := ioutil.TempDir(os.TempDir(), "parser-test-tmp-droplet")
-				Expect(err).ShouldNot(HaveOccurred())
-				testRuntimeContainerConfig := testRuntimeContainerConfig()
-				testRuntimeContainerConfig.DropletDir = tmpDropletDir
-
-				godocker.WriteRuntimeDockerfile(testRuntimeContainerConfig)
-
-				expected, err := ioutil.ReadFile("fixtures/build/Dockerfile")
-				Expect(err).ShouldNot(HaveOccurred())
-				result, err := ioutil.ReadFile(tmpDropletDir + "/Dockerfile")
-				Expect(err).ShouldNot(HaveOccurred())
-				Expect(result).To(Equal(expected))
-
-				os.RemoveAll(tmpDropletDir)
-			})
-		})
-
 		Context("with a base image building config ", func() {
 			It("should write a valid Dockerfile", func() {
 				tmpBaseConfigDir, err := ioutil.TempDir(os.TempDir(), "parser-test-base-config")

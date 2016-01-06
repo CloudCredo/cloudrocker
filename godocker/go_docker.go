@@ -125,7 +125,7 @@ func StopContainer(cli DockerClient, writer io.Writer, containerName string) err
 
 func RunConfiguredContainer(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Starting the CloudRocker container...")
-	var createOptions = ParseCreateContainer(containerConfig)
+	var createOptions = ParseCreateContainerOptions(containerConfig)
 	if os.Getenv("DEBUG") == "true" {
 		fmt.Println(createOptions.Name)
 		fmt.Println(createOptions.Config)
