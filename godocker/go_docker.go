@@ -22,17 +22,17 @@ type DockerClient interface {
 	StartContainer(string, *docker.HostConfig) error
 }
 
-func GetNewClient() (cli *docker.Client) {
-	cli, err := docker.NewClient("unix:///var/run/docker.sock")
+func GetNewClient() (client *docker.Client) {
+	client, err := docker.NewClient("unix:///var/run/docker.sock")
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 	return
 }
 
-func PrintVersion(cli DockerClient, writer io.Writer) error {
+func PrintVersion(client DockerClient, writer io.Writer) error {
 	fmt.Fprintln(writer, "Checking Docker version")
-	versionList, err := cli.Version()
+	versionList, err := client.Version()
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -44,21 +44,21 @@ func PrintVersion(cli DockerClient, writer io.Writer) error {
 	return nil
 }
 
-func ImportRootfsImage(cli DockerClient, writer io.Writer, url string) error {
+func ImportRootfsImage(client DockerClient, writer io.Writer, url string) error {
 	fmt.Fprintln(writer, "Bootstrapping Docker setup - this will take a few minutes...")
 	options := docker.ImportImageOptions{
 		Source:       url,
 		Repository:   "cloudrocker-raw",
 		OutputStream: writer,
 	}
-	err := cli.ImportImage(options)
+	err := client.ImportImage(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 	return nil
 }
 
-func BuildBaseImage(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+func BuildBaseImage(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Creating image configuration...")
 	WriteBaseImageDockerfile(containerConfig)
 	fmt.Fprintln(writer, "Creating image...")
@@ -68,7 +68,7 @@ func BuildBaseImage(cli DockerClient, writer io.Writer, containerConfig *config.
 		Dockerfile:   "/Dockerfile",
 		OutputStream: writer,
 	}
-	err := cli.BuildImage(options)
+	err := client.BuildImage(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -76,7 +76,7 @@ func BuildBaseImage(cli DockerClient, writer io.Writer, containerConfig *config.
 	return nil
 }
 
-func BuildRuntimeImage(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+func BuildRuntimeImage(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Creating image configuration...")
 	compressor := compressor.NewTgz()
 	compressor.Compress(containerConfig.DropletDir+"/app/", containerConfig.DropletDir+"/droplet.tgz")
@@ -88,7 +88,7 @@ func BuildRuntimeImage(cli DockerClient, writer io.Writer, containerConfig *conf
 		Dockerfile:   "/Dockerfile",
 		OutputStream: writer,
 	}
-	err := cli.BuildImage(options)
+	err := client.BuildImage(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -96,11 +96,11 @@ func BuildRuntimeImage(cli DockerClient, writer io.Writer, containerConfig *conf
 	return nil
 }
 
-func GetContainerID(cli DockerClient, containerName string) (containerID string) {
+func GetContainerID(client DockerClient, containerName string) (containerID string) {
 	options := docker.ListContainersOptions{
 		All: true,
 	}
-	containers, err := cli.ListContainers(options)
+	containers, err := client.ListContainers(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -112,9 +112,9 @@ func GetContainerID(cli DockerClient, containerName string) (containerID string)
 	return ""
 }
 
-func DeleteContainer(cli DockerClient, writer io.Writer, containerName string) error {
+func DeleteContainer(client DockerClient, writer io.Writer, containerName string) error {
 	fmt.Fprintln(writer, "Deleting the CloudRocker container...")
-	containerID := GetContainerID(cli, containerName)
+	containerID := GetContainerID(client, containerName)
 	if containerID == "" {
 		log.Fatalf("Error: No such container: %s", containerName)
 	}
@@ -122,7 +122,7 @@ func DeleteContainer(cli DockerClient, writer io.Writer, containerName string) e
 		ID:    containerID,
 		Force: true,
 	}
-	err := cli.RemoveContainer(options)
+	err := client.RemoveContainer(options)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -130,13 +130,13 @@ func DeleteContainer(cli DockerClient, writer io.Writer, containerName string) e
 	return nil
 }
 
-func StopContainer(cli DockerClient, writer io.Writer, containerName string) error {
+func StopContainer(client DockerClient, writer io.Writer, containerName string) error {
 	fmt.Fprintln(writer, "Stopping the CloudRocker container...")
-	containerID := GetContainerID(cli, containerName)
+	containerID := GetContainerID(client, containerName)
 	if containerID == "" {
 		log.Fatalf("Error: No such container: %s", containerName)
 	}
-	err := cli.StopContainer(containerID, 10)
+	err := client.StopContainer(containerID, 10)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -144,7 +144,7 @@ func StopContainer(cli DockerClient, writer io.Writer, containerName string) err
 	return nil
 }
 
-func RunConfiguredContainer(cli DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+func RunConfiguredContainer(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
 	fmt.Fprintln(writer, "Starting the CloudRocker container...")
 	var createOptions = ParseCreateContainerOptions(containerConfig)
 	if os.Getenv("DEBUG") == "true" {
@@ -152,11 +152,11 @@ func RunConfiguredContainer(cli DockerClient, writer io.Writer, containerConfig 
 		fmt.Println(createOptions.Config)
 		fmt.Println(createOptions.HostConfig)
 	}
-	container, err := cli.CreateContainer(createOptions)
+	container, err := client.CreateContainer(createOptions)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
-	err = cli.StartContainer(container.ID, &docker.HostConfig{})
+	err = client.StartContainer(container.ID, &docker.HostConfig{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}

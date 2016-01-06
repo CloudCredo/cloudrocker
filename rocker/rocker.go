@@ -28,31 +28,31 @@ func NewRocker() *Rocker {
 }
 
 func DockerVersion(writer io.Writer) {
-	cli := godocker.GetNewClient()
-	godocker.PrintVersion(cli, writer)
+	client := godocker.GetNewClient()
+	godocker.PrintVersion(client, writer)
 }
 
 func (f *Rocker) ImportRootfsImage(writer io.Writer) {
-	cli := godocker.GetNewClient()
-	godocker.ImportRootfsImage(cli, writer, utils.GetRootfsUrl())
+	client := godocker.GetNewClient()
+	godocker.ImportRootfsImage(client, writer, utils.GetRootfsUrl())
 	f.BuildBaseImage(writer)
 }
 
 func (f *Rocker) BuildBaseImage(writer io.Writer) {
 	createHostDirectories(f.directories)
 	containerConfig := config.NewBaseContainerConfig(f.directories.BaseConfig())
-	cli := godocker.GetNewClient()
-	godocker.BuildBaseImage(cli, writer, containerConfig)
+	client := godocker.GetNewClient()
+	godocker.BuildBaseImage(client, writer, containerConfig)
 }
 
 func StopContainer(writer io.Writer, name string) {
-	cli := godocker.GetNewClient()
-	godocker.StopContainer(cli, writer, name)
+	client := godocker.GetNewClient()
+	godocker.StopContainer(client, writer, name)
 }
 
 func DeleteContainer(writer io.Writer, name string) {
-	cli := godocker.GetNewClient()
-	godocker.DeleteContainer(cli, writer, name)
+	client := godocker.GetNewClient()
+	godocker.DeleteContainer(client, writer, name)
 }
 
 func (f *Rocker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
