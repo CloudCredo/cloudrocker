@@ -48,7 +48,6 @@ var _ = Describe("Parser", func() {
 
 		Context("with a runtime config ", func() {
 			It("should return a CreateContainerOptions with all required attributes", func() {
-				os.Setenv("CLOUDROCKER_HOME", "/home/testuser/.cloudrocker")
 				thisUser, _ := user.Current()
 				userID := thisUser.Uid
 				testRuntimeContainerConfig := testRuntimeContainerConfig()
@@ -84,7 +83,6 @@ var _ = Describe("Parser", func() {
 				var portBindings = map[goDockerClient.Port][]goDockerClient.PortBinding{
 					"8080/tcp": []goDockerClient.PortBinding{
 						{
-							HostIP:   "0.0.0.0",
 							HostPort: "8080",
 						},
 					},

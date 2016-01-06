@@ -67,7 +67,6 @@ func parsePublishedPorts(publishedPorts map[int]int) map[docker.Port][]docker.Po
 	for hostPort, containerPort := range publishedPorts {
 		parsedPublishedPorts[docker.Port(strconv.Itoa(hostPort)+"/tcp")] = []docker.PortBinding{
 			{
-				HostIP:   "0.0.0.0",
 				HostPort: strconv.Itoa(containerPort),
 			},
 		}
