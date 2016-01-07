@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	"github.com/cloudcredo/cloudrocker/buildpack"
 	"github.com/cloudcredo/cloudrocker/config"
