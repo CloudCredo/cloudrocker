@@ -120,8 +120,8 @@ func (f *Rocker) StopRuntime(writer io.Writer) {
 func (f *Rocker) BuildRuntimeImage(writer io.Writer, destImageTagOptional ...string) {
 	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet(), destImageTagOptional...)
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.BuildRuntimeImage(cli, Stdout, stdoutpipe, writer, containerConfig)
+	client := godocker.GetNewClient()
+	godocker.BuildRuntimeImage(client, writer, containerConfig)
 }
 
 func cloudRockerfileLocation() (location string) {
