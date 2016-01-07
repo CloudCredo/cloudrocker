@@ -369,6 +369,9 @@ var _ = Describe("Docker", func() {
 			Expect(fakeDockerClient.createContainerArg.Config.Mounts).To(Equal(mounts))
 			Expect(fakeDockerClient.createContainerArg.Config.AttachStdout).To(Equal(false))
 			Expect(fakeDockerClient.createContainerArg.Config.AttachStderr).To(Equal(false))
+			Expect(fakeDockerClient.createContainerArg.Config.ExposedPorts).To(Equal(map[goDockerClient.Port]struct{}{
+				"8080/tcp": struct{}{},
+			}))
 			Expect(fakeDockerClient.createContainerArg.HostConfig.Binds).To(Equal([]string{
 				"/home/testuser/testapp/app:/app",
 			}))

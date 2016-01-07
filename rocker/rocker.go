@@ -7,10 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/cloudcredo/cloudrocker/buildpack"
 	"github.com/cloudcredo/cloudrocker/config"
-	"github.com/cloudcredo/cloudrocker/docker"
 	"github.com/cloudcredo/cloudrocker/godocker"
 	"github.com/cloudcredo/cloudrocker/stager"
 	"github.com/cloudcredo/cloudrocker/utils"
@@ -102,13 +102,13 @@ func (f *Rocker) StageApp(writer io.Writer, buildpackDirOptional ...string) erro
 func (f *Rocker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	if docker.GetContainerId(cli, Stdout, stdoutpipe, containerConfig.ContainerName) != "" {
+	client := godocker.GetNewClient()
+	if godocker.GetContainerID(client, containerConfig.ContainerName) != "" {
 		fmt.Println("Deleting running runtime container...")
 		f.StopRuntime(writer)
 	}
-	cli, Stdout, stdoutpipe = docker.GetNewClient()
-	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)
+	client = godocker.GetNewClient()
+	godocker.RunRuntimeContainer(client, writer, containerConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 

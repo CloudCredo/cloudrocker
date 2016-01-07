@@ -23,6 +23,7 @@ func ParseCreateContainerOptions(config *config.ContainerConfig) docker.CreateCo
 			Mounts:       parseMounts(config.Mounts),
 			AttachStdout: parseDaemon(config.Daemon),
 			AttachStderr: parseDaemon(config.Daemon),
+			ExposedPorts: parseExposedPorts(config.PublishedPorts),
 		},
 		HostConfig: &docker.HostConfig{
 			Binds:        parseBinds(config.Mounts),
@@ -86,16 +87,28 @@ func parseBinds(mounts map[string]string) (parsedBinds []string) {
 	return
 }
 
+func parseExposedPorts(publishedPorts map[int]int) map[docker.Port]struct{} {
+	var parsedExposedPorts = make(map[docker.Port]struct{})
+	for hostPort := range publishedPorts {
+		parsedExposedPorts[convertHostPort(hostPort)] = struct{}{}
+	}
+	return parsedExposedPorts
+}
+
 func parsePublishedPorts(publishedPorts map[int]int) map[docker.Port][]docker.PortBinding {
 	var parsedPublishedPorts = make(map[docker.Port][]docker.PortBinding)
 	for hostPort, containerPort := range publishedPorts {
-		parsedPublishedPorts[docker.Port(strconv.Itoa(hostPort)+"/tcp")] = []docker.PortBinding{
+		parsedPublishedPorts[convertHostPort(hostPort)] = []docker.PortBinding{
 			{
 				HostPort: strconv.Itoa(containerPort),
 			},
 		}
 	}
 	return parsedPublishedPorts
+}
+
+func convertHostPort(hostPort int) docker.Port {
+	return docker.Port(strconv.Itoa(hostPort) + "/tcp")
 }
 
 func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {

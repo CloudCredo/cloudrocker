@@ -107,7 +107,7 @@ func GetContainerID(client DockerClient, containerName string) (containerID stri
 		log.Fatalf("Error: %s", err)
 	}
 	for _, container := range containers {
-		if container.Names[0] == "/"+containerName {
+		if len(container.Names) > 0 && container.Names[0] == "/"+containerName {
 			return container.ID
 		}
 	}
@@ -201,11 +201,12 @@ func startAttached(client DockerClient, writer io.Writer, container *docker.Cont
 
 func startDetached(client DockerClient, writer io.Writer, container *docker.Container) error {
 	startContainer(client, writer, container)
+	fmt.Fprintln(writer, container.ID+"\n")
 	return nil
 }
 
 func startContainer(client DockerClient, writer io.Writer, container *docker.Container) {
-	err := client.StartContainer(container.ID, &docker.HostConfig{})
+	err := client.StartContainer(container.ID, container.HostConfig)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
