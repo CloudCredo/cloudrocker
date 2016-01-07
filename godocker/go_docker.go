@@ -20,6 +20,8 @@ type DockerClient interface {
 	StopContainer(containerName string, timeout uint) error
 	CreateContainer(docker.CreateContainerOptions) (*docker.Container, error)
 	StartContainer(string, *docker.HostConfig) error
+	AttachToContainerNonBlocking(docker.AttachToContainerOptions) (docker.CloseWaiter, error)
+	AddEventListener(chan<- *docker.APIEvents) error
 }
 
 func GetNewClient() (client *docker.Client) {
@@ -144,7 +146,17 @@ func StopContainer(client DockerClient, writer io.Writer, containerName string) 
 	return nil
 }
 
-func RunConfiguredContainer(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+func RunStagingContainer(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	container := createContainer(client, writer, containerConfig)
+	return startAttached(client, writer, container)
+}
+
+func RunRuntimeContainer(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) error {
+	container := createContainer(client, writer, containerConfig)
+	return startDetached(client, writer, container)
+}
+
+func createContainer(client DockerClient, writer io.Writer, containerConfig *config.ContainerConfig) *docker.Container {
 	fmt.Fprintln(writer, "Starting the CloudRocker container...")
 	var createOptions = ParseCreateContainerOptions(containerConfig)
 	if os.Getenv("DEBUG") == "true" {
@@ -156,10 +168,46 @@ func RunConfiguredContainer(client DockerClient, writer io.Writer, containerConf
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
-	err = client.StartContainer(container.ID, &docker.HostConfig{})
+	return container
+}
+
+func startAttached(client DockerClient, writer io.Writer, container *docker.Container) error {
+	_, err := client.AttachToContainerNonBlocking(docker.AttachToContainerOptions{
+		Container:    container.ID,
+		OutputStream: writer,
+		Stdout:       true,
+		Stderr:       true,
+		Stream:       true,
+	})
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+
+	listener := make(chan *docker.APIEvents)
+	err = client.AddEventListener(listener)
+	if err != nil {
+		log.Fatalf("Error: %s", err)
+	}
+
+	startContainer(client, writer, container)
+
+	for {
+		msg := <-listener
+		if msg.Status == "die" {
+			return nil
+		}
+	}
+}
+
+func startDetached(client DockerClient, writer io.Writer, container *docker.Container) error {
+	startContainer(client, writer, container)
+	return nil
+}
+
+func startContainer(client DockerClient, writer io.Writer, container *docker.Container) {
+	err := client.StartContainer(container.ID, &docker.HostConfig{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
 	fmt.Fprintln(writer, "Started the CloudRocker container.")
-	return nil
 }

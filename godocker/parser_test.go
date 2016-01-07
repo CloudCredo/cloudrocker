@@ -30,6 +30,31 @@ var _ = Describe("Parser", func() {
 				Expect(createContainerOptions.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 				Expect(createContainerOptions.Config.Image).To(Equal("cloudrocker-base:latest"))
 				Expect(createContainerOptions.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+				var mounts = []goDockerClient.Mount{
+					goDockerClient.Mount{
+						Source:      "/home/testuser/.cloudrocker/buildpacks",
+						Destination: "/cloudrockerbuildpacks",
+						RW:          true,
+					},
+					goDockerClient.Mount{
+						Source:      "/home/testuser/.cloudrocker/rocker",
+						Destination: "/rocker",
+						RW:          true,
+					},
+					goDockerClient.Mount{
+						Source:      "/home/testuser/.cloudrocker/staging",
+						Destination: "/tmp/app",
+						RW:          true,
+					},
+					goDockerClient.Mount{
+						Source:      "/home/testuser/.cloudrocker/tmp",
+						Destination: "/tmp",
+						RW:          true,
+					},
+				}
+				Expect(createContainerOptions.Config.Mounts).To(Equal(mounts))
+				Expect(createContainerOptions.Config.AttachStdout).To(Equal(true))
+				Expect(createContainerOptions.Config.AttachStderr).To(Equal(true))
 				var binds = []string{
 					"/home/testuser/.cloudrocker/buildpacks:/cloudrockerbuildpacks",
 					"/home/testuser/.cloudrocker/rocker:/rocker",
@@ -37,6 +62,7 @@ var _ = Describe("Parser", func() {
 					"/home/testuser/.cloudrocker/tmp:/tmp",
 				}
 				Expect(createContainerOptions.HostConfig.Binds).To(Equal(binds))
+				Expect(createContainerOptions.HostConfig.NetworkMode).To(Equal("bridge"))
 			})
 		})
 
@@ -68,6 +94,16 @@ var _ = Describe("Parser", func() {
 					"with",
 					"spaces\"",
 				}))
+				var mounts = []goDockerClient.Mount{
+					goDockerClient.Mount{
+						Source:      "/home/testuser/testapp/app",
+						Destination: "/app",
+						RW:          true,
+					},
+				}
+				Expect(createContainerOptions.Config.Mounts).To(Equal(mounts))
+				Expect(createContainerOptions.Config.AttachStdout).To(Equal(false))
+				Expect(createContainerOptions.Config.AttachStderr).To(Equal(false))
 				Expect(createContainerOptions.HostConfig.Binds).To(Equal([]string{
 					"/home/testuser/testapp/app:/app",
 				}))
@@ -79,6 +115,7 @@ var _ = Describe("Parser", func() {
 					},
 				}
 				Expect(createContainerOptions.HostConfig.PortBindings).To(Equal(portBindings))
+				Expect(createContainerOptions.HostConfig.NetworkMode).To(Equal("bridge"))
 			})
 		})
 	})

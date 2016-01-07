@@ -16,14 +16,18 @@ func ParseCreateContainerOptions(config *config.ContainerConfig) docker.CreateCo
 	var options = docker.CreateContainerOptions{
 		Name: config.ContainerName,
 		Config: &docker.Config{
-			User:  userID(),
-			Env:   parseEnvVars(config.EnvVars),
-			Image: config.SrcImageTag,
-			Cmd:   config.Command,
+			User:         userID(),
+			Env:          parseEnvVars(config.EnvVars),
+			Image:        config.SrcImageTag,
+			Cmd:          config.Command,
+			Mounts:       parseMounts(config.Mounts),
+			AttachStdout: parseDaemon(config.Daemon),
+			AttachStderr: parseDaemon(config.Daemon),
 		},
 		HostConfig: &docker.HostConfig{
 			Binds:        parseBinds(config.Mounts),
 			PortBindings: parsePublishedPorts(config.PublishedPorts),
+			NetworkMode:  "bridge",
 		},
 	}
 	return options
@@ -56,6 +60,24 @@ func userID() string {
 	return thisUser.Uid
 }
 
+type ByHostPath []docker.Mount
+
+func (slice ByHostPath) Len() int           { return len(slice) }
+func (slice ByHostPath) Swap(i, j int)      { slice[i], slice[j] = slice[j], slice[i] }
+func (slice ByHostPath) Less(i, j int) bool { return slice[i].Source < slice[j].Source }
+
+func parseMounts(mounts map[string]string) (parsedMounts []docker.Mount) {
+	for hostPath, containerPath := range mounts {
+		parsedMounts = append(parsedMounts, docker.Mount{
+			Source:      hostPath,
+			Destination: containerPath,
+			RW:          true,
+		})
+	}
+	sort.Sort(ByHostPath(parsedMounts))
+	return
+}
+
 func parseBinds(mounts map[string]string) (parsedBinds []string) {
 	for hostPath, containerPath := range mounts {
 		parsedBinds = append(parsedBinds, hostPath+":"+containerPath)
@@ -84,6 +106,10 @@ func parseEnvVars(envVars map[string]string) (parsedEnvVars []string) {
 	}
 	sort.Strings(parsedEnvVars)
 	return
+}
+
+func parseDaemon(daemon bool) bool {
+	return !daemon
 }
 
 func runtimeInitialDockerfileString() string {

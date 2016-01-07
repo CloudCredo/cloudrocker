@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"time"
 
 	"github.com/cloudcredo/cloudrocker/config"
 	"github.com/cloudcredo/cloudrocker/godocker"
@@ -18,15 +19,18 @@ import (
 )
 
 type FakeDockerClient struct {
-	versionCalled           bool
-	importImageArg          goDockerClient.ImportImageOptions
-	buildImageArg           goDockerClient.BuildImageOptions
-	listContainersArg       goDockerClient.ListContainersOptions
-	removeContainerArg      goDockerClient.RemoveContainerOptions
-	stopContainerArgID      string
-	stopContainerArgTimeout uint
-	createContainerArg      goDockerClient.CreateContainerOptions
-	startContainerArgID     string
+	versionCalled                      bool
+	importImageArg                     goDockerClient.ImportImageOptions
+	buildImageArg                      goDockerClient.BuildImageOptions
+	listContainersArg                  goDockerClient.ListContainersOptions
+	removeContainerArg                 goDockerClient.RemoveContainerOptions
+	stopContainerArgID                 string
+	stopContainerArgTimeout            uint
+	createContainerArg                 goDockerClient.CreateContainerOptions
+	startContainerArgID                string
+	attachToContainerNonBlockingCalled bool
+	attachToContainerNonBlockingArg    goDockerClient.AttachToContainerOptions
+	addEventListenerCalled             bool
 }
 
 func (fake *FakeDockerClient) Version() (*goDockerClient.Env, error) {
@@ -84,6 +88,21 @@ func (fake *FakeDockerClient) CreateContainer(options goDockerClient.CreateConta
 
 func (fake *FakeDockerClient) StartContainer(id string, hostConfig *goDockerClient.HostConfig) error {
 	fake.startContainerArgID = id
+	return nil
+}
+
+func (fake *FakeDockerClient) AttachToContainerNonBlocking(attachToContainerOptions goDockerClient.AttachToContainerOptions) (goDockerClient.CloseWaiter, error) {
+	fake.attachToContainerNonBlockingCalled = true
+	fake.attachToContainerNonBlockingArg = attachToContainerOptions
+	return nil, nil
+}
+
+func (fake *FakeDockerClient) AddEventListener(listener chan<- *goDockerClient.APIEvents) error {
+	fake.addEventListenerCalled = true
+	go func() {
+		time.Sleep(time.Nanosecond * 1000)
+		listener <- &goDockerClient.APIEvents{Status: "die"}
+	}()
 	return nil
 }
 
@@ -253,26 +272,118 @@ var _ = Describe("Docker", func() {
 		})
 	})
 
-	Describe("Running a configured container", func() {
+	Describe("Running a staging container", func() {
 		It("should tell Docker to run the container with the correct arguments", func() {
 			thisUser, _ := user.Current()
 			userID := thisUser.Uid
 			fakeDockerClient = new(FakeDockerClient)
 
-			godocker.RunConfiguredContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("test")))
+			godocker.RunStagingContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("/test")))
 
 			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-staging"))
 			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal(userID))
 			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{"CF_STACK=cflinuxfs2"}))
 			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
 			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{"/rocker/rock", "stage", "internal"}))
+			var mounts = []goDockerClient.Mount{
+				goDockerClient.Mount{
+					Source:      "/test/buildpacks",
+					Destination: "/cloudrockerbuildpacks",
+					RW:          true,
+				},
+				goDockerClient.Mount{
+					Source:      "/test/rocker",
+					Destination: "/rocker",
+					RW:          true,
+				},
+				goDockerClient.Mount{
+					Source:      "/test/staging",
+					Destination: "/tmp/app",
+					RW:          true,
+				},
+				goDockerClient.Mount{
+					Source:      "/test/tmp",
+					Destination: "/tmp",
+					RW:          true,
+				},
+			}
+			Expect(fakeDockerClient.createContainerArg.Config.Mounts).To(Equal(mounts))
+			Expect(fakeDockerClient.createContainerArg.Config.AttachStdout).To(Equal(true))
+			Expect(fakeDockerClient.createContainerArg.Config.AttachStderr).To(Equal(true))
 			var binds = []string{
-				"test/buildpacks:/cloudrockerbuildpacks",
-				"test/rocker:/rocker",
-				"test/staging:/tmp/app",
-				"test/tmp:/tmp",
+				"/test/buildpacks:/cloudrockerbuildpacks",
+				"/test/rocker:/rocker",
+				"/test/staging:/tmp/app",
+				"/test/tmp:/tmp",
 			}
 			Expect(fakeDockerClient.createContainerArg.HostConfig.Binds).To(Equal(binds))
+			Expect(fakeDockerClient.createContainerArg.HostConfig.NetworkMode).To(Equal("bridge"))
+
+			Expect(fakeDockerClient.attachToContainerNonBlockingArg).To(Equal(goDockerClient.AttachToContainerOptions{
+				Container:    "5716e9326cd9",
+				OutputStream: buffer,
+				Stdout:       true,
+				Stderr:       true,
+				Stream:       true,
+			}))
+			Expect(fakeDockerClient.addEventListenerCalled).To(Equal(true))
+			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
+		})
+	})
+
+	Describe("Running a runtime container", func() {
+		It("should tell Docker to run the container with the correct arguments", func() {
+			thisUser, _ := user.Current()
+			userID := thisUser.Uid
+			fakeDockerClient = new(FakeDockerClient)
+
+			godocker.RunRuntimeContainer(fakeDockerClient, buffer, testRuntimeContainerConfig())
+
+			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-runtime"))
+			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal(userID))
+			Expect(fakeDockerClient.createContainerArg.Config.Env).To(Equal([]string{
+				"HOME=/app",
+				"PORT=8080",
+				"TMPDIR=/app/tmp",
+			}))
+			Expect(fakeDockerClient.createContainerArg.Config.Image).To(Equal("cloudrocker-base:latest"))
+			Expect(fakeDockerClient.createContainerArg.Config.Cmd).To(Equal([]string{
+				"/bin/bash",
+				"/app/cloudrocker-start-1c4352a23e52040ddb1857d7675fe3cc.sh",
+				"/app",
+				"the",
+				"start",
+				"command",
+				"\"quoted",
+				"string",
+				"with",
+				"spaces\"",
+			}))
+			var mounts = []goDockerClient.Mount{
+				goDockerClient.Mount{
+					Source:      "/home/testuser/testapp/app",
+					Destination: "/app",
+					RW:          true,
+				},
+			}
+			Expect(fakeDockerClient.createContainerArg.Config.Mounts).To(Equal(mounts))
+			Expect(fakeDockerClient.createContainerArg.Config.AttachStdout).To(Equal(false))
+			Expect(fakeDockerClient.createContainerArg.Config.AttachStderr).To(Equal(false))
+			Expect(fakeDockerClient.createContainerArg.HostConfig.Binds).To(Equal([]string{
+				"/home/testuser/testapp/app:/app",
+			}))
+			var portBindings = map[goDockerClient.Port][]goDockerClient.PortBinding{
+				"8080/tcp": []goDockerClient.PortBinding{
+					{
+						HostPort: "8080",
+					},
+				},
+			}
+			Expect(fakeDockerClient.createContainerArg.HostConfig.PortBindings).To(Equal(portBindings))
+			Expect(fakeDockerClient.createContainerArg.HostConfig.NetworkMode).To(Equal("bridge"))
+
+			Expect(fakeDockerClient.attachToContainerNonBlockingCalled).To(Equal(false))
+			Expect(fakeDockerClient.addEventListenerCalled).To(Equal(false))
 			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
 		})
 	})

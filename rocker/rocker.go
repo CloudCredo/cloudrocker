@@ -83,8 +83,8 @@ func (f *Rocker) RunStager(writer io.Writer) error {
 	prepareStagingFilesystem(f.directories)
 	prepareStagingApp(f.directories.App(), f.directories.Staging())
 	containerConfig := config.NewStageContainerConfig(f.directories)
-	cli, Stdout, stdoutpipe := docker.GetNewClient()
-	docker.RunConfiguredContainer(cli, Stdout, stdoutpipe, writer, containerConfig)
+	client := godocker.GetNewClient()
+	godocker.RunStagingContainer(client, writer, containerConfig)
 	DeleteContainer(writer, containerConfig.ContainerName)
 	return stager.ValidateStagedApp(f.directories)
 }
