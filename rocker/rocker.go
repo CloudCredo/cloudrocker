@@ -10,7 +10,7 @@ import (
 
 	"github.com/cloudcredo/cloudrocker/buildpack"
 	"github.com/cloudcredo/cloudrocker/config"
-	"github.com/cloudcredo/cloudrocker/godocker"
+	"github.com/cloudcredo/cloudrocker/docker"
 	"github.com/cloudcredo/cloudrocker/stager"
 	"github.com/cloudcredo/cloudrocker/utils"
 )

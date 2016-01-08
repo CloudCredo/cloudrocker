@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudcredo/cloudrocker/config"
-	"github.com/cloudcredo/cloudrocker/godocker"
+	"github.com/cloudcredo/cloudrocker/docker"
 
 	goDockerClient "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/fsouza/go-dockerclient"
 
