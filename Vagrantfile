@@ -25,9 +25,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
     # Install Docker
-    pkg_cmd = "wget -q -O - https://get.docker.io/gpg | apt-key add -;" \
-      "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list;" \
-      "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker-1.5.0; "
+    pkg_cmd = "apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D;" \
+      "mkdir -p /etc/apt/sources.list.d;" \
+      "echo deb https://apt.dockerproject.org/repo ubuntu-trusty main > /etc/apt/sources.list.d/docker.list;" \
+      "apt-get update -qq; apt-get install -y -q docker-engine=1.9.1-0~trusty; "
     # Add vagrant user to the docker group
     pkg_cmd << "usermod -a -G docker vagrant; "
 
