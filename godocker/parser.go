@@ -1,4 +1,4 @@
-package godocker
+package docker
 
 import (
 	"io/ioutil"

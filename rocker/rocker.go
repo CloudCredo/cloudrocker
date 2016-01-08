@@ -27,31 +27,31 @@ func NewRocker() *Rocker {
 }
 
 func DockerVersion(writer io.Writer) {
-	client := godocker.GetNewClient()
-	godocker.PrintVersion(client, writer)
+	client := docker.GetNewClient()
+	docker.PrintVersion(client, writer)
 }
 
 func (f *Rocker) ImportRootfsImage(writer io.Writer) {
-	client := godocker.GetNewClient()
-	godocker.ImportRootfsImage(client, writer, utils.GetRootfsUrl())
+	client := docker.GetNewClient()
+	docker.ImportRootfsImage(client, writer, utils.GetRootfsUrl())
 	f.BuildBaseImage(writer)
 }
 
 func (f *Rocker) BuildBaseImage(writer io.Writer) {
 	createHostDirectories(f.directories)
 	containerConfig := config.NewBaseContainerConfig(f.directories.BaseConfig())
-	client := godocker.GetNewClient()
-	godocker.BuildBaseImage(client, writer, containerConfig)
+	client := docker.GetNewClient()
+	docker.BuildBaseImage(client, writer, containerConfig)
 }
 
 func StopContainer(writer io.Writer, name string) {
-	client := godocker.GetNewClient()
-	godocker.StopContainer(client, writer, name)
+	client := docker.GetNewClient()
+	docker.StopContainer(client, writer, name)
 }
 
 func DeleteContainer(writer io.Writer, name string) {
-	client := godocker.GetNewClient()
-	godocker.DeleteContainer(client, writer, name)
+	client := docker.GetNewClient()
+	docker.DeleteContainer(client, writer, name)
 }
 
 func (f *Rocker) AddBuildpack(writer io.Writer, url string, buildpackDirOptional ...string) {
@@ -82,8 +82,8 @@ func (f *Rocker) RunStager(writer io.Writer) error {
 	prepareStagingFilesystem(f.directories)
 	prepareStagingApp(f.directories.App(), f.directories.Staging())
 	containerConfig := config.NewStageContainerConfig(f.directories)
-	client := godocker.GetNewClient()
-	godocker.RunStagingContainer(client, writer, containerConfig)
+	client := docker.GetNewClient()
+	docker.RunStagingContainer(client, writer, containerConfig)
 	DeleteContainer(writer, containerConfig.ContainerName)
 	return stager.ValidateStagedApp(f.directories)
 }
@@ -101,13 +101,13 @@ func (f *Rocker) StageApp(writer io.Writer, buildpackDirOptional ...string) erro
 func (f *Rocker) RunRuntime(writer io.Writer) {
 	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet())
-	client := godocker.GetNewClient()
-	if godocker.GetContainerID(client, containerConfig.ContainerName) != "" {
+	client := docker.GetNewClient()
+	if docker.GetContainerID(client, containerConfig.ContainerName) != "" {
 		fmt.Println("Deleting running runtime container...")
 		f.StopRuntime(writer)
 	}
-	client = godocker.GetNewClient()
-	godocker.RunRuntimeContainer(client, writer, containerConfig)
+	client = docker.GetNewClient()
+	docker.RunRuntimeContainer(client, writer, containerConfig)
 	fmt.Fprintln(writer, "Connect to your running application at http://localhost:8080/")
 }
 
@@ -119,8 +119,8 @@ func (f *Rocker) StopRuntime(writer io.Writer) {
 func (f *Rocker) BuildRuntimeImage(writer io.Writer, destImageTagOptional ...string) {
 	prepareRuntimeFilesystem(f.directories)
 	containerConfig := config.NewRuntimeContainerConfig(f.directories.Droplet(), destImageTagOptional...)
-	client := godocker.GetNewClient()
-	godocker.BuildRuntimeImage(client, writer, containerConfig)
+	client := docker.GetNewClient()
+	docker.BuildRuntimeImage(client, writer, containerConfig)
 }
 
 func cloudRockerfileLocation() (location string) {

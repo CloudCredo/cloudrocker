@@ -1,4 +1,4 @@
-package godocker_test
+package docker_test
 
 import (
 	"io/ioutil"
@@ -121,7 +121,7 @@ var _ = Describe("Docker", func() {
 	Describe("Getting a Docker client", func() {
 		Context("REALDOCKER", func() {
 			It("should return a usable docker client on unix", func() {
-				cli := godocker.GetNewClient()
+				cli := docker.GetNewClient()
 				Expect(cli.Endpoint()).To(Equal("unix:///var/run/docker.sock"))
 			})
 		})
@@ -130,7 +130,7 @@ var _ = Describe("Docker", func() {
 	Describe("Displaying the Docker version", func() {
 		It("should tell Docker to output its version", func() {
 			fakeDockerClient = new(FakeDockerClient)
-			godocker.PrintVersion(fakeDockerClient, buffer)
+			docker.PrintVersion(fakeDockerClient, buffer)
 			Expect(fakeDockerClient.versionCalled).To(Equal(true))
 			Eventually(buffer).Should(gbytes.Say("Client OS/Arch: linux/amd64"))
 			Eventually(buffer).Should(gbytes.Say("Server version: 1.5.0"))
@@ -144,7 +144,7 @@ var _ = Describe("Docker", func() {
 		It("should tell Docker to import the rootfs from the supplied URL", func() {
 			url := "http://test.com/test-img"
 			fakeDockerClient = new(FakeDockerClient)
-			godocker.ImportRootfsImage(fakeDockerClient, buffer, url)
+			docker.ImportRootfsImage(fakeDockerClient, buffer, url)
 			Expect(fakeDockerClient.importImageArg.Source).To(Equal("http://test.com/test-img"))
 			Expect(fakeDockerClient.importImageArg.Repository).To(Equal("cloudrocker-raw"))
 			Expect(fakeDockerClient.importImageArg.OutputStream).To(Equal(buffer))
@@ -157,7 +157,7 @@ var _ = Describe("Docker", func() {
 			BeforeEach(func() {
 				buildDir, _ = ioutil.TempDir(os.TempDir(), "docker-configure-base")
 				fakeDockerClient = new(FakeDockerClient)
-				godocker.BuildBaseImage(fakeDockerClient, buffer, config.NewBaseContainerConfig(buildDir))
+				docker.BuildBaseImage(fakeDockerClient, buffer, config.NewBaseContainerConfig(buildDir))
 			})
 			AfterEach(func() {
 				os.RemoveAll(buildDir)
@@ -183,7 +183,7 @@ var _ = Describe("Docker", func() {
 		Context("when no cloudrocker container is found", func() {
 			It("should return empty string", func() {
 				fakeDockerClient = new(FakeDockerClient)
-				containerID := godocker.GetContainerID(fakeDockerClient, "another-container")
+				containerID := docker.GetContainerID(fakeDockerClient, "another-container")
 				Expect(fakeDockerClient.listContainersArg.All).To(Equal(true))
 				Expect(containerID).To(Equal(""))
 			})
@@ -192,7 +192,7 @@ var _ = Describe("Docker", func() {
 		Context("when a cloudrocker container exists", func() {
 			It("should return the container ID", func() {
 				fakeDockerClient = new(FakeDockerClient)
-				containerID := godocker.GetContainerID(fakeDockerClient, "cloudrocker-runtime")
+				containerID := docker.GetContainerID(fakeDockerClient, "cloudrocker-runtime")
 				Expect(fakeDockerClient.listContainersArg.All).To(Equal(true))
 				Expect(containerID).To(Equal("e8096241370a"))
 			})
@@ -202,7 +202,7 @@ var _ = Describe("Docker", func() {
 	Describe("Deleting the docker container", func() {
 		It("should tell Docker to delete the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
-			godocker.DeleteContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
+			docker.DeleteContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
 			Expect(fakeDockerClient.removeContainerArg.Force).To(Equal(true))
 			Expect(fakeDockerClient.removeContainerArg.ID).To(Equal("e8096241370a"))
 		})
@@ -211,7 +211,7 @@ var _ = Describe("Docker", func() {
 	Describe("Stopping the docker container", func() {
 		It("should tell Docker to stop the container", func() {
 			fakeDockerClient = new(FakeDockerClient)
-			godocker.StopContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
+			docker.StopContainer(fakeDockerClient, buffer, "cloudrocker-runtime")
 			Expect(fakeDockerClient.stopContainerArgID).To(Equal("e8096241370a"))
 			var timeout uint = 10
 			Expect(fakeDockerClient.stopContainerArgTimeout).To(Equal(timeout))
@@ -233,7 +233,7 @@ var _ = Describe("Docker", func() {
 
 		Context("without an image tag", func() {
 			BeforeEach(func() {
-				godocker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir))
+				docker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir))
 			})
 
 			It("should create a tarred version of the droplet mount, for extraction in the container, so as to not have AUFS permissions issues in https://github.com/docker/docker/issues/783", func() {
@@ -263,7 +263,7 @@ var _ = Describe("Docker", func() {
 
 		Context("with an image tag", func() {
 			It("should tell Docker to build the container from the Dockerfile", func() {
-				godocker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir, "repository/image:tag"))
+				docker.BuildRuntimeImage(fakeDockerClient, buffer, config.NewRuntimeContainerConfig(dropletDir, "repository/image:tag"))
 
 				Expect(fakeDockerClient.buildImageArg.Name).To(Equal("repository/image:tag"))
 				Expect(fakeDockerClient.buildImageArg.ContextDir).To(Equal(dropletDir))
@@ -280,7 +280,7 @@ var _ = Describe("Docker", func() {
 			userID := thisUser.Uid
 			fakeDockerClient = new(FakeDockerClient)
 
-			godocker.RunStagingContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("/test")))
+			docker.RunStagingContainer(fakeDockerClient, buffer, config.NewStageContainerConfig(config.NewDirectories("/test")))
 
 			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-staging"))
 			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal(userID))
@@ -341,7 +341,7 @@ var _ = Describe("Docker", func() {
 			userID := thisUser.Uid
 			fakeDockerClient = new(FakeDockerClient)
 
-			godocker.RunRuntimeContainer(fakeDockerClient, buffer, testRuntimeContainerConfig())
+			docker.RunRuntimeContainer(fakeDockerClient, buffer, testRuntimeContainerConfig())
 
 			Expect(fakeDockerClient.createContainerArg.Name).To(Equal("cloudrocker-runtime"))
 			Expect(fakeDockerClient.createContainerArg.Config.User).To(Equal(userID))

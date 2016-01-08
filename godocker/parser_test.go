@@ -1,4 +1,4 @@
-package godocker_test
+package docker_test
 
 import (
 	"io/ioutil"
@@ -23,7 +23,7 @@ var _ = Describe("Parser", func() {
 				userID := thisUser.Uid
 				stageConfig := config.NewStageContainerConfig(config.NewDirectories("/home/testuser/.cloudrocker"))
 
-				createContainerOptions := godocker.ParseCreateContainerOptions(stageConfig)
+				createContainerOptions := docker.ParseCreateContainerOptions(stageConfig)
 
 				Expect(createContainerOptions.Name).To(Equal("cloudrocker-staging"))
 				Expect(createContainerOptions.Config.User).To(Equal(userID))
@@ -72,7 +72,7 @@ var _ = Describe("Parser", func() {
 				userID := thisUser.Uid
 				testRuntimeContainerConfig := testRuntimeContainerConfig()
 
-				createContainerOptions := godocker.ParseCreateContainerOptions(testRuntimeContainerConfig)
+				createContainerOptions := docker.ParseCreateContainerOptions(testRuntimeContainerConfig)
 
 				Expect(createContainerOptions.Name).To(Equal("cloudrocker-runtime"))
 				Expect(createContainerOptions.Config.User).To(Equal(userID))
@@ -127,7 +127,7 @@ var _ = Describe("Parser", func() {
 				Expect(err).ShouldNot(HaveOccurred())
 				testBaseConfigContainerConfig := testBaseConfigContainerConfig(tmpBaseConfigDir)
 
-				godocker.WriteBaseImageDockerfile(testBaseConfigContainerConfig)
+				docker.WriteBaseImageDockerfile(testBaseConfigContainerConfig)
 
 				result, err := ioutil.ReadFile(tmpBaseConfigDir + "/Dockerfile")
 				Expect(err).ShouldNot(HaveOccurred())

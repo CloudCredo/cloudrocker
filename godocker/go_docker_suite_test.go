@@ -1,4 +1,4 @@
-package godocker_test
+package docker_test
 
 import (
 	. "github.com/cloudcredo/cloudrocker/Godeps/_workspace/src/github.com/onsi/ginkgo"
@@ -9,5 +9,5 @@ import (
 
 func TestDocker(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "GoDocker Suite")
+	RunSpecs(t, "Docker Suite")
 }
