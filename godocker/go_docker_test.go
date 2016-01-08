@@ -28,6 +28,7 @@ type FakeDockerClient struct {
 	stopContainerArgTimeout            uint
 	createContainerArg                 goDockerClient.CreateContainerOptions
 	startContainerArgID                string
+	startContainerArgHostConfig        *goDockerClient.HostConfig
 	attachToContainerNonBlockingCalled bool
 	attachToContainerNonBlockingArg    goDockerClient.AttachToContainerOptions
 	addEventListenerCalled             bool
@@ -88,6 +89,7 @@ func (fake *FakeDockerClient) CreateContainer(options goDockerClient.CreateConta
 
 func (fake *FakeDockerClient) StartContainer(id string, hostConfig *goDockerClient.HostConfig) error {
 	fake.startContainerArgID = id
+	fake.startContainerArgHostConfig = hostConfig
 	return nil
 }
 
@@ -328,6 +330,8 @@ var _ = Describe("Docker", func() {
 			}))
 			Expect(fakeDockerClient.addEventListenerCalled).To(Equal(true))
 			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
+			var noHostConfig *goDockerClient.HostConfig
+			Expect(fakeDockerClient.startContainerArgHostConfig).To(Equal(noHostConfig))
 		})
 	})
 
@@ -388,6 +392,8 @@ var _ = Describe("Docker", func() {
 			Expect(fakeDockerClient.attachToContainerNonBlockingCalled).To(Equal(false))
 			Expect(fakeDockerClient.addEventListenerCalled).To(Equal(false))
 			Expect(fakeDockerClient.startContainerArgID).To(Equal("5716e9326cd9"))
+			var noHostConfig *goDockerClient.HostConfig
+			Expect(fakeDockerClient.startContainerArgHostConfig).To(Equal(noHostConfig))
 		})
 	})
 })

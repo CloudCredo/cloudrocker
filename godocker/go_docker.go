@@ -206,7 +206,8 @@ func startDetached(client DockerClient, writer io.Writer, container *docker.Cont
 }
 
 func startContainer(client DockerClient, writer io.Writer, container *docker.Container) {
-	err := client.StartContainer(container.ID, container.HostConfig)
+	var noHostConfig *docker.HostConfig
+	err := client.StartContainer(container.ID, noHostConfig)
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
